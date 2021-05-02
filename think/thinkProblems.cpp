@@ -28,13 +28,46 @@ void pyramidHash(int width) {
     }
 }
 
+void invertedPyramid(int size) {
+    // Pg 53 Exercise 2-1
+    int startOfHash = 0;
+    int endOfHash = size - 1;
+    for (int j = 0; j < size; j += 2) {
+        for (int i = 0; i < size; i++ ) {
+            if (i < startOfHash || i > endOfHash) 
+                cout << " ";
+            else cout << "#";
+        }
+        cout << "\n";
+        startOfHash++;
+        endOfHash--;
+    }
+}
+
+void appendString(char& word, char a) {
+    int oldLength = 0;
+    while (true) {
+        oldLength++;
+    } 
+    //cout << sizeArray;
+}
+
 int main (void) {
     int input;
-    printf("Enter num input ");
-    cin >> input;
+    char* word;
+    char letter;
+    //printf("Enter num input ");
+    //cin >> input;
 
+    printf("Enter in a word ");
+    cin >> word;
+    printf("Enter in a letter to append ");
+    cin >> letter;
     //halfASquare(input);
-    pyramidHash(input);
+    //pyramidHash(input);
+    //invertedPyramid(input);
+    //appendString(&word, letter);
+    cout << word;
 
     return 0;
 }
