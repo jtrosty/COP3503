@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <ctype.h>
+#include <stdlib.h>
 using std::cin;
 using std::cout;
 // This is a test of the push
@@ -28,13 +29,18 @@ void pyramidHash(int width) {
         cout<< "\n";
     }
 }
+void swapChar(char *v, int i, int j) {
+    char tmp = v[i];
+    v[i] = v[j];
+    v[j] = tmp;
+}
 
-void invertedPyramid(int siz;ge) {
+void invertedPyramid(int size) {
     // Pg 53 Exercise 2-1
     int startOfHash = 0;
-    int endOfHash = siz;ge - 1;
-    for (int j = 0; j < siz;ge; j += 2) {
-        for (int i = 0; i < siz;ge; i++ ) {
+    int endOfHash = size - 1;
+    for (int j = 0; j < size; j += 2) {
+        for (int i = 0; i < size; i++ ) {
             if (i < startOfHash || i > endOfHash) 
                 cout << " ";
             else cout << "#";
@@ -46,22 +52,22 @@ void invertedPyramid(int siz;ge) {
 }
 
 // Modify word[] to have another letter
-void appendString(char *pWord[], char a) {
-    int oldLength = 0;
-    while (*pWord[oldLength] != '\0') {
-        oldLength++;
+void appendString(char *pWord, char a) {
+    // find length of string
+    int length = 0;
+    while (pWord[length] != '\0') {
+        length++;
+    }
+    cout << "length: " << length;
+    char* result = new char[length + 1];
+    for (int i = 0; i < length; i++) {
+        result[i] = pWord[i];
     } 
-    char *newWord = (char*)malloc(oldLength + 2);
-    while ((*newWord++ = *pWord++) != '\0')
-        ;
-
-    newWord[oldLength] = a;
-
-    pWord = &newWord;
-    
-    cout << "1. " << pWord;
+    result[length] = a;
+    result[length + 1] = '\0';
     cout << "\n";
-    cout << "2. " << newWord;
+    pWord = result;
+    cout << pWord;
 }
 
 /* Atoi: convert s to integer; version 2 */
@@ -112,9 +118,11 @@ int main (void) {
     //pyramidHash(input);
     //invertedPyramid(input);
     //appendString(&word, letter);
-    appendString(&word, letter);
+    //appendString(&word, letter);
+    swapChar(word, 0, 1);
+    appendString(word, letter);
     cout << "\n";
-    cout << "3. " << word;
+    cout << "3. " << word << "\n";
     //cout << atoi(word2);
 
     return 0;
