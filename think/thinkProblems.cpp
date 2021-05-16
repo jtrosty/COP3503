@@ -1,10 +1,9 @@
-#include <stdio.h>
 #include <iostream>
 #include <ctype.h>
 #include <stdlib.h>
-using std::cin;
-using std::cout;
+using namespace std;
 // This is a test of the push
+//
 // I was able to make changes on home PC and upload to git
 int absInt(int x) {
     if (x < 0) return -x;
@@ -52,22 +51,44 @@ void invertedPyramid(int size) {
 }
 
 // Modify word[] to have another letter
-void appendString(char *pWord, char a) {
+ char* appendString(char *pWord, char a) {
     // find length of string
     int length = 0;
     while (pWord[length] != '\0') {
         length++;
     }
-    cout << "length: " << length;
+    //cout << "length: " << length;
     char* result = new char[length + 1];
     for (int i = 0; i < length; i++) {
         result[i] = pWord[i];
     } 
     result[length] = a;
     result[length + 1] = '\0';
-    cout << "\n";
-    pWord = result;
-    cout << pWord;
+    //cout << "append String function: " << result;
+    return result;
+}
+
+/* This concantenates b onto a, a is made longer. */
+char* concantenate(char *a, char *b) {
+    int lengthA = 0;
+    int lengthB = 0;
+    while (a[lengthA] != '\0') {
+        lengthA++;
+    }
+    while (b[lengthB] != '\0') {
+        lengthB++;
+    }
+    char* result = new char[lengthA + lengthB + 1];
+    
+    for(int i = 0; i < lengthA; i++) {
+        result[i] = a[i];
+    }
+    for(int j = 0; j < lengthB; j++) {
+        result[lengthA + j] = b[j];
+    }
+    result[lengthA + lengthB] = '\0';
+    //cout << "\n concantenate function: " << result;
+    return result;
 }
 
 /* Atoi: convert s to integer; version 2 */
@@ -102,7 +123,10 @@ void shellsort(int v[], int n) {
 
 int main (void) {
     int input;
-    char word[] = {"Jon"};
+    char word[] = {"link"};
+    char name[] = {"zelda"};
+    char* lastName;
+    // lastName = "triforce";
     char letter = 'j';
     //printf("Enter num input ");
     //cin >> input;
@@ -119,11 +143,26 @@ int main (void) {
     //invertedPyramid(input);
     //appendString(&word, letter);
     //appendString(&word, letter);
-    swapChar(word, 0, 1);
-    appendString(word, letter);
+    //swapChar(word, 0, 1);
     cout << "\n";
-    cout << "3. " << word << "\n";
-    //cout << atoi(word2);
+    cout << "Append: " << appendString(word, letter) << "\n";
+    cout << "concantenate: "<< concantenate(word, name) << "\n";
+    cout << "You successfully complied with g++";
+
+    int userNum = 0;
+    int userNum2 = 0;  
+
+    cout << "Enter integer:" << endl;
+    cin >> userNum;
+
+    cout << "You entered: " << userNum << endl;
+    cout << userNum << " squared is " << userNum * userNum << endl;
+    cout << "And " << userNum << " cubed is " << userNum * userNum * userNum << "!!" << endl;
+
+    cout << "Enter another integer: " << endl;
+    cin >> userNum2;
+    cout << userNum << " + " << userNum2 << " is " << (userNum + userNum2) << endl;
+    cout << userNum << " * " << userNum2 << " is " << (userNum * userNum2) << endl;
 
     return 0;
 }
