@@ -1,5 +1,5 @@
 @echo off
 
-g++ lab1.cpp -o lab
+g++ main.cpp -o lab -Wall
 
 lab.exe
