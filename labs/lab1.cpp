@@ -31,14 +31,94 @@ int main()
    3. #include <cctype> library, isalpha, isdigit, isspace, tolower, toupper
    4. find(char or string), substr(index, length), push_back(c), insert(indx, subst), replace (indx, num, substr) CHECK OUT MORE AT C++ STRING LIBRARY!!!!
    */
-    vector<int> yearList(4);
-    yearList.at(0) = 1999;
-    yearList.at(1) = 2000;
-    yearList.at(2) = 2001;
+    bool run = true;
+    string title;
+    vector<string> colData1(0);
+    vector<int> colData2(0);
+    string userInput;
 
+    // Get title
+    cout << "Enter a title for the data:" << endl;
+    getline(cin, title);
+    cout << "You Entered: " << title << endl;
 
+    // Prompt user for headers of 2 coloums
+    string colHeader1;
+    string colHeader2;
+    // Header 1
+    cout << "Enter the colum 1 header: " << endl;
+    getline(cin, colHeader1);
+    cout << "You entered: " << colHeader1 << endl;
+    // header 2 
+    cout << "Enter the colum 2 header: " << endl;
+    getline(cin, colHeader2);
+    cout << "You entered: " << colHeader2 << endl;
 
-    cout << "It worked\n";
-   
-   return 0;
+    while (run) {
+
+        // Test if user input is valid
+        try { 
+            int comma;
+            cout << "Enter a data point (-1 to stop input):" << endl;
+            getline(cin, userInput);
+
+            // Break if -1
+            if (userInput == "-1") break;
+
+            // Check for first Comma
+            comma = userInput.find(',');
+            if (comma == string::npos) {
+                throw runtime_error("No comma.");
+            }
+            // If first comma check good,add string to colData1 
+            colData1.push_back(userInput.substr(0, comma));
+
+            // Check if there are too many commas
+            if (userInput.rfind(',') != comma) {
+                throw runtime_error("Too many commas in input.");
+            }
+
+            // Attempt to convert the part of string after 1 comma to int.
+            int intData = stoi(userInput.substr(comma + 1, string::npos));
+
+            // If Int succeded, add int data to colData2
+            colData2.push_back(intData);
+
+        }
+        catch(runtime_error& e) {
+            cout << "Error: " << e.what() << endl;
+        }
+        catch(invalid_argument& e) {
+            cout << "Error: " << e.what() << endl;
+        }
+    }
+
+    // Display data as a table
+    // Title
+    cout << setw(33) << right << title << endl;
+    // column titles
+    cout << setw(20) << left << colHeader1 << "|";
+    cout << setw(23) << right << colHeader2 << endl;
+    // -------------------------------------
+    cout << setfill('-') << setw(53) << "" << endl;
+    cout << setfill(' '); // reset fill character back to space. 
+    // Table Data 
+    // colData1 (string) left justified, | colData2 (int) number right justified
+    // Breat of The Wild      |               10
+    int sizeTable = colData1.size();
+    for (int i = 0; i < sizeTable; ++i) {
+        cout << setw(20) << left << colData1.at(i) << "|";
+        cout << setw(23) << right << colData2.at(i) << endl;
+    }
+    
+    // Histogram Looks like:
+    // colData1 (string) colData2 Int (int # of starts)
+    //           String ****************
+    for (int i = 0; i < sizeTable; ++i) {
+        cout << setw(20) << right << colData1.at(i) << " ";
+        cout << setfill('*') << setw(colData2.at(i)) << "" << endl;
+        cout << setfill(' ');
+    }
+
+    return 0;
 }
