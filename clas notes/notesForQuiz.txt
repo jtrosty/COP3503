@@ -1,0 +1,116 @@
+Why?
+
+Class vs Struct can be used interchangably 
+The only difference is that 'struct' is set to public by default. 
+
+Why do we write classes?
+-Allows separate parts of a program. 
+-Don't forget a semicolon at the end of a class. 
+What is encapsulation, and why do we do it?
+-Groups data and functionality together. 
+
+Construction
+
+What does a constructor look like? (i.e. how would you write one?)
+- 
+What is a default constructor?
+-Function that is called when your object is created. 
+-No return type 
+
+Do you need a default constructor?
+- No you get 1 by default unless yoou start makign a constructor.  If you do not make any constructiosn a default contsructor is provided for you in not decalred. 
+-The implicitly decalred constructor does nothign at all. 
+What is an implicitly declared constructor?
+How many constructors can an object have?
+-As many as you want. 
+-You can assign default value also for your default contructor. Once you start assigning a default value you have to continue doing it.  Ex:
+Void foo (int x =5, int y =2, int z= 0); // Default values
+Void Foo (int x, int y = 2, int z = 0); // y and z ahve default, user needs to put x.
+Void Foo (int x = 5, int y, int z = 0); // NO GOOD, either Y needs default value or x needs to remove its' default value. 
+
+
+
+Other class functions
+
+What is the purpose of an accessor function?
+-allows you to access private variables. 
+-get functions. Get yous a copy of a private variable. 
+What is the purpose of a mutator function?
+-'set' functions, change somethign about the class, or they 'do' something to the class. EX: increasing the strength of the pokemond last semester. 
+How do we use/write these things?
+Example
+calss Foo
+{
+public:
+	Foo();
+	Foo(int x);
+	Foo(int x, float y, string z);
+};
+
+int main() 
+{
+	Foo 0bject;
+	Foo otherObject(16);
+	Foo anotherFoo(5, -12, "Dinosaur");
+
+	return 0;
+}
+
+Behaviors
+-set multiple values, call multiple functions. 
+
+What is an invoking object?
+What is the "this" keyword?
+	- 'this' represetns teh invoking object - the object that called the function. 
+What are the different levels of accessibility for class members?
+What accessibility does a class have by default? What about a struct?
+Class vs Struct can be used interchangably 
+The only difference is that 'struct' is set to public by default. 
+How are classes broken down in separate files? (i.e. what parts of a class go in which files?)
+-Header - initial defination of the class itself 
+	- has private variables adn function prototypes.
+	- Serves as a "table of contents" almost. 
+	- Source file - where teh class functions are defined.
+
+emaple class
+clase Person
+{
+private:
+	string name_;
+	int age_;
+	
+public:
+	int money_;
+	
+}; <---- DON'T FORGET THIS!
+
+
+// EXAMPLE OF WRITING CLASSES
+
+// MyClass.h - prototype
+class MyClass 
+{
+	int foo;
+	int severalFoos[3];
+	float otherVaule;
+
+public:
+	MyClass(int, float);
+	int GetFoo();
+};
+
+// MyClass.cpp - definitions. 
+#include "MyClass.h"
+MyClass::MyClass(int f, float ov)
+{
+	// "this->" allows access to the object which invoked this function (similar to Java)
+	this->foo = f;
+	
+	// Don't HAVE TO use 'this'
+	otherValue = ov;
+}
+
+int MyClass::GetFoo()
+{
+	return foo;
+}

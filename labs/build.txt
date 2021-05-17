@@ -1,16 +1,6 @@
-#!/bin/bash
+@echo off
 
-g++ lab1.cpp -o lab1.out
+g++ lab1.cpp -o lab1
 
-./lab1.out << STDIN
-Video games
-Name
-Score
-Darksouls 4
-zelda, 7,
-Ori and the, 2
-Rayman, 1
-Subnatica, 0
--1
-
+lab1.exe << test.txt
 

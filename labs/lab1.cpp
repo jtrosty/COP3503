@@ -56,9 +56,10 @@ int main()
 
     while (run) {
 
+        int comma;
+
         // Test if user input is valid
         try { 
-            int comma;
             cout << "Enter a data point (-1 to stop input):" << endl;
             getline(cin, userInput);
 
@@ -66,31 +67,42 @@ int main()
             if (userInput == "-1") break;
 
             // Check for first Comma
-            comma = userInput.find(',');
-            if (comma == string::npos) {
+            if (comma = userInput.find(',') && (userInput.find(',') == string::npos)) {
                 throw runtime_error("No comma.");
             }
+            cout << "comma " << comma << endl; 
             // If first comma check good,add string to colData1 
             colData1.push_back(userInput.substr(0, comma));
 
             // Check if there are too many commas
-            if (userInput.rfind(',') != comma) {
+            if (userInput.rfind(',') == comma) {
                 throw runtime_error("Too many commas in input.");
             }
-
-            // Attempt to convert the part of string after 1 comma to int.
-            int intData = stoi(userInput.substr(comma + 1, string::npos));
-
-            // If Int succeded, add int data to colData2
-            colData2.push_back(intData);
-
         }
         catch(runtime_error& e) {
             cout << "Error: " << e.what() << endl;
         }
         catch(invalid_argument& e) {
-            cout << "Error: " << e.what() << endl;
+                cout << "Error: " << e.what() << endl;
         }
+
+        // Attempt to convert the part of string after 1 comma to int.
+        int intData = stoi(userInput.substr(comma, string::npos));
+
+        // If Int succeded, add int data to colData2
+        colData2.push_back(intData);
+        /*
+        try {
+            // Attempt to convert the part of string after 1 comma to int.
+            int intData = stoi(userInput.substr(comma, string::npos));
+
+            // If Int succeded, add int data to colData2
+            colData2.push_back(intData);
+        }
+        catch(invalid_argument& e) {
+            cout << "Error: " << "Comma not followed by an integer." << endl;
+        }
+        */
     }
 
     // Display data as a table
@@ -106,6 +118,7 @@ int main()
     // colData1 (string) left justified, | colData2 (int) number right justified
     // Breat of The Wild      |               10
     int sizeTable = colData1.size();
+    cout << sizeTable << endl;
     for (int i = 0; i < sizeTable; ++i) {
         cout << setw(20) << left << colData1.at(i) << "|";
         cout << setw(23) << right << colData2.at(i) << endl;

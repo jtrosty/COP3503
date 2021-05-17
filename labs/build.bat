@@ -1,5 +1,6 @@
 @echo off
 
-g++ main.cpp -o lab -Wall
+g++ lab1.cpp -o lab1 -g
 
-lab.exe
+lab1.exe < lab1test.txt
+
