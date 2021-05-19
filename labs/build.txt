@@ -1,6 +1,11 @@
-@echo off
 
 g++ lab1.cpp -o lab1
 
-lab1.exe << test.txt
+./lab1 << STDIN
+Number of Novels Authored
+Author name
+Number of novels
+Jane Austen, 6
+-1
+STDIN
 
