@@ -1,0 +1,6 @@
+
+g++ lab1.cpp -o lab2
+
+./lab2 << STDIN
+
+
