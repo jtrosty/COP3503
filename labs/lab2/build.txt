@@ -1,6 +1,5 @@
 
-g++ lab1.cpp -o lab2
+g++ lab2.cpp Vehicle.cpp -o lab2
 
-./lab2 << STDIN
-
+./lab2
 

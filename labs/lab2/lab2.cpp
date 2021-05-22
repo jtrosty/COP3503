@@ -3,7 +3,7 @@
 #include "Vehicle.h"
 using namespace std;
 
-int main()
+int main(void)
 {
    int input;
    cin >> input;
@@ -19,14 +19,12 @@ int main()
       customVehicle1.Display();
       Vehicle customVehicle2("Chrysler", "New Yorker", 1984, 2000, 100423);
       customVehicle2.Display();
-
    }
    else if (input == 3)
    {
       Vehicle customVehicle1("Chrysler", "New Yorker", 1984, 2000, 100423);
       Vehicle customVehicle2("COP3503", "Moped", 2019, 2200, 45);
       cout << "Price of the vehicles: $" << customVehicle1.GetPrice() + customVehicle2.GetPrice() << endl; 
-      
    }
    else if (input == 4)
    {
@@ -40,10 +38,6 @@ int main()
       Vehicle suv("Mazda", "CX5", 2018, 28449, 11047);
       
       vector<Vehicle> vehicles;
-      
-      // TODO: Add the three Vehicle objects to the vector using the push_back() function
-
-      // TODO: Print out each Vehicle by looping through the vector and calling the Display() function for each Vehicle object
    }
    
    return 0;
