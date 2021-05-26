@@ -1,9 +1,10 @@
+#pragma once
 #include "Vehicle.h"
 #include <iostream>
 using std::cout;
 using std::endl;
 
-// Default constructor, initializes variable sto default values
+// Default constructor, initializes variables to default values
 Vehicle::Vehicle() {
     _make = "COP3503";
     _model = "Rust Bucket";
@@ -23,7 +24,7 @@ Vehicle::Vehicle(string make, string model, int year, float price, int mileage) 
 // Print out the vehciale's details in a single line:
 // 1973 Ford Mustang $9500 113000
 void Vehicle::Display() {
-    cout << _year << " " << _make << " " << _model << " "
+    cout << _year << " " << _make << " " << _model << " $"
          << _price << " " << _mileage << endl;
     
 }

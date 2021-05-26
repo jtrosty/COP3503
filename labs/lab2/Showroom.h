@@ -1,14 +1,16 @@
+#pragma once
 #include <vector>
 #include "Vehicle.h"
 using std::vector;
 
 class Showroom {
-    string _name;
-    vector<Vehicle> _showroom();
+    string name;
+    vector<Vehicle> vehiclesInShowroom();
+    int capacity;
 
     public:
     // Default Constructor
-    Showroom(string name, int capacity);
+    Showroom(string _name = "Generic Dealerhsip", unsigned int _capacity = 0);
 
     // Accessor/Gettor
     vector<Vehicle> GetVehicleList();
@@ -16,5 +18,4 @@ class Showroom {
     void AddVehicle(Vehicle v);
     void ShowInventory();
     float GetInventoryValue();
-
 };

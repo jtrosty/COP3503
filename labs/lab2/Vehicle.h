@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 using std::string;
 
@@ -23,5 +24,4 @@ public:
 
     // Return the price
     float GetPrice();
-
 };
