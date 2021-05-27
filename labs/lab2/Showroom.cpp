@@ -24,6 +24,11 @@ void Showroom::AddVehicle(Vehicle v) {
     }
 }
 
+/* Shows inventory of cars in the following format: 
+Vehicles in Example Showroom 
+2018 Bugatti Chiron $12447.00 4 
+2013 Chrysler Sebring $1819.00 22987
+*/
 void Showroom::ShowInventory() {
     int size = _vehiclesInShowroom.size();
     if (size == 0) cout << _name << " Showroom is empty!" << endl;
@@ -35,6 +40,7 @@ void Showroom::ShowInventory() {
     }
 }
 
+// Returns the total value or cars in showroom
 float Showroom::GetInventoryValue() {
     float sumOfPrices = 0.0f;
     int size = _vehiclesInShowroom.size();
