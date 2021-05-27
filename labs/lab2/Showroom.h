@@ -4,13 +4,13 @@
 using std::vector;
 
 class Showroom {
-    string name;
-    vector<Vehicle> vehiclesInShowroom();
-    int capacity;
+    string _name;
+    vector<Vehicle> _vehiclesInShowroom;
+    int _capacity;
 
     public:
     // Default Constructor
-    Showroom(string _name = "Generic Dealerhsip", unsigned int _capacity = 0);
+    Showroom(string _name = "Unnamed", unsigned int _capacity = 0);
 
     // Accessor/Gettor
     vector<Vehicle> GetVehicleList();
