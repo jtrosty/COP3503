@@ -1,6 +1,6 @@
 @echo off
 
-g++ lab1.cpp -o lab1 -g
+g++ lab2.cpp Vehicle.cpp Showroom.cpp Dealership.cpp -o lab2 -Wall
 
-lab1.exe < lab1test.txt
+lab2.exe
 

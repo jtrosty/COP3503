@@ -1,4 +1,3 @@
-#pragma once
 #include "Vehicle.h"
 #include <iostream>
 using std::cout;
