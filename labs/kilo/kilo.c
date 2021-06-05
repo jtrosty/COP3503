@@ -1,3 +1,5 @@
+/*** includes ***/
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -5,7 +7,18 @@
 #include <termios.h>
 #include <unistd.h>
 
-struct termios orig_termios;
+/*** defines ***/
+#define CTRL_KEY(k) ((k) & 0x1f)
+
+/*** data ***/
+
+struct editorConfig {
+    struct termios orig_termios;
+};
+
+struct editorConfig E;
+
+/*** terminal ***/
 
 void die(const char *s) {
     perror(s); // most C library functiosn that fail will set the global errno variable to indicate what the error was. 
@@ -14,18 +27,18 @@ void die(const char *s) {
 
 // When the program quits this is called ot return the program to its original settings. 
 void disableRawMode() {
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1) {
         die("tcsetattr");
     }
 }
 
 void enableRawMode() {
 
-    if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) 
+    if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) 
         die("tcgetattr"); // reads terminal attributes into 'terminos struct'
     atexit(disableRawMode);
 
-    struct termios raw = orig_termios;
+    struct termios raw = E.orig_termios;
     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON); 
     raw.c_iflag &= ~(ICRNL | IXON); // FLag from termios
     raw.c_iflag &= ~(OPOST); // Post processing of output
@@ -39,21 +52,55 @@ void enableRawMode() {
          die("tcsetattr"); //modifies terminal attributes. TCSAFLUSH tells it when to apply the change.  
 }
 
+char editorReadKey() {
+    int nread;
+    char c;
+    while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
+        if (nread == -1 && errno != EAGAIN) die ("read");
+    }
+    return c;
+}
+
+/*** output ***/
+
+void editorDraw() {
+    int y;
+    for (y = 0; y < 24; y++) {
+        write(STDOUT_FILENO, "~\r\n", 3);
+    }
+}
+
+void editorRefreshScren() {
+    write(STDOUT_FILENO, "\x1b[2J", 4); // \x1b is the escap sequence.
+    write(STDOUT_FILENO, "\x1b[H", 3); 
+
+    editorDrawRows();
+
+    write(STDOUT_FILENO, "\x1b[H", 3);
+}
+
+/*** input ***/
+
+void editorProcessorKeypresses() {
+    char c = editorReadKey();
+
+    switch (c) {
+        case CTRL_KEY('q'):
+            write(STDOUT_FILENO, "\x1b[2J", 4);
+            write(STDOUT_FILENO, "\x1b[H", 3);
+            exit(0);
+            break;
+    }
+}
+
+/*** init ***/
+
 int main() {
     enableRawMode();
 
     while (1) {
-        char c = '\0';
-        if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) 
-            die("read"); // read will wait 100 ms for input before returning. 
-        // iscntrol checks if character is a control character. ASCII 0-31, 127, 32-126. 
-        if (iscntrl(c)) {
-            printf("%d\r\n", c); // This prints out the ASCII inde of the character.
-        } 
-        else {
-            printf("%d ('%c')\r\n", c, c);
-        }
-        if (c == 'q') break;
+        editorRefreshScreen();
+        editorProcessKeypres(); 
     }
     return 0;
 }
