@@ -1,5 +1,5 @@
 
-g++  -o lab3
+g++ main.cpp -o lab3ABQ
 
-./lab3
+./lab3ABQ
 
