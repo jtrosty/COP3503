@@ -1,6 +1,6 @@
 @echo off
 
-g++   -o lab3 -Wall
+g++ main.cpp -o lab3 
 
 lab3.exe
 

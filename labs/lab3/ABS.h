@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <exception>
 using std::cout;
@@ -7,8 +8,8 @@ using std::endl;
 template <typename T>
 class ABS {
 
-    //############### Class Variables
-    //###############################
+    //############### Class Variables ##################
+    //##################################################
     unsigned int _actualSize;
     unsigned int _maxCapacity;
     T* _theData;
@@ -23,7 +24,7 @@ class ABS {
     public: 
 
     ABS();
-    ABS(int capacity = 1);
+    ABS(int capacity);
     ABS(const ABS& other);
     ABS& operator=(const ABS& other);
     ~ABS();
@@ -74,11 +75,11 @@ template<typename T>
 ABS<T>::ABS(const ABS& other) {
      _theData = new T[other._maxCapacity];
      _actualSize = other._actualSize;
-     
+     _maxCapacity = other._maxCapacity; 
+
      for (int i = 0; i < other._maxCapacity; ++i) {
          _theData[i] = other._theData[i];
      }
-     return *this;
 }
 
 // Copy Assignment 
@@ -93,39 +94,41 @@ ABS<T>& ABS<T>::operator=(const ABS& other) {
      return *this;
 }
 
-// Push data <T> onto stack
+// PUSH data <T> onto stack
+// Controls if resize larger occurs. 
 template<typename T>
 void ABS<T>::push(T data) {
     if (_actualSize == _maxCapacity) {
         resizeLarger();
     } 
-    _theData[_actualSize - 1] = data;
+    _theData[_actualSize] = data;
     _actualSize++;
 }
 
-// Pop Data <T>
+// POP Data <T>
+// The function controls when to resize smaller. 
 template<typename T>
 T ABS<T>::pop() {
-    try {
-        if (_actualSize == 0) {
-            throw runtime_error("Array is empty.");
-        }
+    // Check if array is empty
+    if (_actualSize == 0) {
+        throw runtime_error("Array is empty, unable to pop.");
     }
-    catch (runtime_error& e){
-        cout << "Error: " << e.what() << endl;
-    }
+    // TODO: cout << "stuff " << _maxCapacity << ", " << _scaleFactor << endl;
+    // Resize smalle if STRICTLY (size / maxCapacity) < (1 / scale factor) so a float cast is used
     _actualSize--;
-    return _theData[_actualSize--];
+    float percentFilled = ((float)_actualSize / (float)_maxCapacity);
+    if ( percentFilled < (1.0f / _scaleFactor)) {
+        resizeSmaller();
+    } 
+    return _theData[_actualSize]; // No need to decremetnt during return because of decrement above. 
 }
 
 // Peek Data <T>
 template<typename T>
 T ABS<T>::peek() {
-    try {
-        if (_actualSize == 0) throw runtime_error("Array is empty.");
-    }
-    catch (runtime_error& e){
-        cout << "Error: " << e.what() << endl;
+    // Check if array is empty
+    if (_actualSize == 0) {
+        throw runtime_error("Array is empty, unable to pop.");
     }
     return _theData[_actualSize - 1];
 }
@@ -151,36 +154,39 @@ T* ABS<T>::getData() {
 // Private copy function for copy constructor and copy assignment operator
 template<typename T>
 ABS<T>& ABS<T>::copy(const ABS& other) {
-     _theData = new T[other._maxCapacity];
-     _actualSize = other._actualSize;
+    unsigned int i;
+    _theData = new T[other._maxCapacity];
+    _actualSize = other._actualSize;
      
-     for (int i = 0; i < other._maxCapacity; ++i) {
-         _theData[i] = other._theData[i];
-     }
-     return *this;
+    for (i = 0; i < other._maxCapacity; ++i){
+        _theData[i] = other._theData[i];
+    }
+    return *this;
 }
 
 // Resize array larger
 template<typename T>
 void ABS<T>::resizeLarger() {
-    T* temp = new T[_scaleFactor * _maxCapacity];    
-    for (int i = 0; i < _maxCapacity; ++i){
+    unsigned int i;
+    _maxCapacity = _scaleFactor * _maxCapacity;
+    T* temp = new T[_maxCapacity];    
+    for (i = 0; i < _maxCapacity; ++i){
         temp[i] = _theData[i];
-        delete[] _theData[i];
     }
+    delete[] _theData;
     _theData = temp;
-    delete[] temp;
 }
 
 // Resize array smaller
 // TODO finish not done
 template<typename T>
 void ABS<T>::resizeSmaller() {
-    T* temp = new T[_maxCapacity / _scaleFactor];    
-    for (int i = 0; i < _actualSize; ++i){
+    unsigned int i;
+    _maxCapacity = _maxCapacity / _scaleFactor;
+    T* temp = new T[_maxCapacity];    
+    for (i = 0; i <= _actualSize; ++i){
         temp[i] = _theData[i];
-        delete[] _theData[i];
     }
+    delete[] _theData;
     _theData = temp;
-    delete[] temp;
 }

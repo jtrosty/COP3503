@@ -28,7 +28,7 @@ float Dealership::GetAveragePrice() {
         numOfCars += _dealership.at(i).GetVehicleList().size();
     }
     if (numOfCars == 0) return 0.0f;
-    else return (totalValue / numOfCars);
+    else return (totalValue / numOfCars); 
 }
 
 /* Display Dealsher inventory in the following format

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "ABS.h"
 using namespace std;
+#include "leaker.h"
 
 int main()
 {
