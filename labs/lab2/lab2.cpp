@@ -5,6 +5,8 @@
 #include <iomanip>
 using namespace std;
 
+#include "leaker.h"
+
 void TestOne(Vehicle vehicles[]);
 void TestTwo(Vehicle vehicles[]);
 void TestThree(Vehicle vehicles[]);

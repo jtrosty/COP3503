@@ -15,19 +15,11 @@ cout << "Making integer ABQ...\n";
 		cout << "\nEnqueued " << i << endl;
 		cout << "New Size: " << intABQ.getSize() << endl;
 		cout << "New Max Capacity: " << intABQ.getMaxCapacity() << endl;
-        for (int i = 0; i < intABQ.getMaxCapacity(); ++i) {
-            cout <<  " |Item: " << intABQ.at(i) << " ";
-        }
-        cout << endl;
 	}
-    for (int i = 0; i < intABQ.getMaxCapacity(); ++i) {
-		cout << "Item: " << intABQ.at(i) << endl;
-    }
 
 	cout << "\nDequeueing items...\n";
 	for (int i = 1; i < 10; i++)
 	{
-		cout << "First " << intABQ.getFirst() << endl;
 		cout << "\nDequeued " << intABQ.dequeue() << endl;
 		cout << "New Size: " << intABQ.getSize() << endl;
 		cout << "New Max Capacity: " << intABQ.getMaxCapacity() << endl;
@@ -50,7 +42,6 @@ cout << "Making integer ABQ...\n";
 	cout << "\nDequeueing items...\n";
 	for (float i = 1; i < 5; i += 0.5f)
 	{
-		cout << "First " << floatABQ.getFirst() << endl;
 		cout << "\nDequeued " << floatABQ.dequeue() << endl;
 		cout << "New Size: " << floatABQ.getSize() << endl;
 		cout << "New Max Capacity: " << floatABQ.getMaxCapacity() << endl;

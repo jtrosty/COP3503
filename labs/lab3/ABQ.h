@@ -146,7 +146,7 @@ void ABQ<T>::enqueue(T data) {
 
     _actualSize++;
     _theData[_last++] = data;
-    if (_last >= _maxCapacity) _last = _last - _maxCapacity;
+    if (_last > _maxCapacity) _last = _last % _maxCapacity;
 }
 
 // #### Dequeue
@@ -154,7 +154,7 @@ template<typename T>
 T ABQ<T>::dequeue() {
     if (_actualSize == 0) 
         throw runtime_error("Data structure is empty, unable to dequeue.");
-    if (_first >= _maxCapacity) _first = _first - _maxCapacity;
+    if (_first > _maxCapacity) _first = _first % _maxCapacity;
 
     _actualSize--;
 
@@ -191,10 +191,11 @@ void ABQ<T>::resizeLarger() {
 template<typename T>
 void ABQ<T>::resizeSmaller() {
     unsigned int i;
+    unsigned int oldMax = _maxCapacity;
     _maxCapacity = _maxCapacity / _scaleFactor;
     T* temp = new T[_maxCapacity];    
     for (i = 0; i <= _actualSize; ++i){
-        temp[i] = _theData[i];
+        temp[i] = _theData[(i + _first) % oldMax];
     }
     delete[] _theData;
     _theData = temp;
