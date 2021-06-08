@@ -5,16 +5,16 @@ using std::cout;
 using std::runtime_error;
 using std::endl;
 
+#include "leaker.h"
 template <typename T>
 class ABQ {
 
-    //############### Class Variables ##################
-    //##################################################
+//############### Class Variables ##################
+//##################################################
     unsigned int _actualSize;
     unsigned int _maxCapacity;
 
     unsigned int _first;
-    unsigned int _last;
 
     T* _theData;
     const float _scaleFactor = 2.0f;
@@ -42,7 +42,6 @@ class ABQ {
     unsigned int getSize();
     unsigned int getMaxCapacity();
     unsigned int getFirst();
-    unsigned int getLast();
     T at(int index);
     T* getData();
 };
@@ -52,14 +51,12 @@ class ABQ {
 // ######################################################
 
 // ############## Default Constructor ###################
-/// Set
 template<typename T>
 ABQ<T>::ABQ() {
     _maxCapacity = 1;
     _actualSize = 0;
     _theData = new T[_maxCapacity];
     _first = 0;
-    _last = 0;
 }
 
 template<typename T>
@@ -68,7 +65,6 @@ ABQ<T>::ABQ(int capacity) {
     _actualSize = 0;
     _theData = new T[_maxCapacity];
     _first = 0;
-    _last = 0;
 }
 
 // ############### Getters and Setters ###################
@@ -88,11 +84,6 @@ unsigned int ABQ<T>::getFirst() {
 }
 
 template<typename T>
-unsigned int ABQ<T>::getLast() {
-    return _last;
-}
-
-template<typename T>
 T ABQ<T>::at(int index) {
     return _theData[index];
 }
@@ -106,7 +97,6 @@ ABQ<T>::ABQ (const ABQ& other) {
     _actualSize = other._actualSize;
     _maxCapacity = other._maxCapacity;
     _first = other._first;
-    _last = other._last;
 
     for (int i = 0; i < other._maxCapacity; ++i) {
         _theData[i] = other._theData[i];
@@ -120,7 +110,6 @@ ABQ<T>& ABQ<T>::operator=(const ABQ& other) {
     _actualSize = other._actualSize;
     _maxCapacity = other._maxCapacity;
     _first = other._first;
-    _last = other._last;
 
     for (int i = 0; i < other._maxCapacity; ++i) {
         _theData[i] = other._theDatat[i];
@@ -138,15 +127,18 @@ ABQ<T>::~ABQ () {
 // ########### Queue Behavior ##############################
 // #########################################################
 
-
 // #### Enqueue
 template<typename T>
 void ABQ<T>::enqueue(T data) {
+    int lastIndex;
+    
     if (_actualSize == _maxCapacity) resizeLarger();
 
+    if (_actualSize == 0) lastIndex = _first; 
+    else lastIndex = ((_first + _actualSize) % _maxCapacity);
+
+    _theData[lastIndex] = data;
     _actualSize++;
-    _theData[_last++] = data;
-    if (_last > _maxCapacity) _last = _last % _maxCapacity;
 }
 
 // #### Dequeue
@@ -154,16 +146,14 @@ template<typename T>
 T ABQ<T>::dequeue() {
     if (_actualSize == 0) 
         throw runtime_error("Data structure is empty, unable to dequeue.");
-    if (_first > _maxCapacity) _first = _first % _maxCapacity;
-
-    _actualSize--;
+    if (_first >= _maxCapacity) _first = _first % _maxCapacity;
 
     float percentFilled = ((float)_actualSize / (float)_maxCapacity);
-    if ( percentFilled < (1.0f / _scaleFactor)) {
+    if ( percentFilled <= (1.0f / _scaleFactor)) {
         resizeSmaller();
     }  
-    _first++;
-    return _theData[_first - 1];
+    _actualSize--;
+    return _theData[_first++];
 }
 
 // #### Peek
@@ -177,12 +167,14 @@ T ABQ<T>::peek() {
 // #### Resize Larger
 template<typename T>
 void ABQ<T>::resizeLarger() {
-     unsigned int i;
+    unsigned int i;
+    unsigned int oldMax = _maxCapacity; // have to normalize capcity to the array largest index size. 
     _maxCapacity = _scaleFactor * _maxCapacity;
     T* temp = new T[_maxCapacity];    
     for (i = 0; i < _maxCapacity; ++i){
-        temp[i] = _theData[i];
+        temp[i] = _theData[(i + _first) % oldMax];
     }
+    _first = 0;
     delete[] _theData;
     _theData = temp; 
 }
@@ -191,12 +183,13 @@ void ABQ<T>::resizeLarger() {
 template<typename T>
 void ABQ<T>::resizeSmaller() {
     unsigned int i;
-    unsigned int oldMax = _maxCapacity;
+    unsigned int oldMax = _maxCapacity; // have to normalize capcity to the array largest index size. 
     _maxCapacity = _maxCapacity / _scaleFactor;
     T* temp = new T[_maxCapacity];    
-    for (i = 0; i <= _actualSize; ++i){
+    for (i = 0; i < _maxCapacity; ++i){
         temp[i] = _theData[(i + _first) % oldMax];
     }
+    _first = 0;
     delete[] _theData;
     _theData = temp;
 }

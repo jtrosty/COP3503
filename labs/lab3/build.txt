@@ -1,5 +1,5 @@
 
-g++ main.cpp -o lab3ABQ
+g++ main.cpp leaker.cpp -o lab3ABQ
 
 ./lab3ABQ
 
