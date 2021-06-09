@@ -17,10 +17,10 @@ class ABQ {
 
     T* _theData;
     const float _scaleFactor = 2.0f;
-    
-    void resizeLarger();
-    void resizeSmaller();
+
+    void resize(int control);
     ABQ& copy(const ABQ& other); // private copy funciton for copy constructor and copy assignment. 
+    void copyHelper(const ABQ& other);
 
 //################ Public  #############################
 //######################################################
@@ -92,28 +92,27 @@ T ABQ<T>::at(int index) {
 // ###### COPY CONSTRUCTOR
 template<typename T>
 ABQ<T>::ABQ (const ABQ& other) {
-    _theData = other._theData;
-    _actualSize = other._actualSize;
-    _maxCapacity = other._maxCapacity;
-    _first = other._first;
-
-    for (int i = 0; i < other._maxCapacity; ++i) {
-        _theData[i] = other._theData[i];
-    }
+    copyHelper(other);
 }
 
 // ##### Copy Assignment 
 template<typename T> 
 ABQ<T>& ABQ<T>::operator=(const ABQ& other) {
-    _theData = other._theData;
-    _actualSize = other._actualSize;
-    _maxCapacity = other._maxCapacity;
-    _first = other._first;
+    copyHelper(other);
+    return *this;
+}
+
+// copy Helper for Copy Constructor and Copy Assignment
+template<typename T>
+void ABQ<T>::copyHelper(const ABQ& other) {
+    this->_theData = other._theData;
+    this->_actualSize = other._actualSize;
+    this->_maxCapacity = other._maxCapacity;
+    this->_first = other._first;
 
     for (int i = 0; i < other._maxCapacity; ++i) {
-        _theData[i] = other._theDatat[i];
+        this->_theData[i] = other._theData[i];
     }
-    return *this;
 }
 
 // #### Destructor
@@ -132,11 +131,14 @@ void ABQ<T>::enqueue(T data) {
     int lastIndex;
     
     // If too many data points, begin resize. 
-    if (_actualSize == _maxCapacity) resizeLarger();
+    if (_actualSize == _maxCapacity) 
+        resize(1);
 
     // Determine last index so that data is input in correct place. 
-    if (_actualSize == 0) lastIndex = _first; 
-    else lastIndex = ((_first + _actualSize) % _maxCapacity);
+    if (_actualSize == 0) 
+        lastIndex = _first; 
+    else 
+        lastIndex = ((_first + _actualSize) % _maxCapacity);
 
     _theData[lastIndex] = data;
     _actualSize++;
@@ -153,13 +155,14 @@ T ABQ<T>::dequeue() {
         throw runtime_error("Data structure is empty, unable to dequeue.");
 
     // If _first has run over, the, reset it back to start of array
-    if (_first > _maxCapacity) _first = _first % _maxCapacity;
-    _actualSize--;
+    if (_first > _maxCapacity) 
+        _first = _first % _maxCapacity;
 
     // Logic for resize
+    _actualSize--;
     float percentFilled = ((float)_actualSize / (float)_maxCapacity);
     if ( percentFilled < (1.0f / _scaleFactor)) {
-        resizeSmaller();
+        resize(-1);
     }  
     return result;
 }
@@ -172,36 +175,28 @@ T ABQ<T>::peek() {
     return _theData[_first];
 }
 
-// #### Resize Larger
+// #### Resize 
+// If control >= 0, resize array larger, else, resize it smaller. 
 template<typename T>
-void ABQ<T>::resizeLarger() {
+void ABQ<T>::resize(int control) {
     unsigned int i;
+    unsigned int iOldArray;
     unsigned int oldMax = _maxCapacity; // have to normalize capcity to the array largest index size. 
 
-    _maxCapacity = _scaleFactor * _maxCapacity;
+    // The following determiens if the data array will be getting larger or smaller. 
+    if (control >= 0)
+        _maxCapacity = _maxCapacity * _scaleFactor;
+    else    
+        _maxCapacity = _maxCapacity / _scaleFactor;
+
     T* temp = new T[_maxCapacity];    
     for (i = 0; i < _maxCapacity; ++i){
-        temp[i] = _theData[(i + _first) % oldMax];
+        // When the array is resized, _first is reset back to index 0, iOldArray is the transfer from _frist from the old array to 0 of the new array. 
+        iOldArray = (i + _first) % (oldMax + 1);
+        temp[i] = _theData[iOldArray];
     }
 
     _first = 0;
     delete[] _theData;
     _theData = temp; 
-}
-
-// #### Resize Smaller 
-template<typename T>
-void ABQ<T>::resizeSmaller() {
-    unsigned int i;
-    unsigned int iOldArray;
-    unsigned int oldMax = _maxCapacity; // have to normalize capcity to the array largest index size. 
-    _maxCapacity = _maxCapacity / _scaleFactor;
-    T* temp = new T[_maxCapacity];    
-    for (i = 0; i < _maxCapacity; ++i){
-        iOldArray = (i + _first) % (oldMax + 1);
-        temp[i] = _theData[iOldArray];
-    }
-    _first = 0;
-    delete[] _theData;
-    _theData = temp;
 }
