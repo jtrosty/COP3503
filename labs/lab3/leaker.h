@@ -8,9 +8,7 @@
  *
  * This program is distributed under the terms of the GNU GPL version 2.
  */
-/* 0.1 2011-10-15
-Modified by Joshua Fox 2019-5-30 to ignore delete called on nullptr
-*/
+/* 0.1 2011-10-15 */
 
 #ifndef _LEAKER_H
 #define _LEAKER_H
@@ -19,6 +17,7 @@ Modified by Joshua Fox 2019-5-30 to ignore delete called on nullptr
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 #include <memory>
@@ -35,7 +34,7 @@ Modified by Joshua Fox 2019-5-30 to ignore delete called on nullptr
 #define START_SIZE  128     /* Initial size of memory allocation table */
 
 #define GUARD_SIZE  4       /* Padding at the end of each allocated block */
-#define GUARD_STR   "\014\033\014"  /* magic string to pad allocation */
+#define GUARD_STR   "\014\033\014\033"  /* magic string to pad allocation */
 
 typedef struct _LEAK_T
 {
@@ -91,7 +90,7 @@ extern const char *_leaker_func;
 extern unsigned long _leaker_line;
 
 #define new (_leaker_file=__FILE__, _leaker_func=__func__, \
-    _leaker_line=__LINE__) && 0 ? 0 : new
+    _leaker_line=__LINE__) && 0 ? NULL : new
 #define delete _leaker_file=__FILE__, _leaker_func=__func__, \
     _leaker_line=__LINE__, delete
 

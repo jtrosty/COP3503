@@ -7,12 +7,14 @@ using std::endl;
 
 template <typename T>
 class ABS {
-    //############### Class Variables ##################
-    //##################################################
+//############### Class Variables ##################
+//##################################################
+// Private items
     unsigned int _actualSize;
     unsigned int _maxCapacity;
+    unsigned int _totalResizes;
     T* _theData;
-    float _scaleFactor = 2.0f;
+    float _scaleFactor;
     
     void resize(int control);
     void copyHelper(const ABS& other); // private copy funciton for copy constructor and copy assignment. 
@@ -23,6 +25,7 @@ class ABS {
 
     ABS();
     ABS(int capacity);
+    ABS(int capacity, float scaleFactor);
     ABS(const ABS& other);
     ABS& operator=(const ABS& other);
     ~ABS();
@@ -35,6 +38,7 @@ class ABS {
 //######################################################
     unsigned int getSize();
     unsigned int getMaxCapacity();
+    unsigned int getTotalResizes();
     T* getData();
 };
 
@@ -48,6 +52,8 @@ template<typename T>
 ABS<T>::ABS() {
     _maxCapacity = 1;
     _actualSize = 0;
+    _scaleFactor = 2.0f;
+    _totalResizes = 0;
     _theData = new T[_maxCapacity];
 }
 
@@ -57,8 +63,20 @@ template<typename T>
 ABS<T>::ABS(int capacity) {
     _maxCapacity = capacity;
     _actualSize = 0;
+    _scaleFactor = 2.0f;
+    _totalResizes = 0;
     _theData = new T[_maxCapacity];
 }
+
+template<typename T>
+ABS<T>::ABS(int capacity, float scaleFactor) {
+    _maxCapacity = capacity;
+    _actualSize = 0;
+    _scaleFactor = scaleFactor;
+    _totalResizes = 0;
+    _theData = new T[_maxCapacity];
+}
+
 // #################### Big 3 ############################
 
 // Destrutor
@@ -86,6 +104,8 @@ void ABS<T>::copyHelper(const ABS& other) {
     unsigned int i;
     this->_theData = new T[other._maxCapacity];
     this->_actualSize = other._actualSize;
+    this->_scaleFactor = other._scaleFactor;
+    this->_totalResizes = other._totalResizes;
      
     for (i = 0; i < other._maxCapacity; ++i){
         this->_theData[i] = other._theData[i];
@@ -104,6 +124,11 @@ unsigned int ABS<T>::getSize() {
 template<typename T>
 unsigned int ABS<T>::getMaxCapacity() {
     return _maxCapacity;
+}
+
+template<typename T>
+unsigned int ABS<T>::getTotalResizes() {
+    return _totalResizes;
 }
 
 // Get data
@@ -158,6 +183,7 @@ T ABS<T>::peek() {
 // If control >= 0 Make the array lareger, else the data array is made smaller.
 template<typename T>
 void ABS<T>::resize(int control) {
+    _totalResizes++;
     // The following variables control the for loop that performs a copy of the data. 
     unsigned int i;
     unsigned int arraySize;

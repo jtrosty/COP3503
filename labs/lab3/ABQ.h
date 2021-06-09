@@ -12,11 +12,11 @@ class ABQ {
 //##################################################
     unsigned int _actualSize;
     unsigned int _maxCapacity;
-
+    unsigned int _totalResizes;
     unsigned int _first;
 
     T* _theData;
-    const float _scaleFactor = 2.0f;
+    float _scaleFactor;
 
     void resize(int control);
     ABQ& copy(const ABQ& other); // private copy funciton for copy constructor and copy assignment. 
@@ -28,6 +28,7 @@ class ABQ {
 
     ABQ();
     ABQ(int capacity);
+    ABQ(int capacity, float scaleFactor);
     ABQ(const ABQ& other);
     ABQ& operator=(const ABQ& other);
     ~ABQ();
@@ -41,6 +42,7 @@ class ABQ {
     unsigned int getSize();
     unsigned int getMaxCapacity();
     unsigned int getFirst();
+    unsigned int getTotalResizes();
     T at(int index);
     T* getData();
 };
@@ -54,16 +56,30 @@ template<typename T>
 ABQ<T>::ABQ() {
     _maxCapacity = 1;
     _actualSize = 0;
+    _scaleFactor = 2.0f;
     _theData = new T[_maxCapacity];
     _first = 0;
+    _totalResizes = 0;
 }
 
 template<typename T>
 ABQ<T>::ABQ(int capacity) {
     _maxCapacity = capacity;
     _actualSize = 0;
+    _scaleFactor = 2.0f;
     _theData = new T[_maxCapacity];
     _first = 0;
+    _totalResizes = 0;
+}
+
+template<typename T>
+ABQ<T>::ABQ(int capacity, float scaleFactor) {
+    _maxCapacity = capacity;
+    _actualSize = 0;
+    _scaleFactor = scaleFactor;
+    _theData = new T[_maxCapacity];
+    _first = 0;
+    _totalResizes = 0;
 }
 
 // ############### Getters and Setters ###################
@@ -87,6 +103,11 @@ T ABQ<T>::at(int index) {
     return _theData[index];
 }
 
+template<typename T>
+unsigned int ABQ<T>::getTotalResizes() {
+    return _totalResizes;
+}
+
 // ############### The Big Three #########################
 
 // ###### COPY CONSTRUCTOR
@@ -108,7 +129,9 @@ void ABQ<T>::copyHelper(const ABQ& other) {
     this->_theData = other._theData;
     this->_actualSize = other._actualSize;
     this->_maxCapacity = other._maxCapacity;
+    this->_scaleFactor = other._scaleFactor;
     this->_first = other._first;
+    this->_totalResizes = other._totalResizes;
 
     for (int i = 0; i < other._maxCapacity; ++i) {
         this->_theData[i] = other._theData[i];
@@ -179,6 +202,7 @@ T ABQ<T>::peek() {
 // If control >= 0, resize array larger, else, resize it smaller. 
 template<typename T>
 void ABQ<T>::resize(int control) {
+    _totalResizes++;
     unsigned int i;
     unsigned int iOldArray;
     unsigned int oldMax = _maxCapacity; // have to normalize capcity to the array largest index size. 
