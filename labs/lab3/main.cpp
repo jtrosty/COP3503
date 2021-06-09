@@ -2,7 +2,6 @@
 #include "ABQ.h"
 using namespace std;
 
-#include "leaker.h"
 
 int main()
 {
@@ -52,7 +51,7 @@ cout << "Making integer ABQ...\n";
 	{
 		cout << "\npeek " << floatABQ.peek() << endl;
 		cout << "maxCapacity " << floatABQ.getMaxCapacity() << endl;
-		cout << "_first " << floatABQ.getFirst() << endl;
+		cout << "before _first " << floatABQ.getFirst() << endl;
 		cout << "Dequeued " << floatABQ.dequeue() << endl;
 		cout << "_first " << floatABQ.getFirst() << endl;
 		cout << "New Size: " << floatABQ.getSize() << endl;

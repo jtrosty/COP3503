@@ -5,7 +5,6 @@ using std::cout;
 using std::runtime_error;
 using std::endl;
 
-#include "leaker.h"
 template <typename T>
 class ABQ {
 
@@ -132,8 +131,10 @@ template<typename T>
 void ABQ<T>::enqueue(T data) {
     int lastIndex;
     
+    // If too many data points, begin resize. 
     if (_actualSize == _maxCapacity) resizeLarger();
 
+    // Determine last index so that data is input in correct place. 
     if (_actualSize == 0) lastIndex = _first; 
     else lastIndex = ((_first + _actualSize) % _maxCapacity);
 
@@ -141,19 +142,26 @@ void ABQ<T>::enqueue(T data) {
     _actualSize++;
 }
 
-// #### Dequeue
+// #### Dequeue 
+// Contains the Logic for if a resize smaller is required.
 template<typename T>
 T ABQ<T>::dequeue() {
+    // The dequeue result is collected at the start. 
+    T result = _theData[_first++];
+    // Check fo if array is empty
     if (_actualSize == 0) 
         throw runtime_error("Data structure is empty, unable to dequeue.");
-    if (_first >= _maxCapacity) _first = _first % _maxCapacity;
 
+    // If _first has run over, the, reset it back to start of array
+    if (_first > _maxCapacity) _first = _first % _maxCapacity;
+    _actualSize--;
+
+    // Logic for resize
     float percentFilled = ((float)_actualSize / (float)_maxCapacity);
-    if ( percentFilled <= (1.0f / _scaleFactor)) {
+    if ( percentFilled < (1.0f / _scaleFactor)) {
         resizeSmaller();
     }  
-    _actualSize--;
-    return _theData[_first++];
+    return result;
 }
 
 // #### Peek
@@ -169,11 +177,13 @@ template<typename T>
 void ABQ<T>::resizeLarger() {
     unsigned int i;
     unsigned int oldMax = _maxCapacity; // have to normalize capcity to the array largest index size. 
+
     _maxCapacity = _scaleFactor * _maxCapacity;
     T* temp = new T[_maxCapacity];    
     for (i = 0; i < _maxCapacity; ++i){
         temp[i] = _theData[(i + _first) % oldMax];
     }
+
     _first = 0;
     delete[] _theData;
     _theData = temp; 
@@ -183,11 +193,13 @@ void ABQ<T>::resizeLarger() {
 template<typename T>
 void ABQ<T>::resizeSmaller() {
     unsigned int i;
+    unsigned int iOldArray;
     unsigned int oldMax = _maxCapacity; // have to normalize capcity to the array largest index size. 
     _maxCapacity = _maxCapacity / _scaleFactor;
     T* temp = new T[_maxCapacity];    
     for (i = 0; i < _maxCapacity; ++i){
-        temp[i] = _theData[(i + _first) % oldMax];
+        iOldArray = (i + _first) % (oldMax + 1);
+        temp[i] = _theData[iOldArray];
     }
     _first = 0;
     delete[] _theData;
