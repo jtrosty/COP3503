@@ -27,56 +27,127 @@ int main() {
     int numOfTests = 5;
     int N;
     float scaleFactor;
-
-
-    // TEST WITH STACK ###################################### 
-    // ######################################################
+    bool TEST_ABS = false;
+    bool TEST_ABQ = false;
+    bool outToTextFile = true;
+    float timeResultsABS[25];
+    int resizeResultsABS[25];
+    float timeResultsABQ[25];
+    int resizeResultsABQ[25];
+    int indexABS = 0;
+    int indexABQ = 0;
     
+    // ######################################################
     cout << "TEST WITH STACK" << endl;
-    for (int j = 0; j < numOfTests; ++j) {
-        N = testInputs[j].N;
-        scaleFactor = testInputs[j].ScaleFactor;
+    for (int k = 0; k < numOfTests; ++k) {
+        // TEST WITH STACK #####################################
+        // #####################################################
+        for (int j = 0; j < numOfTests; ++j) { //TODO must change
+            N = testInputs[j].N;
+            scaleFactor = testInputs[k].ScaleFactor;
+            ABS<int> intABS(2, scaleFactor);
+            if (TEST_ABS) {
+                /*
+                for (int i = 0; i < N; i++) {
+                    intABS.push(i);
+                    intABS.test_DEBUG();
+                }
+                cout << "success push" << endl;
+                for (int i = 0; i < N; i++) {
+                    //cout << intABS.pop() << " ";
+                    intABS.pop();
+                    intABS.test_DEBUG();
+                }
+                cout << "success" << endl;
+                */
+            } 
+            else {
+                cout << "Scale: " << scaleFactor << " N: " << N << endl;
+
+                auto start = chrono::high_resolution_clock::now();
+                for (int i = 0; i < N; i++) {
+                    intABS.push(i);
+                }
+                for (int i = 0; i < N; i++) {
+                    intABS.pop();
+                }
+                auto end = chrono::high_resolution_clock::now();
+                chrono::duration<double> time = end - start;
+
+                cout << "Sec: " << endl << time.count() << endl;
+                cout << "Resizes " << endl << intABS.getTotalResizes() << endl;
+                timeResultsABS[indexABS] = time.count();
+                resizeResultsABS[indexABS] = intABS.getTotalResizes();
+                indexABS++;
+            }
+        }
         
-        ABS<int> intABS(2, scaleFactor);
-        cout << "Test" << (j + 1) <<  ": " << endl;
-        cout << "Scale: " << scaleFactor << " N: " << N << endl;
+        // TEST WITH QUEUE #######################################
+        // #######################################################
+        cout << "TEST WITH QUEUE" << endl;
+        for (int j = 0; j < numOfTests; ++j) {
+            N = testInputs[j].N;
+            scaleFactor = testInputs[k].ScaleFactor;
+            
+            ABQ<int> intABQ(2, scaleFactor);
+            if (TEST_ABQ) {
+                for (int i = 0; i < N; i++) {
+                    intABQ.enqueue(i);
+                }
+                cout << "success push" << endl;
+                for (int i = 0; i < N; i++) {
+                    cout << intABQ.dequeue() << " ";
+                }
+                cout << endl;
+                cout << "success" << endl;
+            } 
+            else {
+                cout << "Test Queue " << (j + 1) <<  ": " << endl;
+                cout << "Scale: " << scaleFactor << " N: " << N << endl;
 
-        auto start = chrono::high_resolution_clock::now();
-        for (int i = 0; i < N; i++) {
-            intABS.push(i);
-        }
-        for (int i = 0; i < N; i++) {
-            intABS.pop();
-        }
-        auto end = chrono::high_resolution_clock::now();
-        chrono::duration<double> time = end - start;
+                auto start2 = chrono::high_resolution_clock::now();
+                for (int i = 0; i < N; i++) {
+                    intABQ.enqueue(i);
+                }
+                for (int i = 0; i < N; i++) {
+                    intABQ.dequeue();
+                }
+                auto end2 = chrono::high_resolution_clock::now();
+                chrono::duration<double> time2 = end2 - start2;
 
-        cout << "Sec: " << time.count() << endl;
-        cout << "Resizes " << intABS.getTotalResizes() << endl;
+                cout << "Sec: " << time2.count() << endl;
+                cout << "Resizes " << intABQ.getTotalResizes() << endl;
+                timeResultsABQ[indexABQ] = time2.count();
+                resizeResultsABQ[indexABQ] = intABQ.getTotalResizes();
+                indexABQ++;
+            }
+        }
     }
     
-    // TEST WITH QUEUE #######################################
-    // #######################################################
-    cout << "TEST WITH QUEUE" << endl;
-    for (int j = 0; j < numOfTests; ++j) {
-        N = testInputs[j].N;
-        scaleFactor = testInputs[j].ScaleFactor;
-        
-        ABQ<int> intABQ(2, scaleFactor);
-        cout << "Test " << (j + 1) <<  ": " << endl;
-        cout << "Scale: " << scaleFactor << " N: " << N << endl;
-
-        auto start2 = chrono::high_resolution_clock::now();
-        for (int i = 0; i < N; i++) {
-            intABQ.enqueue(i);
+    if (outToTextFile) {
+        freopen("testResultsABS.txt", "w", stdout);
+        for (int tracker = 0; tracker <= indexABS; tracker++) {
+            cout << timeResultsABS[tracker] << endl;
         }
-        for (int i = 0; i < N; i++) {
-            cout << "\n" << intABQ.dequeue();
+        cout << "break" << endl;
+        for (int tracker = 0; tracker <= indexABS; tracker++) {
+            cout << resizeResultsABS[tracker] << endl;
         }
-        auto end2 = chrono::high_resolution_clock::now();
-        chrono::duration<double> time = end2 - start2;
-
-        cout << "Sec: " << time.count() << endl;
-        cout << "Resizes " << intABQ.getTotalResizes() << endl;
+        cout << "done" << endl;
+    }
+    
+    
+    if (outToTextFile) {
+        cout << "index " << indexABQ << endl;
+        freopen("testResultsABQ.txt", "w", stdout);
+        for (int tracker = 0; tracker <= indexABQ; tracker++) {
+            cout << timeResultsABQ[tracker] << endl;
+        }
+        cout << "break" << endl;
+        for (int tracker = 0; tracker <= indexABQ; tracker++) {
+            cout << resizeResultsABQ[tracker] << endl;
+        }
+        cout << "done" << endl;
+        fclose(stdout);
     }
 }

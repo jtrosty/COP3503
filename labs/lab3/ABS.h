@@ -28,6 +28,7 @@ class ABS {
     ABS(int capacity, float scaleFactor);
     ABS(const ABS& other);
     ABS& operator=(const ABS& other);
+    void test_DEBUG();
     ~ABS();
 
     void push(T data);
@@ -189,11 +190,11 @@ void ABS<T>::resize(int control) {
     unsigned int arraySize;
 
     if (control >= 0) {
-        _maxCapacity = _maxCapacity * _scaleFactor;
         arraySize = _maxCapacity;
+        _maxCapacity = _maxCapacity * _scaleFactor;
     }
     else  {
-        _maxCapacity = _maxCapacity / _scaleFactor;
+        _maxCapacity = _actualSize + 1; //_maxCapacity / _scaleFactor;
         arraySize = _actualSize + 1; // Adjust so actual size is normalized to a index of 0
     }
 
@@ -203,4 +204,20 @@ void ABS<T>::resize(int control) {
     }
     delete[] _theData;
     _theData = temp;
+}
+
+// ONLY WORKS WITH INT DATA TYPE!!!
+template<typename T>
+void ABS<T>::test_DEBUG() {
+    /*
+    for (int i = 0; i < _actualSize; ++i) {
+        cout << _theData[i] << " ";
+    }
+    */ 
+    for (int i = 1; i < _actualSize; ++i) {
+        if (_theData[i] != (_theData[i - 1] + 1)) {
+            cout << "AGH FAIL at: " << i << endl; 
+        }
+    }
+    //cout << "PASS" << endl; 
 }
