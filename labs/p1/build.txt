@@ -1,5 +1,5 @@
 
-g++ main.cpp -o p1 
+g++ main.cpp leaker.c -o p1
 
 ./p1
 
