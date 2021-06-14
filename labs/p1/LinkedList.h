@@ -4,11 +4,11 @@
 using std::vector;
 using std::cout;
 using std::endl;
-#include "leaker.h"
+//#include "leaker.h"
 
 template<typename T>
 class LinkedList {
-int nodeCounter;
+unsigned int nodeCounter;
 
     public:
         //template<typename T>
@@ -45,12 +45,15 @@ int nodeCounter;
 
         //Constructors
         LinkedList();
-        LinkedList(T _data);
+        //LinkedList(T _data);
         // Copy Constructor
-        LinkedList(LinkedList& other);
-        LinkedList(const LinkedList& other);
-        LinkedList& operator=(const LinkedList& other);
-        void copyHelper(const LinkedList& other);
+        // LinkedList(const LinkedList<T>& other);
+        LinkedList(const LinkedList<T>& other);
+        // Overloaded Operators
+        LinkedList<T>& operator=(const LinkedList<T>& other);
+        T& operator[](unsigned int index);
+        const T& operator[](unsigned int index) const;
+        void copyHelper(const LinkedList<T>& other);
         // Destructor
         ~LinkedList();
 };
@@ -71,13 +74,13 @@ LinkedList<T>::LinkedList() {
 }
 // Copy Constructor 
 template<typename T>
-LinkedList<T>::LinkedList(const LinkedList& other) {
+LinkedList<T>::LinkedList(const LinkedList<T>& other) {
     copyHelper(other);
 }
 
 // Copy Assignment Opeartors
 template<typename T>
-LinkedList<T>& LinkedList<T>::operator=(const LinkedList& other) {
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
     copyHelper(other);
     return *this;
 }
@@ -85,15 +88,30 @@ LinkedList<T>& LinkedList<T>::operator=(const LinkedList& other) {
 // Copy Assit array
 template<typename T>
 void LinkedList<T>::copyHelper(const LinkedList& other) {
-    head = other.head;
-    nodeCounter = other.nodeCounter;
+    Node* temp = other.head;
+    while (temp != nullptr) {
+        AddTail(temp->data);
+        temp = temp->next;
+    }
+
+    // TODO delte this stuff
+    /*
+    this->head = new Node();
+    this->head->prev = nullptr;
+    this->head->data = other.head.data;
+    this->nodeCounter = other.nodeCounter;
     Node* temp = other.head->next;
     while(temp != nullptr) {
         Node* newNode = new Node();
+        newNode->data = temp->data;
         newNode->prev = temp->prev;
         newNode->next = temp->next;
+        if (temp->next == nullptr) {
+            this->tail = other.tail;
+        }
         temp = temp->next;
     }
+    */
 }
 
 // Destructor
@@ -210,24 +228,26 @@ int LinkedList<T>::NodeCount() {
 
 // Find
 template<typename T>
-LinkedList<T>::Node* LinkedList<T>::Find(const T& _data) {
+typename LinkedList<T>::Node* LinkedList<T>::Find(const T& _data) {
     Node* temp = head;
     while (temp != nullptr) {
         if (temp->data == _data) {
             return temp;
         }
+        temp = temp->next;
     }
     return nullptr;
 }
 
 // CONSTANT Find
 template<typename T>
-const LinkedList<T>::Node* LinkedList<T>::Find(const T& _data) const {
+const typename LinkedList<T>::Node* LinkedList<T>::Find(const T& _data) const {
     Node* temp = head;
     while (temp != nullptr) {
         if (temp->data == _data) {
             return temp;
         }
+        temp = temp->next;
     }
     return nullptr;
 }
@@ -238,43 +258,43 @@ void LinkedList<T>::FindAll(vector<Node*>& outData, const T& value) const {
     Node* temp = head;
     while (temp != nullptr) {
         if (temp->data == value) {
-            outData.add(temp); 
+            outData.push_back(temp); 
         }
+        temp = temp->next;
     }
 }
 
 // Return head
 template<typename T>
-LinkedList<T>::Node* LinkedList<T>::Head() {
+typename LinkedList<T>::Node* LinkedList<T>::Head() {
     return head;
 }
 
 // Return Head Constant
 template<typename T>
-const LinkedList<T>::Node* LinkedList<T>::Head() const {
+const typename LinkedList<T>::Node* LinkedList<T>::Head() const {
     return head;
 }
 
 // Return Tail
 template<typename T>
-LinkedList<T>::Node* LinkedList<T>::Tail() {
+typename LinkedList<T>::Node* LinkedList<T>::Tail() {
     return tail;
 }
-
 // Return Tail Constant
 template<typename T>
-const LinkedList<T>::Node* LinkedList<T>::Tail() const {
+const typename LinkedList<T>::Node* LinkedList<T>::Tail() const {
     return tail;
 }
 
 // Get Node
 template<typename T> 
-LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) {
+typename LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) {
     if (index > nodeCounter) {
-        throw out_of_range();
+        throw std::out_of_range("That request is out of Array range.");
     }
     Node* temp = head;
-    for (unsigned int = 0; i = index; i++) {
+    for (unsigned int i = 0; i <= index; i++) {
         temp = temp->next;
     }
     return temp;
@@ -282,13 +302,39 @@ LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) {
 
 // Get Node Constant
 template<typename T> 
-const LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) const {
+const typename LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) const {
     if (index > nodeCounter) {
-        throw out_of_range();
+        throw std::out_of_range("That request is out of Array range.");
     }
     Node* temp = head;
-    for (unsigned int = 0; i = index; i++) {
+    for (unsigned int i = 0; i <= index; i++) {
         temp = temp->next;
     }
     return temp;
+}
+
+// Operator[] overload
+template<typename T>
+T& LinkedList<T>::operator[](unsigned int index) {
+    if (index >= nodeCounter) {
+        throw std::out_of_range("That request is out of Array range.");
+    }
+    Node* temp = head;
+    for (unsigned int i = 1; i <= index; i++) {
+        temp = temp->next;
+    }
+    return temp->data;
+}
+
+// Operator[] overload constant
+template<typename T>
+const T& LinkedList<T>::operator[](unsigned int index) const {
+    if (index >= nodeCounter) {
+        throw std::out_of_range("That request is out of Array range.");
+    }
+    Node* temp = head;
+    for (unsigned int i = 1; i <= index; i++) {
+        temp = temp->next;
+    }
+    return temp->data;
 }

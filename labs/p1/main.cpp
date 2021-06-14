@@ -1,5 +1,6 @@
 #include <iostream>
 #include "LinkedList.h"
+#include <vector>
 using std::endl;
 using std::cout;
 #include "leaker.h"
@@ -13,11 +14,13 @@ int main() {
     for (int i = 0; i < number; i++) {
         intList.AddTail(i);
     }
+    intList.AddHead(2);
     cout << "node count: " << intList.NodeCount() << endl;
-    intList.AddNodesTail(testInt, testCount);
+    //intList.AddNodesTail(testInt, testCount);
     cout << "node count: " << intList.NodeCount() << endl;
-    intList.PrintForward();
-    intList.PrintReverse();
+    //vector<Node>* testFindAll = new vector<Node>;
+    //intList.FindAll(testFindAll, 2);
+
 
     return 0;
 }
