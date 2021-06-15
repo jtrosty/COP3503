@@ -1,5 +1,5 @@
 
-g++ mainzy.cpp -o pT
+g++ -g mainzy.cpp leaker.c -o pT
 
 ./pT
 

@@ -4,7 +4,7 @@
 using std::vector;
 using std::cout;
 using std::endl;
-//#include "leaker.h"
+#include "leaker.h"
 
 template<typename T>
 class LinkedList {
@@ -45,6 +45,7 @@ unsigned int nodeCounter;
 
         //Constructors
         LinkedList();
+        void createFirstNode();
         //LinkedList(T _data);
         // Copy Constructor
         // LinkedList(const LinkedList<T>& other);
@@ -65,6 +66,12 @@ unsigned int nodeCounter;
 // Default Constructor
 template<typename T>
 LinkedList<T>::LinkedList() {
+    createFirstNode();
+}
+
+// Constructor first node helper
+template<typename T>
+void LinkedList<T>::createFirstNode() {
     head = new Node();
     head->next = nullptr;
     head->prev = nullptr;
@@ -72,6 +79,7 @@ LinkedList<T>::LinkedList() {
 
     nodeCounter = 0;
 }
+
 // Copy Constructor 
 template<typename T>
 LinkedList<T>::LinkedList(const LinkedList<T>& other) {
@@ -88,9 +96,10 @@ LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
 // Copy Assit array
 template<typename T>
 void LinkedList<T>::copyHelper(const LinkedList& other) {
+    createFirstNode();
     Node* temp = other.head;
     while (temp != nullptr) {
-        AddTail(temp->data);
+        this->AddTail(temp->data);
         temp = temp->next;
     }
 
@@ -117,7 +126,7 @@ void LinkedList<T>::copyHelper(const LinkedList& other) {
 // Destructor
 template<typename T>
 LinkedList<T>::~LinkedList() {
-    Node* temp = head;
+    Node* temp = this->head;
     while(temp != nullptr) {
         Node* next = temp->next;
         delete temp;
@@ -135,18 +144,14 @@ void LinkedList<T>::AddHead(T _data) {
     // A new node is not needed becasue the constructor made it
     if (nodeCounter == 0) {
         head->data = _data;
-        head->data = _data;
     }
     else {
         //  A new node must be created
         Node* newNode = new Node;
-        // When the first node is made, the tail is assigned the pointer to the first node.
-        if (nodeCounter == 0) {
-            tail = newNode;
-        }
         // Assign data to new node
         newNode->data = _data;
         newNode->next = head;
+        newNode->prev = nullptr;
         // Link the oldHead to the new head
         head->prev = newNode;
         //Transfer the crown 
@@ -166,14 +171,11 @@ template <typename T>
 void LinkedList<T>::AddTail(T _data) {
     // A new node is not needed becasue the constructor made it
     if (nodeCounter == 0) {
-        tail->data = _data;
         head->data = _data;
     }
     else {
         //  A new node must be created
         Node* newNode = new Node;
-        if (nodeCounter == 0) 
-            head = newNode;
 
         newNode->data = _data;
         newNode->prev = tail;
@@ -290,11 +292,11 @@ const typename LinkedList<T>::Node* LinkedList<T>::Tail() const {
 // Get Node
 template<typename T> 
 typename LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) {
-    if (index > nodeCounter) {
+    if (index >= nodeCounter) {
         throw std::out_of_range("That request is out of Array range.");
     }
     Node* temp = head;
-    for (unsigned int i = 0; i <= index; i++) {
+    for (unsigned int i = 0; i < index; i++) {
         temp = temp->next;
     }
     return temp;
@@ -303,11 +305,11 @@ typename LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) {
 // Get Node Constant
 template<typename T> 
 const typename LinkedList<T>::Node* LinkedList<T>::GetNode(unsigned int index) const {
-    if (index > nodeCounter) {
+    if (index >= nodeCounter) {
         throw std::out_of_range("That request is out of Array range.");
     }
     Node* temp = head;
-    for (unsigned int i = 0; i <= index; i++) {
+    for (unsigned int i = 0; i < index; i++) {
         temp = temp->next;
     }
     return temp;

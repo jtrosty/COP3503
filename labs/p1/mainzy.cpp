@@ -108,7 +108,7 @@ void TestAssignment()
    for (int i = 20; i <= 30; i += 5)
       first.AddTail(i);
    for (int i = 17; i < 100; i += 22)
-      second.AddTail(i);
+      second.AddHead(i);
    
    cout << "Printing first list:" << endl;
    first.PrintForward();
@@ -120,6 +120,8 @@ void TestAssignment()
    
    cout << "Assigning one list to another..." << endl;
    first = second;
+   LinkedList<int> third = second;
+   third = first;
    
    cout << "Printing after copying:" << endl;
    first.PrintForward();
@@ -137,4 +139,5 @@ void TestAssignment()
    cout << endl;
    cout << "Printing second list: " << endl;
    second.PrintForward();
+   cout << "get node: " << second.GetNode(0)->data << endl;
 }
