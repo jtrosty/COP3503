@@ -3,12 +3,13 @@
 #include <sstream>
 #include "LinkedList.h"
 using namespace std;
-#include "leaker.h"
+//#include "leaker.h"
 
 void TestRemove();
 void TestRemoveHeadTail();
 void TestOtherRemoval();
 void TestRecursion();
+void TestRemove2();
 
 int main()
 {
@@ -22,6 +23,8 @@ int main()
       TestOtherRemoval();
    else if (testNum == 4)
       TestRecursion();
+   else if (testNum == 5)
+      TestRemove2(); 
       
 	return 0;
 }
@@ -51,6 +54,24 @@ void TestRemove()
 	cout << "Removing " << val << " from the list again." << endl;
 	cout << "Nodes removed: " << count << endl;
 
+}
+
+void TestRemove2() {
+	LinkedList<int> data;
+	data.AddHead(3);
+	data.AddHead(1);
+	data.AddHead(3);
+	data.AddHead(1);
+	data.AddHead(1);
+	data.AddHead(3);
+	data.AddHead(3);
+	cout << " node count " << data.NodeCount() << endl;
+
+	//first printout
+	data.PrintForward();
+	cout << "test remove of 3 " << endl;
+	cout << "Nodes removed: " << data.Remove(3) << endl;
+	data.PrintForward();
 }
 
 void TestRemoveHeadTail()

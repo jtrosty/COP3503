@@ -5,7 +5,7 @@
 using std::vector;
 using std::cout;
 using std::endl;
-#include "leaker.h"
+//#include "leaker.h"
 
 template<typename T>
 class LinkedList {
@@ -146,12 +146,15 @@ void LinkedList<T>::copyHelper(const LinkedList& other) {
 // Destructor
 template<typename T>
 LinkedList<T>::~LinkedList() {
-    Node* temp = this->head;
-    Node* next;
-    while(temp != nullptr) {
-        next = temp->next;
-        delete temp;
-        temp = next;
+    if (head == nullptr) {/* DO NOTHING DATA ALREADY DELETED */}
+    else {
+        Node* temp = this->head;
+        Node* next;
+        while(temp != nullptr) {
+            next = temp->next;
+            delete temp;
+            temp = next;
+        }
     }
 }
 
@@ -284,6 +287,8 @@ bool LinkedList<T>::RemoveHead() {
     }
     else if (nodeCounter == 1) {
         delete head;
+        tail = nullptr;
+        head = nullptr;
         nodeCounter--;
         return true;
     }
@@ -301,8 +306,10 @@ bool LinkedList<T>::RemoveTail() {
         nodeCounter--;
         return true;
     }
-    else if (nodeCounter ==1) {
+    else if (nodeCounter == 1) {
         delete tail;
+        tail = nullptr;
+        head = nullptr;
         nodeCounter--;
         return true;
     }
@@ -342,7 +349,9 @@ unsigned int LinkedList<T>::Remove(const T& _data) {
     unsigned int numNodesRemoved = 0;
     unsigned int index = 0;
     Node* temp = head;
+    Node* next;
     while (temp != nullptr) {
+        next = temp->next;
         if (temp->data == _data) {
             RemoveAt(index);
             numNodesRemoved++;
@@ -350,7 +359,7 @@ unsigned int LinkedList<T>::Remove(const T& _data) {
         else {
             index++;
         }
-        temp = temp->next;
+        temp = next;
     }
     return numNodesRemoved;
 }

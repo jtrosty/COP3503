@@ -1,7 +1,7 @@
 
 @echo off
 
-g++ mainP3.cpp leaker.c -o mainzy
+g++ mainP4.cpp -o mainP4
 
-mainzy.exe
+mainP4.exe
 
