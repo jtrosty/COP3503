@@ -3,6 +3,7 @@
 #include <sstream>
 #include "LinkedList.h"
 using namespace std;
+#include "leaker.h"
 
 void TestFindAll();
 void TestCopyCtor();
@@ -122,6 +123,7 @@ void TestAssignment()
    first = second;
    LinkedList<int> third = second;
    third = first;
+   cout << "Test == " << (third == first) << endl;
    
    cout << "Printing after copying:" << endl;
    first.PrintForward();
@@ -132,9 +134,12 @@ void TestAssignment()
    first.AddHead(66);
    first.AddTail(8888);
    second.AddTail(19);
-   first.AddHead(-100);
+   first.AddHead(66);
    second.AddHead(-512);
    cout << "Printing first list: " << endl;
+   first.PrintForward();
+   cout << "Add stuff" << endl;
+   first.InsertAt(88, 3);
    first.PrintForward();
    cout << endl;
    cout << "Printing second list: " << endl;
