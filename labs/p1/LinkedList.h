@@ -56,14 +56,9 @@ unsigned int nodeCounter;
 
         int NodeCount();
 
-        //Constructors
         LinkedList();
         void createFirstNode();
-        //LinkedList(T _data);
-        // Copy Constructor
-        // LinkedList(const LinkedList<T>& other);
         LinkedList(const LinkedList<T>& other);
-        // Overloaded Operators
         LinkedList<T>& operator=(const LinkedList<T>& other);
         bool operator==(const LinkedList<T>& rhs);
         T& operator[](unsigned int index);
@@ -106,6 +101,14 @@ LinkedList<T>::LinkedList(const LinkedList<T>& other) {
 // Copy Assignment Opeartors
 template<typename T>
 LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
+    Node* temp = this->head;
+    Node* next;
+    while(temp != nullptr) {
+        next = temp->next;
+        delete temp;
+        temp = next;
+    }
+    
     copyHelper(other);
     return *this;
 }
@@ -138,44 +141,18 @@ void LinkedList<T>::copyHelper(const LinkedList& other) {
         this->AddTail(temp->data);
         temp = temp->next;
     }
-
-    // TODO delte this stuff
-    /*
-    this->head = new Node();
-    this->head->prev = nullptr;
-    this->head->data = other.head.data;
-    this->nodeCounter = other.nodeCounter;
-    Node* temp = other.head->next;
-    while(temp != nullptr) {
-        Node* newNode = new Node();
-        newNode->data = temp->data;
-        newNode->prev = temp->prev;
-        newNode->next = temp->next;
-        if (temp->next == nullptr) {
-            this->tail = other.tail;
-        }
-        temp = temp->next;
-    }
-    */
 }
 
 // Destructor
 template<typename T>
 LinkedList<T>::~LinkedList() {
     Node* temp = this->head;
-    /*
+    Node* next;
     while(temp != nullptr) {
-        Node* next = temp->next;
+        next = temp->next;
         delete temp;
         temp = next;
     }
-    */
-    while(temp != nullptr) {
-        delete temp;
-        temp = temp->next;
-    }
-    //delete head;
-    //delete tail;
 }
 
 // #####################################################
@@ -296,7 +273,7 @@ void LinkedList<T>::InsertAt(const T& _data, unsigned int _index) {
 // #####################################################
 template <typename T>
 bool LinkedList<T>::RemoveHead() {
-    if (nodeCounter > 0) {
+    if (nodeCounter > 1) {
         Node* temp = head;
         temp = head->next;
         temp->prev = nullptr;
@@ -305,17 +282,27 @@ bool LinkedList<T>::RemoveHead() {
         nodeCounter--;
         return true;
     }
+    else if (nodeCounter == 1) {
+        delete head;
+        nodeCounter--;
+        return true;
+    }
     return false;
 }
 
 template <typename T>
 bool LinkedList<T>::RemoveTail() {
-    if (nodeCounter > 0) {
+    if (nodeCounter > 1) {
         Node* temp = tail;
         temp = tail->prev;
         temp->next = nullptr;
         delete tail;
         tail = temp;
+        nodeCounter--;
+        return true;
+    }
+    else if (nodeCounter ==1) {
+        delete tail;
         nodeCounter--;
         return true;
     }
