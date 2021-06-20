@@ -1,0 +1,37 @@
+Jonathan Trost
+COP3503
+SUMMER 2021
+LAB 3 EXTRA CREDIT
+
+Assumptions: The test below was performed in a situation where the array is filled then emptied. 
+
+ABS
+-Initial Observations:
+1. Minimizes resizes also maximizes speed. Observing Figure 6, one can see that a larger scale factor results in shorter running time. 
+
+ABS Effects on Change in N:
+As N went up so would time. This is most clearly seen in Figure 5, there are a constant number of resizes of 9 for all Ns tested. From this we see there is a linear relationship between N and the amount of time to fill and empty with resizes being equal. 
+In figure 1, ABS scale factor 1.5, one can see that for large changing Ns and samller scale factor the amount of time needed for large Ns rises quickly. This observation can most clearly be seen in Figure 3, poitns 2, 3, and 4 share the same number of resizes and the time grows linearly. The last point in Figure 3 requires 2 additioanl resizes and between point 4 and 5, the time required almost doubles in order to handle 50% more N.
+On figure 2, we can see taht for the same amoutn of resizes we see that the time grows more than linearly for larger Ns. Resizes at large N are much more costly than resizes at small N.   	
+
+ABQ Effects on Change in N:
+The same effects on change in N can bee seen in the ABQ data structure the same as the ABS strcuture.  The number of resizes for the ABQ and ABS are the same across the different figures.  For the same scale factor and N, the ABS and ABQ graphs have the same inflection and proportional slopes to one another.  
+
+ABS Effects on change in Scale Factor:
+A larger scale factor results in less resizes overall and a faster runtime of the data structure.  At the smalles scale factor of 1.5 there were up to 92 resizes (Figure 1) compared to 9 resizes (Figure 5). For smaller scale factors, the time resizes require take less time proportional to each previous resize. The effects for scale factor on time can most easily been seen when reviewing points 4 and 5 of Figure 1 and 3.  For these 2 figures and points, there are 2 resizes between each.  For Figure 1, from point 4 to 5 takes ~.5 secs, for Figure 4, from point 4 to 5 takes ~.7 secs.   
+A large scale Factor has a large effect on shortening the the time needed for small N, this can be seen when comparing the time to the first point.  At the smalles scale factor it is .190 secs and for scale factor 100 is .087. A smaller scale factor is proportianatley faster for smaller changes in N, this would be due to there potentially being a great deal of wasted memory that is not used. 
+
+ABQ Effects of change in Scale Factor:
+The same observations noted for ABS can be seen in the ABQ data.
+
+The differences between ABS and ABQ:
+The top difference is that ABQ takes longer overall. A review of the operatiosn whithin push/enqueue and pop/dequeue. ABS's push function has one if check, assigns the data to the array, and increments the size. ABS has at least 3 operations.  ABQ's push fuctnions has two 'if' checks, assigns the data to the array, and makes a variable and initializes it. ABQ's push has at least 5 opeartaions. Looking at pop/dequeue operations with the assumption that resize is not necessary. ABS pop has at least 5 operations and ABQ dequeue has at least 7 opertaions. ABS resize has at least 9 opertions with a for loop that executes N times with 1 operation.  ABQ resize has at leat 8 operations and a for loop that executes N times with 2 operations.  for this analysis I will assume that the resize operations require the same number of operations due the N in the for loop growing so large.  
+ABS pop/push combination has 8 operations and ABQ has 13 operations. This is equal to .615, looking at table 3, the first 3 scale factors are within +/-.10 of this ratio.  As the scale factor gets larger the ABQ time required grows faster than ABS. I believe think this is due to ABQ haveing 2 operations in each resize, the effect of this grows much more as the the resize gets larger. The resize array for ABQ, when resizing larger, loops for as many times as there are elements in the larger array, the ABS array only loops as many times as the actual size (see improvement section). The most drastic difference is between the first N and scale factor 10000, the ratio of .122 in the top right cell of table 3. The ABQ takes almost 10 times as long and as the N grows the ratio gets closer to .5. I think tha because of the issue noted above of cycling through the fulle size on the new array and a large scale factor, that number of times the for loop executes is dispropritanately large.
+
+Improvement Analysis on Runtime:
+ABQ on resize larger loops through as the full new larger array, this should be unecessary.  It should only need to loop through the actual size of the array. The ABS.h code was corrected to avoid uncessary iterations and tested again on part 2 of the Zybooks Lab 3. The improved code is contained in ABQimproved.h. The results of this improvement are seen in Table 4 and 5. The improvement brought the ratio of ABS to ABQ to being ~.7 in line with expectations after observing difference in the number of operations between push/pop and queue/dequeue.  
+
+Conclusions:
+The factors that seem to have the largest impactt on the data strcutors operating are:
+1. The number of resizes, minimizing resizes is one of the most important considerations in order to minimize the amount of time required. 
+2. The number of operations, 

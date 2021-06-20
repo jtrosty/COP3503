@@ -189,10 +189,12 @@ void ABS<T>::resize(int control) {
     unsigned int i;
     unsigned int arraySize;
 
+    // If control > 0, resize larger
     if (control >= 0) {
         arraySize = _maxCapacity;
         _maxCapacity = _maxCapacity * _scaleFactor;
     }
+    // Resize smaller
     else  {
         _maxCapacity = _actualSize + 1; //_maxCapacity / _scaleFactor;
         arraySize = _actualSize + 1; // Adjust so actual size is normalized to a index of 0

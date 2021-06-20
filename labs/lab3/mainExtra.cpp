@@ -2,6 +2,8 @@
 #include <chrono>
 #include "ABS.h"
 #include "ABQ.h"
+#include <fstream>
+using std::ofstream;
 using namespace std;
 //#include "leaker.h"
 
@@ -24,6 +26,8 @@ int main() {
     testInputs[3].ScaleFactor = 10.0f;
     testInputs[4].N = 100000000;
     testInputs[4].ScaleFactor = 100.0f;
+    testInputs[5].N = 150000000;
+    testInputs[5].ScaleFactor = 150.0f;
     int numOfTests = 5;
     int N;
     float scaleFactor;
@@ -150,4 +154,14 @@ int main() {
         cout << "done" << endl;
         fclose(stdout);
     }
+    /*
+
+    ofstream myCSVTest;
+    myCSVTest.open("csvDatat.csv");
+    for (int tracker = 0; tracker <= indexABS; tracker++) {
+        cout << timeResultsABS[tracker] << ",";
+        cout << resizeResultsABS[tracker] << ",";
+    }
+    */
+
 }
