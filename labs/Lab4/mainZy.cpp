@@ -75,14 +75,15 @@ int main()
 	cout << "4. All 3 files" << endl;
 	int option;
 	cin >> option;
+	vector<vector <LegoProduct> > legoProductVect;
 	vector<LegoProduct> legoProductVectorTest;
-	vector<LegoProduct> lego1;
-	vector<LegoProduct> lego2;
 	vector<LegoProduct> lego3;
 
 	switch (option)
 	{
 		case 1:
+			vector<LegoProduct> lego1;
+			legoProductVect.push_back(lego1);
 			break;
 		case 2:
 			break;
