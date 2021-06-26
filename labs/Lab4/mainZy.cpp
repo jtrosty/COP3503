@@ -76,7 +76,6 @@ void MostExpensiveProdcut(vector<vector<LegoProduct>>& data) {
     int mostExpenseiveSet = 0;
     int collectionWithMostExpensiveSet = 0;
     int numOfCollections = data.size();
-    cout << "Num of Collections " << numOfCollections << endl;
     int numOfSets = 0;
     for (int collection = 0; collection < numOfCollections; collection++) {
         numOfSets = data.at(collection).size();
@@ -98,7 +97,6 @@ void LargestPieceCount(vector<vector<LegoProduct>>& data) {
     int largestPieceCountSet = 0;
     int collectionWithSetWithLargePieceCount = 0;
     int numOfCollections = data.size();
-    cout << "Num of Collections " << numOfCollections << endl;
     int numOfSets = 0;
     for (int collection = 0; collection < numOfCollections; collection++) {
         numOfSets = data.at(collection).size();
@@ -121,7 +119,6 @@ void LargestPieceCount(vector<vector<LegoProduct>>& data) {
 
 void NameSearch(vector<vector<LegoProduct>>& data) {
     int numOfCollections = data.size();
-    cout << "Num of Collections " << numOfCollections << endl;
     bool nameFound = false;
     int numOfSets = 0;
     vector<int> result;
@@ -135,6 +132,40 @@ void NameSearch(vector<vector<LegoProduct>>& data) {
         cout << "Num of Sets " << numOfSets << endl;
         for (int set = 0; set < numOfSets; set++) {
             if (data.at(collection).at(set).name.find(searchTerm) != string::npos) {
+                nameFound = true;
+                result.push_back(collection);
+                result.push_back(set);
+            } 
+        }
+    }
+    if (!nameFound) {
+        cout << "No sets found matching that search term." << endl;
+    }
+    else {
+        int sizeResult = result.size();
+        for (int i = 0; i < sizeResult; i += 2) {
+        cout << data.at(result.at(i)).at(result.at(i + 1)).numberID;
+        cout << " " << data.at(result.at(i)).at(result.at(i + 1)).name;
+        cout << " $" << data.at(result.at(i)).at(result.at(i + 1)).price << endl;
+        }
+    }
+}
+
+void ThemeSearch(vector<vector<LegoProduct>>& data) {
+    int numOfCollections = data.size();
+    bool nameFound = false;
+    int numOfSets = 0;
+    vector<int> result;
+
+    string searchTerm;
+    cin >> searchTerm;
+    cin.get();
+
+    for (int collection = 0; collection < numOfCollections; collection++) {
+        numOfSets = data.at(collection).size();
+        cout << "Num of Sets " << numOfSets << endl;
+        for (int set = 0; set < numOfSets; set++) {
+            if (data.at(collection).at(set).theme.find(searchTerm) != string::npos) {
                 nameFound = true;
                 result.push_back(collection);
                 result.push_back(set);
@@ -252,6 +283,7 @@ int main()
             NameSearch(legoProductVect);
 			break;
 		case 4:
+            ThemeSearch(legoProductVect);
 			break;
 		case 5: 
 			break;
