@@ -2,13 +2,54 @@
 #include "extrafile.h"
 
 /********************************************************************************
- * ********************** Constructor/Destructor/etc ****************************
+ * **** Constructor/Copy Assignment operator/ Copy Constructor/Destructor/etc ***
  * ******************************************************************************/
 
 LegoProductCatalog::LegoProductCatalog() {}
 
 LegoProductCatalog::LegoProductCatalog(ifstream& dataFile) {
     ReadLegoData(dataFile);
+}
+
+LegoProductCatalog::LegoProductCatalog(LegoProductCatalog& rhs) {
+    int sizeCollection = rhs.LegoProductVect.size();
+    int sizeSets = 0;
+    for (int i = 0; i < sizeCollection; i++) {
+        sizeSets = rhs.LegoProductVect.at(i).size();
+        vector <LegoProduct> LegoProductCollection;
+        this->LegoProductVect.push_back(LegoProductCollection);
+        for (int j = 0; j < sizeSets; j++) {
+			LegoProduct* temp = new LegoProduct;
+            temp->numberID = rhs.LegoProductVect.at(i).at(j).numberID;
+            temp->name = rhs.LegoProductVect.at(i).at(j).name;
+            temp->theme = rhs.LegoProductVect.at(i).at(j).theme;
+            temp->numOfMinifigs = rhs.LegoProductVect.at(i).at(j).numOfMinifigs;
+            temp->numOfPieces = rhs.LegoProductVect.at(i).at(j).numOfPieces;
+            temp->price = rhs.LegoProductVect.at(i).at(j).price;
+            this->LegoProductVect.at(i).push_back(*temp);
+        }
+    }
+}
+
+LegoProductCatalog& LegoProductCatalog::operator=(LegoProductCatalog& rhs) {
+    int sizeCollection = rhs.LegoProductVect.size();
+    int sizeSets = 0;
+    for (int i = 0; i < sizeCollection; i++) {
+        sizeSets = rhs.LegoProductVect.at(i).size();
+        vector <LegoProduct> LegoProductCollection;
+        this->LegoProductVect.push_back(LegoProductCollection);
+        for (int j = 0; j < sizeSets; j++) {
+			LegoProduct* temp = new LegoProduct;
+            temp->numberID = rhs.LegoProductVect.at(i).at(j).numberID;
+            temp->name = rhs.LegoProductVect.at(i).at(j).name;
+            temp->theme = rhs.LegoProductVect.at(i).at(j).theme;
+            temp->numOfMinifigs = rhs.LegoProductVect.at(i).at(j).numOfMinifigs;
+            temp->numOfPieces = rhs.LegoProductVect.at(i).at(j).numOfPieces;
+            temp->price = rhs.LegoProductVect.at(i).at(j).price;
+            this->LegoProductVect.at(i).push_back(*temp);
+        }
+    }
+    return *this; 
 }
 
 LegoProductCatalog::~LegoProductCatalog() {

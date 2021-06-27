@@ -30,7 +30,9 @@ class LegoProductCatalog {
     LegoProductCatalog(ifstream& dataFile);
 
     // Copy Constructor
-
+    LegoProductCatalog(LegoProductCatalog& rhs);
+    // Copy Assignment Operator
+    LegoProductCatalog& operator=(LegoProductCatalog& rhs);
     // Destructor 
     ~LegoProductCatalog();
 
