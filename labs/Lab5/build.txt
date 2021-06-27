@@ -1,0 +1,4 @@
+
+g++ mainZy.cpp -o mainZy
+
+./mainZy
