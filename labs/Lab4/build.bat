@@ -1,5 +1,5 @@
 @echo off
 
-g++ mainZy.cpp -o mainZy
+g++ mainClass.cpp extrafile.cpp -o mainClass
 
-mainZy.exe
+mainClass.exe

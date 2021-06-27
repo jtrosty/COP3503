@@ -20,6 +20,15 @@ struct LegoProduct {
 	double price;
 };
 
+void DisplayFullSetInfo(LegoProduct& rha) {
+    cout << "Name: " << rha.name << endl;
+    cout << "Number: " << rha.numberID << endl;
+    cout << "Theme: " << rha.theme << endl;
+    cout << "Price: $" << rha.price << endl;
+    cout << "Minifigures: " << rha.numOfMinifigs<< endl;
+    cout << "Piece count: " << rha.numOfPieces << endl;
+}
+
 void ReadLegoData(ifstream& dataFile, vector<LegoProduct>& LegoDataVector) {
 	// Get the title information
 	string buffer; 
@@ -38,12 +47,6 @@ void ReadLegoData(ifstream& dataFile, vector<LegoProduct>& LegoDataVector) {
 	string titleUSPrice = buffer;
 
 	if (dataFile.is_open()) {
-		unsigned int setNumberTemp;
-		string setThemeTemp;
-		string setNameTemp;
-		unsigned int numOfPiecesInSetTemp;
-		double setPriceTemp;
-
 		while (getline(dataFile,buffer,',')){
 			LegoProduct* temp = new LegoProduct;
 			//cout << "buffer is " << buffer << endl; TODO remove
@@ -66,10 +69,10 @@ void ReadLegoData(ifstream& dataFile, vector<LegoProduct>& LegoDataVector) {
 
 void PrintNumOfDataRecorded(vector<vector <LegoProduct> >& data) {
     int sumOfDataRecorded = 0;
-    for (int i = 0; i < data.size(); i++) {
+    for (unsigned int i = 0; i < data.size(); i++) {
         sumOfDataRecorded += data.at(i).size(); 
     }
-    cout << "Datat collected: " << sumOfDataRecorded << endl;
+    cout << "Total number of sets: " << sumOfDataRecorded << endl;
 }
 
 void MostExpensiveProdcut(vector<vector <LegoProduct> >& data) {
@@ -79,7 +82,6 @@ void MostExpensiveProdcut(vector<vector <LegoProduct> >& data) {
     int numOfSets = 0;
     for (int collection = 0; collection < numOfCollections; collection++) {
         numOfSets = data.at(collection).size();
-        cout << "Num of Sets " << numOfSets << endl;
         for (int set = 0; set < numOfSets; set++) {
             if (data.at(collection).at(set).price > data.at(collectionWithMostExpensiveSet).at(mostExpenseiveSet).price) {
                 mostExpenseiveSet = set;
@@ -88,9 +90,12 @@ void MostExpensiveProdcut(vector<vector <LegoProduct> >& data) {
         }
     }
     cout << "The most expensive set is: " << endl;
+    DisplayFullSetInfo(data.at(collectionWithMostExpensiveSet).at(mostExpenseiveSet));
+    /*
     cout << "Name: " << data.at(collectionWithMostExpensiveSet).at(mostExpenseiveSet).name << endl;
     cout << "Number: " << data.at(collectionWithMostExpensiveSet).at(mostExpenseiveSet).numberID << endl;
     cout << "Theme: " << data.at(collectionWithMostExpensiveSet).at(mostExpenseiveSet).theme << endl;
+    */ //TODO DELETE
 }
 
 void LargestPieceCount(vector<vector <LegoProduct> >& data) {
@@ -100,7 +105,6 @@ void LargestPieceCount(vector<vector <LegoProduct> >& data) {
     int numOfSets = 0;
     for (int collection = 0; collection < numOfCollections; collection++) {
         numOfSets = data.at(collection).size();
-        cout << "Num of Sets " << numOfSets << endl;
         for (int set = 0; set < numOfSets; set++) {
             if (data.at(collection).at(set).numOfPieces > data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet).numOfPieces) {
                 largestPieceCountSet = set;
@@ -108,13 +112,8 @@ void LargestPieceCount(vector<vector <LegoProduct> >& data) {
             } 
         }
     }
-    cout << "The most expensive set is: " << endl;
-    cout << "Name: " << data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet).name << endl;
-    cout << "Number: " << data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet).numberID << endl;
-    cout << "Theme: " << data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet).theme << endl;
-    cout << "Price: $" << data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet).price << endl;
-    cout << "Minifigures: " << data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet).numOfMinifigs << endl;
-    cout << "Theme: " << data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet).numOfPieces << endl;
+    cout << "The set with the highest parts count: " << endl;
+    DisplayFullSetInfo(data.at(collectionWithSetWithLargePieceCount).at(largestPieceCountSet));
 }
 
 void NameSearch(vector<vector <LegoProduct> >& data) {
@@ -124,12 +123,10 @@ void NameSearch(vector<vector <LegoProduct> >& data) {
     vector<int> result;
 
     string searchTerm;
-    cin >> searchTerm;
-    cin.get();
+    getline(cin, searchTerm, '\n');
 
     for (int collection = 0; collection < numOfCollections; collection++) {
         numOfSets = data.at(collection).size();
-        cout << "Num of Sets " << numOfSets << endl;
         for (int set = 0; set < numOfSets; set++) {
             if (data.at(collection).at(set).name.find(searchTerm) != string::npos) {
                 nameFound = true;
@@ -139,14 +136,15 @@ void NameSearch(vector<vector <LegoProduct> >& data) {
         }
     }
     if (!nameFound) {
-        cout << "No sets found matching that search term." << endl;
+        cout << "No sets found matching that search term" << endl;
     }
     else {
+        cout << "Sets matching \"" << searchTerm << "\":" << endl;
         int sizeResult = result.size();
         for (int i = 0; i < sizeResult; i += 2) {
-        cout << data.at(result.at(i)).at(result.at(i + 1)).numberID;
-        cout << " " << data.at(result.at(i)).at(result.at(i + 1)).name;
-        cout << " $" << data.at(result.at(i)).at(result.at(i + 1)).price << endl;
+            cout << data.at(result.at(i)).at(result.at(i + 1)).numberID;
+            cout << " " << data.at(result.at(i)).at(result.at(i + 1)).name;
+            cout << " $" << data.at(result.at(i)).at(result.at(i + 1)).price << endl;
         }
     }
 }
@@ -158,11 +156,9 @@ void ThemeSearch(vector<vector <LegoProduct> >& data) {
     vector<int> result;
 
     string searchTerm;
-    cin >> searchTerm;
-    cin.get();
+    getline(cin, searchTerm, '\n');
     for (int collection = 0; collection < numOfCollections; collection++) {
         numOfSets = data.at(collection).size();
-        cout << "Num of Sets " << numOfSets << endl;
         for (int set = 0; set < numOfSets; set++) {
             if (data.at(collection).at(set).theme.find(searchTerm) != string::npos) {
                 nameFound = true;
@@ -172,14 +168,15 @@ void ThemeSearch(vector<vector <LegoProduct> >& data) {
         }
     }
     if (!nameFound) {
-        cout << "No sets found matching that search term." << endl;
+        cout << "No sets found matching that search term" << endl;
     }
     else {
+        cout << "Sets matching \"" << searchTerm << "\":" << endl;
         int sizeResult = result.size();
         for (int i = 0; i < sizeResult; i += 2) {
-        cout << data.at(result.at(i)).at(result.at(i + 1)).numberID;
-        cout << " " << data.at(result.at(i)).at(result.at(i + 1)).name;
-        cout << " $" << data.at(result.at(i)).at(result.at(i + 1)).price << endl;
+            cout << data.at(result.at(i)).at(result.at(i + 1)).numberID;
+            cout << " " << data.at(result.at(i)).at(result.at(i + 1)).name;
+            cout << " $" << data.at(result.at(i)).at(result.at(i + 1)).price << endl;
         }
     }
 }
@@ -196,8 +193,97 @@ void AvgNumOfPartsInSets(vector <vector <LegoProduct> >& data) {
 			totalNumOfParts += data.at(collection).at(set).numOfPieces;
         }
     }
+    // The following make 1 line of outpoint
 	cout << "Average part count for " << totalNumOfSets << " sets: ";
 	cout << (totalNumOfParts / totalNumOfSets) << endl;
+}
+
+void PriceInformation(vector <vector <LegoProduct> >& data) {
+    double totalCost = 0;
+    double priceOfCheapestSet = data.at(0).at(0).price;
+    double priceOfMostExpensiveSet = 0;
+    int cheapestSet = 0;
+    int collectionWithCheapestSet = 0;
+    int mostExpensiveSet = 0;
+    int collectionWithMostExpensiveSet = 0;
+	int numOfCollections = data.size();
+	int numOfSets = 0;
+	unsigned int totalNumOfSets = 0;
+
+    for (int collection = 0; collection < numOfCollections; collection++) {
+        numOfSets = data.at(collection).size();
+		totalNumOfSets += numOfSets;
+        for (int set = 0; set < numOfSets; set++) {
+            totalCost += data.at(collection).at(set).price;
+            if (data.at(collection).at(set).price > priceOfMostExpensiveSet) {
+                mostExpensiveSet = set;
+                collectionWithMostExpensiveSet = collection;
+                priceOfMostExpensiveSet = data.at(collection).at(set).price;
+            }
+            if (data.at(collection).at(set).price < priceOfCheapestSet) {
+                cheapestSet = set;
+                collectionWithCheapestSet = collection;
+                priceOfCheapestSet = data.at(collection).at(set).price;
+            }
+        }
+    }
+    // The following make 1 line of outpoint
+    cout << "Average price for " << totalNumOfSets << " sets: $" << (totalCost / (double)totalNumOfSets) << endl;
+    cout << endl;
+    cout << "Least expensive set: " << endl;
+    DisplayFullSetInfo(data.at(collectionWithCheapestSet).at(cheapestSet));
+    cout << endl;
+    cout << "Most expensive set: " << endl;
+    DisplayFullSetInfo(data.at(collectionWithMostExpensiveSet).at(mostExpensiveSet));
+}
+
+void MinifigureInfo(vector <vector <LegoProduct> >& data) {
+	int numOfCollections = data.size();
+	int numOfSets = 0;
+	unsigned int totalNumOfMinifigures = 0;
+	unsigned int totalNumOfSets = 0;
+    int collectionWithMostMinifigures = 0;
+    int setWithMostMinifigures = 0;
+    unsigned int mostMinifigures = 0;
+
+    for (int collection = 0; collection < numOfCollections; collection++) {
+        numOfSets = data.at(collection).size();
+		totalNumOfSets += numOfSets;
+        for (int set = 0; set < numOfSets; set++) {
+			totalNumOfMinifigures += data.at(collection).at(set).numOfMinifigs;
+            if (data.at(collection).at(set).numOfMinifigs > mostMinifigures) {
+                collectionWithMostMinifigures = collection;
+                setWithMostMinifigures = set;
+                mostMinifigures = data.at(collection).at(set).numOfMinifigs;
+            }
+        }
+    }
+    // The following make 1 line of outpoint
+	cout << "Average number of minifigures: " << (totalNumOfMinifigures / totalNumOfSets) << endl;
+    cout << endl;
+    cout << "Set with the most minifigures: " << endl;
+    DisplayFullSetInfo(data.at(collectionWithMostMinifigures).at(setWithMostMinifigures));
+}
+
+void BuyOneOfEverything(vector <vector <LegoProduct> >& data) {
+	int numOfCollections = data.size();
+	int numOfSets = 0;
+	unsigned int totalNumOfMinifigures = 0;
+	double totalCost = 0.0f;
+	unsigned int totalNumOfPieces = 0;
+
+    for (int collection = 0; collection < numOfCollections; collection++) {
+        numOfSets = data.at(collection).size();
+        for (int set = 0; set < numOfSets; set++) {
+			totalCost += data.at(collection).at(set).price;
+			totalNumOfPieces += data.at(collection).at(set).numOfPieces;
+			totalNumOfMinifigures += data.at(collection).at(set).numOfMinifigs;
+        }
+    }
+    cout << "If you bought one of everything..." << endl;
+    cout << "It would cost: $" << totalCost << endl;
+    cout << "You would have " << totalNumOfPieces << " pieces in your collection" << endl;
+    cout << "You would have an army of " << totalNumOfMinifigures << " minifigures!" << endl;
 }
 
 int main()
@@ -220,7 +306,7 @@ int main()
 	switch (option)
 	{
 		case 1:
-            legoDatatInput.open("test.csv");
+            legoDatatInput.open("lego1.csv");
 			legoProductVect.push_back(lego1);
             ReadLegoData(legoDatatInput, legoProductVect.at(0));
             legoDatatInput.close();
@@ -228,13 +314,13 @@ int main()
 		case 2:
             legoDatatInput.open("lego2.csv");
 			legoProductVect.push_back(lego2);
-            ReadLegoData(legoDatatInput, legoProductVect.at(1)); // THIS WON"T WORK
+            ReadLegoData(legoDatatInput, legoProductVect.at(0)); // THIS WON"T WORK
             legoDatatInput.close();
 			break;
 		case 3:
             legoDatatInput.open("lego3.csv");
 			legoProductVect.push_back(lego3);
-            ReadLegoData(legoDatatInput, legoProductVect.at(2));
+            ReadLegoData(legoDatatInput, legoProductVect.at(0));
             legoDatatInput.close();
 			break;
 		case 4:
@@ -250,10 +336,12 @@ int main()
 			legoProductVect.push_back(lego3);
             ReadLegoData(legoDatatInput, legoProductVect.at(2));
             legoDatatInput.close();
+            /*
             legoDatatInput.open("test.csv");
 			legoProductVect.push_back(legoProductVectorTest);
             ReadLegoData(legoDatatInput, legoProductVect.at(3));
             legoDatatInput.close();
+            */
 			break;
 		case 5: 
 			legoDatatInput.open("test.csv");
@@ -265,9 +353,8 @@ int main()
 			break;
 	}
 
-    PrintNumOfDataRecorded(legoProductVect);
+    cout << endl;
    /*======= Load data from file(s) =======*/
-
    
     cout << "1. Most Expensive set" << endl;
 	cout << "2. Largest piece count" << endl;
@@ -278,6 +365,9 @@ int main()
 	cout << "7. Minifigure information" << endl;
 	cout << "8. If you bought one of everything..." << endl;
 	cout << "0. Exit" << endl;
+
+    PrintNumOfDataRecorded(legoProductVect);
+    cout << endl;
    
 	int choice;
     int sizeTest; // TODO delete
@@ -304,10 +394,13 @@ int main()
 			AvgNumOfPartsInSets(legoProductVect);
 			break;
 		case 6:
+            PriceInformation(legoProductVect);
 			break;
 		case 7:
+            MinifigureInfo(legoProductVect);
 			break;
 		case 8:
+            BuyOneOfEverything(legoProductVect);
 			break;
 		case 0:
 			break;
@@ -350,5 +443,3 @@ int main()
    
 	return 0;
 }
-
-
