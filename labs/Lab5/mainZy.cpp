@@ -8,9 +8,14 @@ void readSpaceShipFileBinary(ifstream& binaryData) {
     cout << "# of spaceships: " << numOfSpaceships << endl;
     char* nameOfShip;
     char* classOfShip;
+    short* lengthOfShip;
+    int* shieldCapcityOfShip;
+    int* numOfWeaponsOnShip;
+
 
     for (int i = 0; i < 1; i++) {
         int lengthOfName;
+
         binaryData.read((char*)&lengthOfName, sizeof(int));
         nameOfShip = new char[lengthOfName];
         binaryData.read(nameOfShip, lengthOfName);
@@ -24,6 +29,12 @@ void readSpaceShipFileBinary(ifstream& binaryData) {
 
         cout << "lenght of class " << lengthOfName << endl;
         cout << "Name of class " << classOfShip << endl;
+        binaryData.read((char*)&lengthOfShip, sizeof(short));
+        binaryData.read((char*)&shieldCapcityOfShip, sizeof(int));
+        binaryData.read((char*)&numOfWeaponsOnShip, sizeof(int));
+        binaryData.read(classOfShip, lengthOfName);
+
+
     }
 }
 
