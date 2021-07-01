@@ -1,4 +1,4 @@
 
-g++ mainZy.cpp -o mainZy
+g++ mainZy.cpp extrafile.cpp -o mainZy
 
 ./mainZy
