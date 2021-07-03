@@ -26,12 +26,13 @@ class ImageProcessingTGA {
     };
     
     ifstream fileInput;
+    HeaderTGA fileHeaderData;
 
     public:
     // constructor
-    ImageProcessingTGA() {
-    }
+    ImageProcessingTGA();
 
+    // Read in behaviour
     void readInFileTGA(string file);
     
 };
