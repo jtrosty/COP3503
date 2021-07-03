@@ -1,5 +1,5 @@
 @echo off
 
-g++ mainClass.cpp extrafile.cpp -o mainClass
+g++ mainZy.cpp extrafile.cpp leaker.c -o mainZy -Wall 
 
-mainClass.exe
+mainZy.exe

@@ -6,6 +6,7 @@ using std::ifstream;
 using std::vector;
 using std::cout;
 using std::endl;
+#include "leaker.h"
 
 class StarShipHangar {
 
@@ -24,13 +25,14 @@ class StarShipHangar {
         int shieldCapcityOfShip;
         float warpSpeedOfShip;
         int numOfWeaponsOnShip;
-        vector<Weapon> weaponsOnShip;
+        vector<StarShipHangar::Weapon> weaponsOnShip;
     };
 
     vector<StarShip> starFleet;
 
     // Constructor, copy constructor, copy helper, and Destructor
     StarShipHangar();
+    StarShipHangar(StarShipHangar& rhs);
     StarShipHangar& operator=(StarShipHangar& rhs); 
     StarShipHangar& CopyHelper(StarShipHangar& rhs);
     ~StarShipHangar();
@@ -42,5 +44,7 @@ class StarShipHangar {
     void printStarShip(StarShip& starShip);
     void printAllStarShip();
     void printShipWithStrongestWeapon();
-
+    void printStrongestShipWithWeapons();
+    void printWeakestShipWithWeapons();
+    void printUnarmedShips();
 };
