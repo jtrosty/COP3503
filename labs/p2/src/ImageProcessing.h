@@ -59,6 +59,7 @@ class ImageProcessingTGA {
 
     // Writing behavior
     void writeFileTGA(Picture& picture);
+    void writeMonoDEBUG(Picture& picture);
 
     // Testing Function
 

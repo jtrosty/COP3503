@@ -114,6 +114,41 @@ void ImageProcessingTGA::writeFileTGA(Picture& picture) {
     }
 }
 
+void ImageProcessingTGA::writeMonoDEBUG(Picture& picture) {
+    fileOutput.open("oneColor.tga", ios_base::binary |ios_base::out);
+    if(fileOutput.is_open()) {
+
+        cout << "Commence wite of Header: " << endl;
+        fileOutput.write((char*)&picture.header->idLength,        sizeof(picture.header->idLength));
+        fileOutput.write((char*)&picture.header->colorMapType,    sizeof(picture.header->colorMapType));
+        fileOutput.write((char*)&picture.header->dataTypeCode,    sizeof(picture.header->dataTypeCode));
+        fileOutput.write((char*)&picture.header->colorMapOrigin,  sizeof(picture.header->colorMapOrigin));
+        fileOutput.write((char*)&picture.header->colorMapLength,  sizeof(picture.header->colorMapLength));
+        fileOutput.write((char*)&picture.header->colorMapDepth,   sizeof(picture.header->colorMapDepth));
+        fileOutput.write((char*)&picture.header->xOrigin,         sizeof(picture.header->xOrigin));
+        fileOutput.write((char*)&picture.header->yOrigin,         sizeof(picture.header->yOrigin));
+        fileOutput.write((char*)&picture.header->width,           sizeof(picture.header->width));
+        fileOutput.write((char*)&picture.header->height,          sizeof(picture.header->height));
+        fileOutput.write((char*)&picture.header->bitsPerPixel,    sizeof(picture.header->bitsPerPixel));
+        fileOutput.write((char*)&picture.header->imageDescriptor, sizeof(picture.header->imageDescriptor));
+
+        cout << "Commence write of pixels: " << endl;
+        cout << "Length is: " << *picture.lengthOfPixelData << endl;
+        char color = (char)98;
+
+        for (int i = 0; i < *(picture.lengthOfPixelData); i++) {
+            //cout << i << " ";
+            fileOutput.write(&color, sizeof(unsigned char));
+            fileOutput.write(&color, sizeof(unsigned char));
+            fileOutput.write(&color, sizeof(unsigned char));
+        }
+        fileOutput.close();
+    }
+    else {
+        cout << "Ouptut file did not open" << endl;
+    }
+}
+
 /**************************************************************
  * ************************ Accessors *************************
  * ************************************************************/

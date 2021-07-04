@@ -18,6 +18,11 @@ int main() {
     ImageProcessingTGA imageProcessor;
     imageProcessor.readInFileTGA("test.tga");
     imageProcessor.writeFileTGA(imageProcessor.getPicture(0));
+    cout << "the header #############################" << endl;
+    imageProcessor.printHeader(*(imageProcessor.getPicture(0).header));
+    cout << "mono debug #############################" << endl;
+    imageProcessor.writeMonoDEBUG(imageProcessor.getPicture(0));
+    imageProcessor.readInFileTGA("oneColor.tga");
 
     return 0;
 }
