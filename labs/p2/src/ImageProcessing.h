@@ -9,6 +9,7 @@ using std::string;
 using std::vector;
 using std::cout;
 using std::endl;
+using std::boolalpha;
 
 class ImageProcessingTGA {
 
@@ -46,7 +47,7 @@ class ImageProcessingTGA {
     ImageProcessingTGA();
 
     // Read in behaviour
-    void readInFileTGA(string file);
+    char readInFileTGA(string file);
 
     // Writing behavior
     void writeFileTGA(Picture& picture);

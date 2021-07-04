@@ -1,9 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include "ImageProcessing.h"
 #include <string.h>
 
-//using namespace std;
+#include "ImageProcessing.h"
 
 using std::ifstream;
 using std::ios_base;
@@ -16,10 +15,10 @@ using std::cin;
 int main() {
     cout << "Test complete" << endl;
 
+    //string fileToCopy = "..\\input\\layer1.tga";
     ImageProcessingTGA imageProcessor;
+    cout << imageProcessor.readInFileTGA("..\\input\\layer1.tga") << endl;
 
-    
-   
 
     return 0;
 }

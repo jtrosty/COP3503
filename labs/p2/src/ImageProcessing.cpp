@@ -1,15 +1,20 @@
 #include "ImageProcessing.h"
 
+// Constructor
+ImageProcessingTGA::ImageProcessingTGA() {}
+
 /**************************************************************
  * ************** Read In Behaviour ***************************
  * ************************************************************/
 
-void ImageProcessingTGA::readInFileTGA(string file) {
+char ImageProcessingTGA::readInFileTGA(string file) {
+    cout << "Entered read" << endl; 
 
     HeaderTGA fileHeaderData;
     fileInput.open(file, ios_base::in);
     if (fileInput.is_open()) {
         cout << "File open" << endl; 
+        return 'F';
     }
 
     // Reads in the header
@@ -31,9 +36,9 @@ void ImageProcessingTGA::readInFileTGA(string file) {
     Pixel* pixelData = new Pixel[size];
 
     for (int i = 0; i < size; i++) {
-        fileInput.read((char*)pixelData[i].blue, sizeof(char));
-        fileInput.read((char*)pixelData[i].green, sizeof(char));
-        fileInput.read((char*)pixelData[i].red, sizeof(char));
+        fileInput.read((char*)pixelData[i].blue, sizeof(unsigned char));
+        fileInput.read((char*)pixelData[i].green, sizeof(unsigned char));
+        fileInput.read((char*)pixelData[i].red, sizeof(unsigned char));
     }
     
     Picture* picture = new Picture;
@@ -43,6 +48,7 @@ void ImageProcessingTGA::readInFileTGA(string file) {
     pictures.push_back(picture);
 
     fileInput.close();
+    return 'S';
 }
 
 
