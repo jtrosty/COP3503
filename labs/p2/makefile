@@ -1,8 +1,8 @@
 #g++ -0 bin/program src/*.cpp exmaple from Professor
 
 build:
-	g++ src\main.cpp src\ImageProcessing.cpp -o project2 
-	project2.exe
+	g++ src//main.cpp src//ImageProcessing.cpp -o project2 
+	./project2
 
 clean:
-	del project2.exe
+	rm project2

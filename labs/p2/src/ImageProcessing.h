@@ -40,6 +40,7 @@ class ImageProcessingTGA {
     struct Picture {
         HeaderTGA* header;
         Pixel* pixelData;
+        int* lengthOfPixelData;
     };
     
     ifstream fileInput;
@@ -54,7 +55,7 @@ class ImageProcessingTGA {
     ~ImageProcessingTGA();
 
     // Read in behaviour
-    char readInFileTGA(string file);
+    char readInFileTGA(char* fileName);
 
     // Writing behavior
     void writeFileTGA(Picture& picture);
