@@ -11,6 +11,7 @@ using std::cout;
 using std::endl;
 using std::cin;
 
+//#include "leaker.h"
 
 int main() {
     cout << "Test complete" << endl;

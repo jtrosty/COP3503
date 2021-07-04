@@ -4,12 +4,15 @@
 #include <vector>
 
 using std::ifstream;
+using std::ofstream;
 using std::ios_base;
 using std::string;
 using std::vector;
 using std::cout;
 using std::endl;
 using std::boolalpha;
+
+//#include "leaker.h"
 
 class ImageProcessingTGA {
 
@@ -35,16 +38,20 @@ class ImageProcessingTGA {
     };
 
     struct Picture {
-        HeaderTGA header;
+        HeaderTGA* header;
         Pixel* pixelData;
     };
     
     ifstream fileInput;
+    ofstream fileOutput;
     vector<Picture*> pictures;
 
     public:
     // constructor
     ImageProcessingTGA();
+
+    // Destructor
+    ~ImageProcessingTGA();
 
     // Read in behaviour
     char readInFileTGA(string file);
@@ -52,8 +59,10 @@ class ImageProcessingTGA {
     // Writing behavior
     void writeFileTGA(Picture& picture);
 
-
     // Testing Function
+
+    // Accessors
+    Picture& getPicture(int element);
 
     
 };
