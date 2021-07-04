@@ -65,5 +65,8 @@ class ImageProcessingTGA {
     // Accessors
     Picture& getPicture(int element);
 
+    // Printing Behaviour 
+    void printHeader(HeaderTGA& header); 
+
     
 };

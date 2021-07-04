@@ -16,16 +16,7 @@ using std::cin;
 int main() {
     //string fileToCopy = "..\\input\\layer1.tga";
     ImageProcessingTGA imageProcessor;
-    ifstream testIn;
-    testIn.open("test.tga", ios_base::in | ios_base::binary);
-    if (testIn.is_open()) {
-        cout << "This worked" << endl;
-    }
-    else {
-        cout << "MAIN did not open" << endl;
-    }
-
-    cout << imageProcessor.readInFileTGA("test.tga") << endl;
+    imageProcessor.readInFileTGA("test.tga");
     imageProcessor.writeFileTGA(imageProcessor.getPicture(0));
 
     return 0;
