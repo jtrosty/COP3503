@@ -1,10 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <vector>
 
 using std::ifstream;
 using std::ios_base;
 using std::string;
+using std::vector;
 using std::cout;
 using std::endl;
 
@@ -24,9 +26,20 @@ class ImageProcessingTGA {
         char bitsPerPixel;
         char imageDescriptor;
     };
+
+    struct Pixel {
+        unsigned char blue;
+        unsigned char green;
+        unsigned char red;
+    };
+
+    struct Picture {
+        HeaderTGA header;
+        Pixel* pixelData;
+    };
     
     ifstream fileInput;
-    HeaderTGA fileHeaderData;
+    vector<Picture*> pictures;
 
     public:
     // constructor
@@ -34,5 +47,12 @@ class ImageProcessingTGA {
 
     // Read in behaviour
     void readInFileTGA(string file);
+
+    // Writing behavior
+    void writeFileTGA(Picture& picture);
+
+
+    // Testing Function
+
     
 };
