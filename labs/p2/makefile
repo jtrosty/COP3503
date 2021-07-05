@@ -5,3 +5,4 @@ build:
 
 clean:
 	del project2
+	del *.tga

@@ -64,6 +64,7 @@ class ImageProcessingTGA {
     // Blend Behavior
     void multiply(Picture& lhs, Picture& rhs);
     void subtract(Picture& lhs, Picture& rhs);
+    void screen(Picture& lhs, Picture& rhs);
 
     // Testing Function
     int testPictures(char* lhs, char* rhs);
@@ -75,8 +76,8 @@ class ImageProcessingTGA {
     void printHeader(HeaderTGA& header); 
 
     // Helper math functions
-    char clampSubtractChar(unsigned char& lhs, unsigned char& rhs);
-    char clampAddChar(unsigned char& lhs, unsigned char& rhs);
+    unsigned char clampSubtractChar(unsigned char& lhs, unsigned char& rhs);
+    unsigned char clampAddChar(unsigned char& lhs, unsigned char& rhs);
 
     
 };

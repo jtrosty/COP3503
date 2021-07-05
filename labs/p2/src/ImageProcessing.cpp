@@ -30,7 +30,6 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
     HeaderTGA* fileHeaderData = new HeaderTGA;
     fileInput.open(fileName, ios_base::in |ios_base::binary);
     if (fileInput.is_open()) {
-        cout << "File is open" << endl;
         // Reads in the header
         fileInput.read((char*)&fileHeaderData->idLength,        sizeof(fileHeaderData->idLength));
         fileInput.read((char*)&fileHeaderData->colorMapType,    sizeof(fileHeaderData->colorMapType));
@@ -45,11 +44,8 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
         fileInput.read((char*)&fileHeaderData->bitsPerPixel,    sizeof(fileHeaderData->bitsPerPixel));
         fileInput.read((char*)&fileHeaderData->imageDescriptor, sizeof(fileHeaderData->imageDescriptor));
 
-        printHeader(*fileHeaderData);
-
         // Read In the pixels of the file. 
         int size = (fileHeaderData->width) * (fileHeaderData->height);
-        cout << "Size is: " << size << endl;
         Pixel* pixelData = new Pixel[size];
 
         for (int i = 0; i < size; i++) {
@@ -58,16 +54,12 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
             fileInput.read((char*)&pixelData[i].red, sizeof(unsigned char));
         }
         
-        cout << "finsihed read of pixel data" << endl;
-        
         Picture* picture = new Picture;
         picture->header = fileHeaderData;
         picture->pixelData = pixelData;
         picture->lengthOfPixelData = new int(size);
 
         pictures.push_back(picture);
-        cout << "################# pictures #######################" << endl;
-        printHeader(*pictures.at(0)->header);
 
         fileInput.close();
         return 'S';
@@ -163,9 +155,10 @@ void ImageProcessingTGA::multiply(Picture& lhs, Picture& rhs) {
     int isSameLength = 0;
     int longest = 0;
     int shortest = 0;
-    const int SIZEBYTE = 255;
+    const float SIZEBYTE = 255.0f;
+    const float ROUND = 0.5f;
+
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
-        cout << "Same length" << endl;
         result->header = lhs.header;
         result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
         longest = *lhs.lengthOfPixelData;
@@ -192,17 +185,17 @@ void ImageProcessingTGA::multiply(Picture& lhs, Picture& rhs) {
 
         for (int i = 0; i < longest; i++) {
             // Blue
-            x = ((float)lhs.pixelData[i].blue  / 255);
-            y = ((float)rhs.pixelData[i].blue  / 255);
-            resultPixels[i].blue =  (unsigned char)(((x * y) * 255.0f) + 0.5f);
+            x = ((float)lhs.pixelData[i].blue  / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].blue  / SIZEBYTE);
+            resultPixels[i].blue =  (unsigned char)(((x * y) * SIZEBYTE) + ROUND);
             // Green
-            x = ((float)lhs.pixelData[i].green  / 255);
-            y = ((float)rhs.pixelData[i].green  / 255);
-            resultPixels[i].green = (unsigned char)(((x * y) * 255.0f) + 0.5f);
+            x = ((float)lhs.pixelData[i].green  / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].green  / SIZEBYTE);
+            resultPixels[i].green = (unsigned char)(((x * y) * SIZEBYTE) + ROUND);
             // Red
-            x = ((float)lhs.pixelData[i].red  / 255);
-            y = ((float)rhs.pixelData[i].red  / 255);
-            resultPixels[i].red =   (unsigned char)(((x * y) * 255.0f) + 0.5f);
+            x = ((float)lhs.pixelData[i].red  / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].red  / SIZEBYTE);
+            resultPixels[i].red =   (unsigned char)(((x * y) * SIZEBYTE) + ROUND);
         }
         result->pixelData = resultPixels;
     }
@@ -215,7 +208,7 @@ void ImageProcessingTGA::subtract(Picture& lhs, Picture& rhs) {
     int isSameLength = 0;
     int longest = 0;
     int shortest = 0;
-    const int SIZEBYTE = 255;
+
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
         cout << "Same length" << endl;
         result->header = lhs.header;
@@ -231,14 +224,63 @@ void ImageProcessingTGA::subtract(Picture& lhs, Picture& rhs) {
     }
     if (isSameLength == 0) {
         Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+        float x = 0.0f;
+        float y = 0.0f;
 
         for (int i = 0; i < longest; i++) {
             // Blue
             resultPixels[i].blue =  clampSubtractChar(lhs.pixelData[i].blue, rhs.pixelData[i].blue);
             // Green
-            resultPixels[i].green =  clampSubtractChar(lhs.pixelData[i].green, rhs.pixelData[i].green);
+            resultPixels[i].green = clampSubtractChar(lhs.pixelData[i].green, rhs.pixelData[i].green);
             // Red
-            resultPixels[i].blue =  clampSubtractChar(lhs.pixelData[i].red, rhs.pixelData[i].red);
+            resultPixels[i].red =  clampSubtractChar(lhs.pixelData[i].red, rhs.pixelData[i].red);
+        }
+        result->pixelData = resultPixels;
+    }
+    pictures.push_back(result);
+
+}
+
+void ImageProcessingTGA::screen(Picture& lhs, Picture& rhs) {
+    Picture* result = new Picture;
+    int lengthLhs = *lhs.lengthOfPixelData;
+    int isSameLength = 0;
+    int longest = 0;
+    int shortest = 0;
+    const float SIZEBYTE = 255.0f;
+    const float ROUND = 0.5f;
+
+    if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
+        cout << "Same length" << endl;
+        result->header = lhs.header;
+        result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
+        longest = *lhs.lengthOfPixelData;
+        isSameLength = 0;
+    }
+    else if (*lhs.lengthOfPixelData > *rhs.lengthOfPixelData) {
+        // Logic if the size is not the same and lhs is bigger
+    }
+    else {
+        // Logic if the size is not the same and rhs is bigger
+    }
+    if (isSameLength == 0) {
+        Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+        float x = 0.0f;
+        float y = 0.0f;
+
+        for (int i = 0; i < longest; i++) {
+            // Blue
+            x = ((float)lhs.pixelData[i].blue / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].blue / SIZEBYTE);
+            resultPixels[i].blue =  (unsigned char)(((1 - (1 - x) * (1 -y)) * SIZEBYTE) + ROUND);
+            // Green
+            x = ((float)lhs.pixelData[i].green / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].green / SIZEBYTE);
+            resultPixels[i].green =  (unsigned char)(((1 - (1 - x) * (1 -y)) * SIZEBYTE) + ROUND);
+            // Red
+            x = ((float)lhs.pixelData[i].red  / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].red  / SIZEBYTE);
+            resultPixels[i].red =  (unsigned char)(((1 - (1 - x) * (1 -y)) * SIZEBYTE) + ROUND);
         }
         result->pixelData = resultPixels;
     }
@@ -288,10 +330,12 @@ void ImageProcessingTGA::subtract(Picture& lhs, Picture& rhs) {
         }
         else {
             cout << "Files are not the same size. LHS size: " << lengthLhs << " RHS: " << lengthRhs << endl;
+            return 0;
         }
     }
     else {
         cout << "Files did not open properly. Check filename and location." << endl;
+        return 0;
     }
     // Return 1 for success
     cout << "Test Passsed,  files are the same" << endl;
@@ -332,12 +376,12 @@ void ImageProcessingTGA::printHeader(HeaderTGA& header) {
  * ********************** Helper Functions ********************
  * ************************************************************/
 
-char ImageProcessingTGA::clampSubtractChar(unsigned char& lhs, unsigned char& rhs) {
+unsigned char ImageProcessingTGA::clampSubtractChar(unsigned char& lhs, unsigned char& rhs) {
     if ((lhs - rhs) < 0) return (char)0;
     else return (lhs - rhs);
 }
 
-char ImageProcessingTGA::clampAddChar(unsigned char& lhs, unsigned char& rhs) {
+unsigned char ImageProcessingTGA::clampAddChar(unsigned char& lhs, unsigned char& rhs) {
     if ((lhs - rhs) > 255) return (char)255;
     else return (lhs + rhs);
 }
