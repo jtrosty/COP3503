@@ -82,8 +82,9 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
  * ************** Write Out Behaviour *************************
  * ************************************************************/
 
-void ImageProcessingTGA::writeFileTGA(Picture& picture) {
-    fileOutput.open("writeTest.tga", ios_base::binary |ios_base::out);
+void ImageProcessingTGA::writeFileTGA(Picture& picture, char* title) {
+
+    fileOutput.open(title, ios_base::binary |ios_base::out);
     if(fileOutput.is_open()) {
 
         cout << "Commence wite of Header: " << endl;
@@ -151,8 +152,105 @@ void ImageProcessingTGA::writeMonoDEBUG(Picture& picture) {
 }
 
 /**************************************************************
- * ************************ Accessors *************************
+ * ********************* Blend Behaviour **********************
  * ************************************************************/
+
+// CODE ASSUMES BOTH PICTURES HAVE SAME SIZE ADN WIDTH.
+void ImageProcessingTGA::multiply(Picture& lhs, Picture& rhs) {
+    
+    Picture* result = new Picture;
+    int lengthLhs = *lhs.lengthOfPixelData;
+    int isSameLength = 0;
+    int longest = 0;
+    int shortest = 0;
+    const int SIZEBYTE = 255;
+    if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
+        cout << "Same length" << endl;
+        result->header = lhs.header;
+        result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
+        longest = *lhs.lengthOfPixelData;
+        isSameLength = 0;
+    }
+    else if (*lhs.lengthOfPixelData > *rhs.lengthOfPixelData) {
+        longest = *lhs.lengthOfPixelData;
+        result->header = lhs.header;
+        result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
+        shortest = *rhs.lengthOfPixelData;
+        isSameLength = -1;
+    }
+    else {
+        longest = *rhs.lengthOfPixelData;
+        result->header = rhs.header;
+        result->lengthOfPixelData = new int(*rhs.lengthOfPixelData);
+        shortest = *lhs.lengthOfPixelData;
+        isSameLength = 1;
+    }
+    if (isSameLength == 0) {
+        Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+        float x = 0.0f;
+        float y = 0.0f;
+
+        for (int i = 0; i < longest; i++) {
+            // Blue
+            x = ((float)lhs.pixelData[i].blue  / 255);
+            y = ((float)rhs.pixelData[i].blue  / 255);
+            resultPixels[i].blue =  (unsigned char)(((x * y) * 255.0f) + 0.5f);
+            // Green
+            x = ((float)lhs.pixelData[i].green  / 255);
+            y = ((float)rhs.pixelData[i].green  / 255);
+            resultPixels[i].green = (unsigned char)(((x * y) * 255.0f) + 0.5f);
+            // Red
+            x = ((float)lhs.pixelData[i].red  / 255);
+            y = ((float)rhs.pixelData[i].red  / 255);
+            resultPixels[i].red =   (unsigned char)(((x * y) * 255.0f) + 0.5f);
+        }
+        result->pixelData = resultPixels;
+    }
+    pictures.push_back(result);
+}
+
+void ImageProcessingTGA::subtract(Picture& lhs, Picture& rhs) {
+    Picture* result = new Picture;
+    int lengthLhs = *lhs.lengthOfPixelData;
+    int isSameLength = 0;
+    int longest = 0;
+    int shortest = 0;
+    const int SIZEBYTE = 255;
+    if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
+        cout << "Same length" << endl;
+        result->header = lhs.header;
+        result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
+        longest = *lhs.lengthOfPixelData;
+        isSameLength = 0;
+    }
+    else if (*lhs.lengthOfPixelData > *rhs.lengthOfPixelData) {
+        // Logic if the size is not the same and lhs is bigger
+    }
+    else {
+        // Logic if the size is not the same and rhs is bigger
+    }
+    if (isSameLength == 0) {
+        Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+
+        for (int i = 0; i < longest; i++) {
+            // Blue
+            resultPixels[i].blue =  clampSubtractChar(lhs.pixelData[i].blue, rhs.pixelData[i].blue);
+            // Green
+            resultPixels[i].green =  clampSubtractChar(lhs.pixelData[i].green, rhs.pixelData[i].green);
+            // Red
+            resultPixels[i].blue =  clampSubtractChar(lhs.pixelData[i].red, rhs.pixelData[i].red);
+        }
+        result->pixelData = resultPixels;
+    }
+    pictures.push_back(result);
+
+}
+
+/**************************************************************
+ * ************************ Test Code *************************
+ * ************************************************************/
+
+// This functions test equivalence between 2 pictures 1 byte at a time. 
  int ImageProcessingTGA::testPictures(char* lhs, char* rhs) {
     ifstream fileRhs;
     fileInput.open(lhs, ios_base::binary | ios_base::in);
@@ -196,8 +294,9 @@ void ImageProcessingTGA::writeMonoDEBUG(Picture& picture) {
         cout << "Files did not open properly. Check filename and location." << endl;
     }
     // Return 1 for success
-    cout << "Test Passsed, both files are the same" << endl;
-
+    cout << "Test Passsed,  files are the same" << endl;
+    fileInput.close();
+    fileRhs.close();
     return 1;
 }
 
@@ -227,4 +326,18 @@ void ImageProcessingTGA::printHeader(HeaderTGA& header) {
     cout << "height: " << header.height << endl;
     cout << "bitsPerPixedl: " << (int)header.bitsPerPixel << endl;
     cout << "imageDescriptor: " << (int)header.imageDescriptor << endl;
+}
+
+/**************************************************************
+ * ********************** Helper Functions ********************
+ * ************************************************************/
+
+char ImageProcessingTGA::clampSubtractChar(unsigned char& lhs, unsigned char& rhs) {
+    if ((lhs - rhs) < 0) return (char)0;
+    else return (lhs - rhs);
+}
+
+char ImageProcessingTGA::clampAddChar(unsigned char& lhs, unsigned char& rhs) {
+    if ((lhs - rhs) > 255) return (char)255;
+    else return (lhs + rhs);
 }

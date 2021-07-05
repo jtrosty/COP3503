@@ -58,8 +58,12 @@ class ImageProcessingTGA {
     char readInFileTGA(char* fileName);
 
     // Writing behavior
-    void writeFileTGA(Picture& picture);
+    void writeFileTGA(Picture& picture, char* title);
     void writeMonoDEBUG(Picture& picture);
+
+    // Blend Behavior
+    void multiply(Picture& lhs, Picture& rhs);
+    void subtract(Picture& lhs, Picture& rhs);
 
     // Testing Function
     int testPictures(char* lhs, char* rhs);
@@ -69,6 +73,10 @@ class ImageProcessingTGA {
 
     // Printing Behaviour 
     void printHeader(HeaderTGA& header); 
+
+    // Helper math functions
+    char clampSubtractChar(unsigned char& lhs, unsigned char& rhs);
+    char clampAddChar(unsigned char& lhs, unsigned char& rhs);
 
     
 };
