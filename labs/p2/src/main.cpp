@@ -17,12 +17,13 @@ int main() {
     //string fileToCopy = "..\\input\\layer1.tga";
     ImageProcessingTGA imageProcessor;
     imageProcessor.readInFileTGA("test.tga");
-    imageProcessor.writeFileTGA(imageProcessor.getPicture(0));
     cout << "the header #############################" << endl;
-    imageProcessor.printHeader(*(imageProcessor.getPicture(0).header));
-    cout << "mono debug #############################" << endl;
-    imageProcessor.writeMonoDEBUG(imageProcessor.getPicture(0));
-    imageProcessor.readInFileTGA("oneColor.tga");
+    ImageProcessingTGA::HeaderTGA y = *imageProcessor.getPicture(0).header;
+    imageProcessor.printHeader(y);
+    //imageProcessor.writeFileTGA(imageProcessor.getPicture(0));
+    //cout << "mono debug #############################" << endl;
+    //imageProcessor.writeMonoDEBUG(imageProcessor.getPicture(0));
+    //imageProcessor.readInFileTGA("oneColor.tga");
 
     return 0;
 }

@@ -32,17 +32,17 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
     if (fileInput.is_open()) {
         cout << "File is open" << endl;
         // Reads in the header
-        fileInput.read((char*)&fileHeaderData.idLength,       sizeof(fileHeaderData.idLength));
-        fileInput.read((char*)&fileHeaderData.colorMapType,   sizeof(fileHeaderData.colorMapType));
-        fileInput.read((char*)&fileHeaderData.dataTypeCode,   sizeof(fileHeaderData.dataTypeCode));
-        fileInput.read((char*)&fileHeaderData.colorMapOrigin, sizeof(fileHeaderData.colorMapOrigin));
-        fileInput.read((char*)&fileHeaderData.colorMapLength, sizeof(fileHeaderData.colorMapLength));
-        fileInput.read((char*)&fileHeaderData.colorMapDepth,  sizeof(fileHeaderData.colorMapDepth));
-        fileInput.read((char*)&fileHeaderData.xOrigin,        sizeof(fileHeaderData.xOrigin));
-        fileInput.read((char*)&fileHeaderData.yOrigin,        sizeof(fileHeaderData.yOrigin));
-        fileInput.read((char*)&fileHeaderData.width,          sizeof(fileHeaderData.width));
-        fileInput.read((char*)&fileHeaderData.height,         sizeof(fileHeaderData.height));
-        fileInput.read((char*)&fileHeaderData.bitsPerPixel,   sizeof(fileHeaderData.bitsPerPixel));
+        fileInput.read((char*)&fileHeaderData.idLength,        sizeof(fileHeaderData.idLength));
+        fileInput.read((char*)&fileHeaderData.colorMapType,    sizeof(fileHeaderData.colorMapType));
+        fileInput.read((char*)&fileHeaderData.dataTypeCode,    sizeof(fileHeaderData.dataTypeCode));
+        fileInput.read((char*)&fileHeaderData.colorMapOrigin,  sizeof(fileHeaderData.colorMapOrigin));
+        fileInput.read((char*)&fileHeaderData.colorMapLength,  sizeof(fileHeaderData.colorMapLength));
+        fileInput.read((char*)&fileHeaderData.colorMapDepth,   sizeof(fileHeaderData.colorMapDepth));
+        fileInput.read((char*)&fileHeaderData.xOrigin,         sizeof(fileHeaderData.xOrigin));
+        fileInput.read((char*)&fileHeaderData.yOrigin,         sizeof(fileHeaderData.yOrigin));
+        fileInput.read((char*)&fileHeaderData.width,           sizeof(fileHeaderData.width));
+        fileInput.read((char*)&fileHeaderData.height,          sizeof(fileHeaderData.height));
+        fileInput.read((char*)&fileHeaderData.bitsPerPixel,    sizeof(fileHeaderData.bitsPerPixel));
         fileInput.read((char*)&fileHeaderData.imageDescriptor, sizeof(fileHeaderData.imageDescriptor));
 
         printHeader(fileHeaderData);
@@ -66,6 +66,8 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
         picture->lengthOfPixelData = new int(size);
 
         pictures.push_back(picture);
+        cout << "################# pictures #######################" << endl;
+        printHeader(*pictures.at(0)->header);
 
         fileInput.close();
         return 'S';
@@ -75,7 +77,6 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
         return 'F';
     }
 }
-
 
 /**************************************************************
  * ************** Write Out Behaviour *************************
@@ -166,13 +167,13 @@ void ImageProcessingTGA::printHeader(HeaderTGA& header) {
     cout << "idLenght: " << (int)header.idLength << endl;
     cout << "colorMapType: " << (int)header.colorMapType << endl;
     cout << "dataTypeCode: " << (int)header.dataTypeCode << endl;
-    cout << "colorMapOrigin: " << (int)header.colorMapOrigin << endl;
-    cout << "colorMapLenght: " << (int)header.colorMapLength << endl;
+    cout << "colorMapOrigin: " << header.colorMapOrigin << endl;
+    cout << "colorMapLenght: " << header.colorMapLength << endl;
     cout << "colorMapDepth: " << (int)header.colorMapDepth << endl;
-    cout << "x Origin: " << (int)header.xOrigin << endl;
-    cout << "y Origin: " << (int)header.yOrigin << endl;
-    cout << "width: " << (int)header.width << endl;
-    cout << "height: " << (int)header.height << endl;
+    cout << "x Origin: " << header.xOrigin << endl;
+    cout << "y Origin: " << header.yOrigin << endl;
+    cout << "width: " << header.width << endl;
+    cout << "height: " << header.height << endl;
     cout << "bitsPerPixedl: " << (int)header.bitsPerPixel << endl;
     cout << "imageDescriptor: " << (int)header.imageDescriptor << endl;
 }

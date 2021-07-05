@@ -16,6 +16,7 @@ using std::boolalpha;
 
 class ImageProcessingTGA {
 
+    public:
     struct HeaderTGA {
         char idLength;
         char colorMapType;
@@ -47,7 +48,6 @@ class ImageProcessingTGA {
     ofstream fileOutput;
     vector<Picture*> pictures;
 
-    public:
     // constructor
     ImageProcessingTGA();
 
