@@ -156,25 +156,48 @@ void ImageProcessingTGA::writeMonoDEBUG(Picture& picture) {
  int ImageProcessingTGA::testPictures(char* lhs, char* rhs) {
     ifstream fileRhs;
     fileInput.open(lhs, ios_base::binary | ios_base::in);
-    fileRhs.open(lhs, ios_base::binary | ios_base::in);
+    fileRhs.open(rhs, ios_base::binary | ios_base::in);
     if (fileInput && fileRhs) {
-        char* lhsByte;
-        char* rhsByte;
-        int counter = 0;
 
-        while (fileInput.read(lhsByte, sizeof(char)) || fileRhs.read(rhsByte, sizeof(char))) {
-            counter++;
-            if (lhsByte == rhsByte) continue;
-            else {
-                cout << "The files are not equivalent. Counter: " << counter << endl;
-                return 0; // return 0 for failure
+        // Length of LHS file
+        fileInput.seekg(0, fileInput.end);
+        int lengthLhs = fileInput.tellg();
+        fileInput.seekg(0, fileInput.beg);
+
+        // Lenght of RHS file 
+        fileRhs.seekg(0, fileRhs.end);
+        int lengthRhs = fileRhs.tellg();
+        fileRhs.seekg(0, fileRhs.beg);
+        cout << "Files size. LHS size: " << lengthLhs << " RHS: " << lengthRhs << endl;
+
+        if (lengthLhs == lengthRhs) {
+            char* lhsByte = new char;
+            char* rhsByte = new char;
+            for (int i = 0; i < lengthLhs; i++) {
+                fileInput.read(lhsByte, sizeof(char));
+                fileRhs.read(rhsByte, sizeof(char));
+                if (*lhsByte == *rhsByte) continue;
+                else {
+                    cout << "The files are not equivalent. Counter: " << i << endl;
+                    cout << "LHS " << *lhsByte << " RHS: " << *rhsByte << endl;
+                    delete lhsByte;
+                    delete rhsByte;
+                    return 0; // return 0 for failure
+                }
             }
+            delete lhsByte;
+            delete rhsByte;
+        }
+        else {
+            cout << "Files are not the same size. LHS size: " << lengthLhs << " RHS: " << lengthRhs << endl;
         }
     }
     else {
         cout << "Files did not open properly. Check filename and location." << endl;
     }
     // Return 1 for success
+    cout << "Test Passsed, both files are the same" << endl;
+
     return 1;
 }
 
