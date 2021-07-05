@@ -65,6 +65,13 @@ class ImageProcessingTGA {
     void multiply(Picture& lhs, Picture& rhs);
     void subtract(Picture& lhs, Picture& rhs);
     void screen(Picture& lhs, Picture& rhs);
+    void overlay(Picture& lhs, Picture& rhs);
+    void addAdjustRGB(Picture& pic, unsigned char r, unsigned char g, unsigned char b);
+    void scaleAdjustRGB(Picture& pic, float r, float g, float b);
+    void individualChannel(Picture& pic, char channel);
+    void combinePicsEachOneChannel(Picture& red, Picture& green, Picture& blue);
+    void rotate180(Picture& pic);
+    void extraCreditCombine4Pics(Picture& topLeft, Picture& topRight, Picture& bottomLeft, Picture& bottomRight);
 
     // Testing Function
     int testPictures(char* lhs, char* rhs);
@@ -78,6 +85,7 @@ class ImageProcessingTGA {
     // Helper math functions
     unsigned char clampSubtractChar(unsigned char& lhs, unsigned char& rhs);
     unsigned char clampAddChar(unsigned char& lhs, unsigned char& rhs);
+    unsigned char clampScaleChar(unsigned char& color, float& scale);
 
     
 };

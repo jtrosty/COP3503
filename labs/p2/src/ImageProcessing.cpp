@@ -79,7 +79,6 @@ void ImageProcessingTGA::writeFileTGA(Picture& picture, char* title) {
     fileOutput.open(title, ios_base::binary |ios_base::out);
     if(fileOutput.is_open()) {
 
-        cout << "Commence wite of Header: " << endl;
         fileOutput.write((char *)&picture.header->idLength,        sizeof(picture.header->idLength));
         fileOutput.write((char *)&picture.header->colorMapType,    sizeof(picture.header->colorMapType));
         fileOutput.write((char *)&picture.header->dataTypeCode,    sizeof(picture.header->dataTypeCode));
@@ -93,8 +92,6 @@ void ImageProcessingTGA::writeFileTGA(Picture& picture, char* title) {
         fileOutput.write((char *)&picture.header->bitsPerPixel,    sizeof(picture.header->bitsPerPixel));
         fileOutput.write((char *)&picture.header->imageDescriptor, sizeof(picture.header->imageDescriptor));
 
-        cout << "Commence write of pixels: " << endl;
-        cout << "Lenght is: " << *picture.lengthOfPixelData << endl;
         for (int i = 0; i < *(picture.lengthOfPixelData); i++) {
             //cout << i << " ";
             fileOutput.write((char *)&picture.pixelData[i].blue,  sizeof(unsigned char));
@@ -112,7 +109,6 @@ void ImageProcessingTGA::writeMonoDEBUG(Picture& picture) {
     fileOutput.open("oneColor.tga", ios_base::binary |ios_base::out);
     if(fileOutput.is_open()) {
 
-        cout << "Commence wite of Header: " << endl;
         fileOutput.write((char*)&picture.header->idLength,        sizeof(picture.header->idLength));
         fileOutput.write((char*)&picture.header->colorMapType,    sizeof(picture.header->colorMapType));
         fileOutput.write((char*)&picture.header->dataTypeCode,    sizeof(picture.header->dataTypeCode));
@@ -126,8 +122,6 @@ void ImageProcessingTGA::writeMonoDEBUG(Picture& picture) {
         fileOutput.write((char*)&picture.header->bitsPerPixel,    sizeof(picture.header->bitsPerPixel));
         fileOutput.write((char*)&picture.header->imageDescriptor, sizeof(picture.header->imageDescriptor));
 
-        cout << "Commence write of pixels: " << endl;
-        cout << "Length is: " << *picture.lengthOfPixelData << endl;
         char color = (char)98;
 
         for (int i = 0; i < *(picture.lengthOfPixelData); i++) {
@@ -210,7 +204,6 @@ void ImageProcessingTGA::subtract(Picture& lhs, Picture& rhs) {
     int shortest = 0;
 
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
-        cout << "Same length" << endl;
         result->header = lhs.header;
         result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
         longest = *lhs.lengthOfPixelData;
@@ -251,7 +244,6 @@ void ImageProcessingTGA::screen(Picture& lhs, Picture& rhs) {
     const float ROUND = 0.5f;
 
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
-        cout << "Same length" << endl;
         result->header = lhs.header;
         result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
         longest = *lhs.lengthOfPixelData;
@@ -285,7 +277,238 @@ void ImageProcessingTGA::screen(Picture& lhs, Picture& rhs) {
         result->pixelData = resultPixels;
     }
     pictures.push_back(result);
+}
 
+void ImageProcessingTGA::overlay(Picture& lhs, Picture& rhs) {
+    
+    Picture* result = new Picture;
+    int lengthLhs = *lhs.lengthOfPixelData;
+    int isSameLength = 0;
+    int longest = 0;
+    int shortest = 0;
+    const float SIZEBYTE = 255.0f;
+    const float ROUND = 0.5f;
+
+    if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
+        result->header = lhs.header;
+        result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
+        longest = *lhs.lengthOfPixelData;
+        isSameLength = 0;
+    }
+    else if (*lhs.lengthOfPixelData > *rhs.lengthOfPixelData) {
+        // Logic if the size is not the same and lhs is bigger
+    }
+    else {
+        // Logic if the size is not the same and rhs is bigger
+    }
+    if (isSameLength == 0) {
+        Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+        float x = 0.0f;
+        float y = 0.0f;
+
+        for (int i = 0; i < longest; i++) {
+            // Blue
+            x = ((float)lhs.pixelData[i].blue  / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].blue  / SIZEBYTE);
+            if (y < 0.5f) {
+                resultPixels[i].blue =  (unsigned char)(((2.0f * x * y) * SIZEBYTE) + ROUND);
+            }
+            else {
+                resultPixels[i].blue =  (unsigned char)(((1 - (2 * (1 - x) * (1 -y))) * SIZEBYTE) + ROUND);
+            }
+            // Green
+            x = ((float)lhs.pixelData[i].green  / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].green  / SIZEBYTE);
+            if (y < 0.5f) {
+                resultPixels[i].green =  (unsigned char)(((2.0f * x * y) * SIZEBYTE) + ROUND);
+            }
+            else {
+                resultPixels[i].green =  (unsigned char)(((1 - (2 * (1 - x) * (1 -y))) * SIZEBYTE) + ROUND);
+            }
+            // Red
+            x = ((float)lhs.pixelData[i].red  / SIZEBYTE);
+            y = ((float)rhs.pixelData[i].red  / SIZEBYTE);
+            if (y < 0.5f) {
+                resultPixels[i].red =  (unsigned char)(((2.0f * x * y) * SIZEBYTE) + ROUND);
+            }
+            else {
+                resultPixels[i].red =  (unsigned char)(((1 - (2 * (1 - x) * (1 -y))) * SIZEBYTE) + ROUND);
+            }
+        }
+        result->pixelData = resultPixels;
+    }
+    pictures.push_back(result);
+}
+
+void ImageProcessingTGA::addAdjustRGB(Picture& pic, unsigned char r, unsigned char g, unsigned char b) {
+    Picture* result = new Picture;
+    int length = *pic.lengthOfPixelData;
+    result->header = pic.header;
+    result->lengthOfPixelData = pic.lengthOfPixelData;
+
+    Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+
+    for (int i = 0; i < length; i++) {
+        // Blue
+        resultPixels[i].blue = clampAddChar(pic.pixelData[i].blue, b);
+        // Green
+        resultPixels[i].green = clampAddChar(pic.pixelData[i].green, g);
+        // Red
+        resultPixels[i].red = clampAddChar(pic.pixelData[i].red, r);
+    }
+    result->pixelData = resultPixels;
+    pictures.push_back(result);
+}
+
+void ImageProcessingTGA::scaleAdjustRGB(Picture& pic, float r, float g, float b) {
+    Picture* result = new Picture;
+    int length = *pic.lengthOfPixelData;
+    result->header = pic.header;
+    result->lengthOfPixelData = pic.lengthOfPixelData;
+
+    Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+
+    for (int i = 0; i < length; i++) {
+        // Blue
+        resultPixels[i].blue = clampScaleChar(pic.pixelData[i].blue, b);
+        // Green
+        resultPixels[i].green = clampScaleChar(pic.pixelData[i].green, g);
+        // Red
+        resultPixels[i].red = clampScaleChar(pic.pixelData[i].red, r);
+    }
+    result->pixelData = resultPixels;
+    pictures.push_back(result);
+}
+
+void ImageProcessingTGA::individualChannel(Picture& pic, char channel) {
+    Picture* result = new Picture;
+    int length = *pic.lengthOfPixelData;
+    result->header = pic.header;
+    result->lengthOfPixelData = pic.lengthOfPixelData;
+    unsigned char value;
+
+    Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+
+    for (int i = 0; i < length; i++) {
+        if (channel == 'r') value = pic.pixelData[i].red;
+        else if (channel == 'g') value = pic.pixelData[i].green;
+        else if (channel == 'b') value = pic.pixelData[i].blue;
+
+        // Blue
+        resultPixels[i].blue = value;
+        // Green
+        resultPixels[i].green = value;
+        // Red
+        resultPixels[i].red = value;
+    }
+    result->pixelData = resultPixels;
+    pictures.push_back(result);
+}
+
+// All files must be the same size
+void ImageProcessingTGA::combinePicsEachOneChannel(Picture& red, Picture& green, Picture& blue) {
+    Picture* result = new Picture;
+    int length = *red.lengthOfPixelData;
+    result->header = red.header;
+    result->lengthOfPixelData = red.lengthOfPixelData;
+
+    Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+
+    for (int i = 0; i < length; i++) {
+        // Blue
+        resultPixels[i].blue = blue.pixelData[i].blue;
+        // Green
+        resultPixels[i].green = green.pixelData[i].green;
+        // Red
+        resultPixels[i].red = red.pixelData[i].red;
+    }
+    result->pixelData = resultPixels;
+    pictures.push_back(result);
+}
+
+void ImageProcessingTGA::rotate180(Picture& pic) {
+    Picture* result = new Picture;
+    int length = *pic.lengthOfPixelData;
+    result->header = pic.header;
+    result->lengthOfPixelData = pic.lengthOfPixelData;
+
+    Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
+
+    for (int i = 0; i < length; i++) {
+        // Blue
+        resultPixels[i].blue = pic.pixelData[length -1 - i].blue;
+        // Green
+        resultPixels[i].green = pic.pixelData[length -1 - i].green;
+        // Red
+        resultPixels[i].red = pic.pixelData[length -1 - i].red;
+    }
+    result->pixelData = resultPixels;
+    pictures.push_back(result);
+}
+
+void ImageProcessingTGA::extraCreditCombine4Pics(Picture& topLeft, Picture& topRight, Picture& bottomLeft, Picture& bottomRight) {
+    Picture* result = new Picture;
+    int lengthInitial = *topLeft.lengthOfPixelData;
+    int* lengthFinal = new int(lengthInitial * 4);
+    int halfWay = *lengthFinal / 2;
+    int width = topLeft.header->width;
+    result->header = topLeft.header;
+    result->header->width = width * 2;
+    result->header->height = topLeft.header->height * 2;
+    result->lengthOfPixelData = lengthFinal;
+    Pixel* resultPixels = new Pixel[*lengthFinal];
+
+    int counterTL = 0;
+    int counterTR = 0;
+    int counterBL = 0;
+    int counterBR = 0;
+    int pictureSelect = 0;
+
+    for (int i = 0; i < *lengthFinal; i++) {
+        pictureSelect = i / width;
+        if (i < halfWay ) {
+            if (pictureSelect % 2 == 0) {
+                // Blue
+                resultPixels[i].blue = bottomLeft.pixelData[counterBL].blue;
+                // Green
+                resultPixels[i].green = bottomLeft.pixelData[counterBL].green;
+                // Red
+                resultPixels[i].red = bottomLeft.pixelData[counterBL].red;
+                counterBL++;
+            }
+            else {
+                // Blue
+                resultPixels[i].blue = bottomRight.pixelData[counterBR].blue;
+                // Green
+                resultPixels[i].green = bottomRight.pixelData[counterBR].green;
+                // Red
+                resultPixels[i].red = bottomRight.pixelData[counterBR].red;
+                counterBR++;
+            }
+        }
+        else {
+            if (pictureSelect % 2 == 0) {
+                // Blue
+                resultPixels[i].blue = topLeft.pixelData[counterTL].blue;
+                // Green
+                resultPixels[i].green = topLeft.pixelData[counterTL].green;
+                // Red
+                resultPixels[i].red = topLeft.pixelData[counterTL].red;
+                counterTL++;
+            }
+            else {
+                // Blue
+                resultPixels[i].blue = topRight.pixelData[counterTR].blue;
+                // Green
+                resultPixels[i].green = topRight.pixelData[counterTR].green;
+                // Red
+                resultPixels[i].red = topRight.pixelData[counterTR].red;
+                counterTR++;
+            }
+        }
+    }
+    result->pixelData = resultPixels;
+    pictures.push_back(result);
 }
 
 /**************************************************************
@@ -308,7 +531,7 @@ void ImageProcessingTGA::screen(Picture& lhs, Picture& rhs) {
         fileRhs.seekg(0, fileRhs.end);
         int lengthRhs = fileRhs.tellg();
         fileRhs.seekg(0, fileRhs.beg);
-        cout << "Files size. LHS size: " << lengthLhs << " RHS: " << lengthRhs << endl;
+        //cout << "Files size. LHS size: " << lengthLhs << " RHS: " << lengthRhs << endl;
 
         if (lengthLhs == lengthRhs) {
             char* lhsByte = new char;
@@ -338,7 +561,7 @@ void ImageProcessingTGA::screen(Picture& lhs, Picture& rhs) {
         return 0;
     }
     // Return 1 for success
-    cout << "Test Passsed,  files are the same" << endl;
+    cout << "Test Passsed, files are the same." << endl;
     fileInput.close();
     fileRhs.close();
     return 1;
@@ -382,6 +605,12 @@ unsigned char ImageProcessingTGA::clampSubtractChar(unsigned char& lhs, unsigned
 }
 
 unsigned char ImageProcessingTGA::clampAddChar(unsigned char& lhs, unsigned char& rhs) {
-    if ((lhs - rhs) > 255) return (char)255;
+    if ((lhs + rhs) > 255) return (char)255;
     else return (lhs + rhs);
+}
+
+unsigned char ImageProcessingTGA::clampScaleChar(unsigned char& color, float& scale) {
+    if ((color * scale) > 255) return (char)255;
+    else if ((color * scale) < 0) return (char)0;
+    else return (char)((color * scale) + 0.5f);
 }
