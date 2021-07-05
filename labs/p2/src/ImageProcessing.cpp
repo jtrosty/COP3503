@@ -16,7 +16,7 @@ ImageProcessingTGA::~ImageProcessingTGA() {
     int size = pictures.size();
     for (int i = 0; i < size; i++) {
         delete[] pictures.at(i)->pixelData;
-        //delete pictures.at(i)->header;
+        delete pictures.at(i)->header;
         delete pictures.at(i)->lengthOfPixelData;
         delete pictures.at(i);
     }
@@ -27,28 +27,28 @@ ImageProcessingTGA::~ImageProcessingTGA() {
  * ************************************************************/
 
 char ImageProcessingTGA::readInFileTGA(char* fileName) {
-    HeaderTGA fileHeaderData;
+    HeaderTGA* fileHeaderData = new HeaderTGA;
     fileInput.open(fileName, ios_base::in |ios_base::binary);
     if (fileInput.is_open()) {
         cout << "File is open" << endl;
         // Reads in the header
-        fileInput.read((char*)&fileHeaderData.idLength,        sizeof(fileHeaderData.idLength));
-        fileInput.read((char*)&fileHeaderData.colorMapType,    sizeof(fileHeaderData.colorMapType));
-        fileInput.read((char*)&fileHeaderData.dataTypeCode,    sizeof(fileHeaderData.dataTypeCode));
-        fileInput.read((char*)&fileHeaderData.colorMapOrigin,  sizeof(fileHeaderData.colorMapOrigin));
-        fileInput.read((char*)&fileHeaderData.colorMapLength,  sizeof(fileHeaderData.colorMapLength));
-        fileInput.read((char*)&fileHeaderData.colorMapDepth,   sizeof(fileHeaderData.colorMapDepth));
-        fileInput.read((char*)&fileHeaderData.xOrigin,         sizeof(fileHeaderData.xOrigin));
-        fileInput.read((char*)&fileHeaderData.yOrigin,         sizeof(fileHeaderData.yOrigin));
-        fileInput.read((char*)&fileHeaderData.width,           sizeof(fileHeaderData.width));
-        fileInput.read((char*)&fileHeaderData.height,          sizeof(fileHeaderData.height));
-        fileInput.read((char*)&fileHeaderData.bitsPerPixel,    sizeof(fileHeaderData.bitsPerPixel));
-        fileInput.read((char*)&fileHeaderData.imageDescriptor, sizeof(fileHeaderData.imageDescriptor));
+        fileInput.read((char*)&fileHeaderData->idLength,        sizeof(fileHeaderData->idLength));
+        fileInput.read((char*)&fileHeaderData->colorMapType,    sizeof(fileHeaderData->colorMapType));
+        fileInput.read((char*)&fileHeaderData->dataTypeCode,    sizeof(fileHeaderData->dataTypeCode));
+        fileInput.read((char*)&fileHeaderData->colorMapOrigin,  sizeof(fileHeaderData->colorMapOrigin));
+        fileInput.read((char*)&fileHeaderData->colorMapLength,  sizeof(fileHeaderData->colorMapLength));
+        fileInput.read((char*)&fileHeaderData->colorMapDepth,   sizeof(fileHeaderData->colorMapDepth));
+        fileInput.read((char*)&fileHeaderData->xOrigin,         sizeof(fileHeaderData->xOrigin));
+        fileInput.read((char*)&fileHeaderData->yOrigin,         sizeof(fileHeaderData->yOrigin));
+        fileInput.read((char*)&fileHeaderData->width,           sizeof(fileHeaderData->width));
+        fileInput.read((char*)&fileHeaderData->height,          sizeof(fileHeaderData->height));
+        fileInput.read((char*)&fileHeaderData->bitsPerPixel,    sizeof(fileHeaderData->bitsPerPixel));
+        fileInput.read((char*)&fileHeaderData->imageDescriptor, sizeof(fileHeaderData->imageDescriptor));
 
-        printHeader(fileHeaderData);
+        printHeader(*fileHeaderData);
 
         // Read In the pixels of the file. 
-        int size = (fileHeaderData.width) * (fileHeaderData.height);
+        int size = (fileHeaderData->width) * (fileHeaderData->height);
         cout << "Size is: " << size << endl;
         Pixel* pixelData = new Pixel[size];
 
@@ -61,7 +61,7 @@ char ImageProcessingTGA::readInFileTGA(char* fileName) {
         cout << "finsihed read of pixel data" << endl;
         
         Picture* picture = new Picture;
-        picture->header = &fileHeaderData;
+        picture->header = fileHeaderData;
         picture->pixelData = pixelData;
         picture->lengthOfPixelData = new int(size);
 
@@ -148,6 +148,34 @@ void ImageProcessingTGA::writeMonoDEBUG(Picture& picture) {
     else {
         cout << "Ouptut file did not open" << endl;
     }
+}
+
+/**************************************************************
+ * ************************ Accessors *************************
+ * ************************************************************/
+ int ImageProcessingTGA::testPictures(char* lhs, char* rhs) {
+    ifstream fileRhs;
+    fileInput.open(lhs, ios_base::binary | ios_base::in);
+    fileRhs.open(lhs, ios_base::binary | ios_base::in);
+    if (fileInput && fileRhs) {
+        char* lhsByte;
+        char* rhsByte;
+        int counter = 0;
+
+        while (fileInput.read(lhsByte, sizeof(char)) || fileRhs.read(rhsByte, sizeof(char))) {
+            counter++;
+            if (lhsByte == rhsByte) continue;
+            else {
+                cout << "The files are not equivalent. Counter: " << counter << endl;
+                return 0; // return 0 for failure
+            }
+        }
+    }
+    else {
+        cout << "Files did not open properly. Check filename and location." << endl;
+    }
+    // Return 1 for success
+    return 1;
 }
 
 /**************************************************************

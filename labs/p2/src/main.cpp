@@ -16,11 +16,11 @@ using std::cin;
 int main() {
     //string fileToCopy = "..\\input\\layer1.tga";
     ImageProcessingTGA imageProcessor;
-    imageProcessor.readInFileTGA("test.tga");
+    imageProcessor.readInFileTGA("src\\test.tga");
     cout << "the header #############################" << endl;
     ImageProcessingTGA::HeaderTGA y = *imageProcessor.getPicture(0).header;
     imageProcessor.printHeader(y);
-    //imageProcessor.writeFileTGA(imageProcessor.getPicture(0));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(0));
     //cout << "mono debug #############################" << endl;
     //imageProcessor.writeMonoDEBUG(imageProcessor.getPicture(0));
     //imageProcessor.readInFileTGA("oneColor.tga");

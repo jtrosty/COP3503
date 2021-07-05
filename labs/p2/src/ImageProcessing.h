@@ -62,6 +62,7 @@ class ImageProcessingTGA {
     void writeMonoDEBUG(Picture& picture);
 
     // Testing Function
+    int testPictures(char* lhs, char* rhs);
 
     // Accessors
     Picture& getPicture(int element);
