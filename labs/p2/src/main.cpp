@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 using std::cin;
 
-//#include "leaker.h"
+#include "leaker.h"
 int main() { //string fileToCopy = "..\\input\\layer1.tga";
     ImageProcessingTGA imageProcessor;
     /*

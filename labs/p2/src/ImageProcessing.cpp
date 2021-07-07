@@ -1,5 +1,5 @@
 #include "ImageProcessing.h"
-//#include "leaker.h"
+#include "leaker.h"
 
 /**************************************************************
  * ********** Constructor/Copy Assignment/Destructor **********
@@ -405,7 +405,6 @@ void ImageProcessingTGA::individualChannel(Picture& pic, char channel) {
     pictures.push_back(result);
 }
 
-// All files must be the same size
 void ImageProcessingTGA::combinePicsEachOneChannel(Picture& red, Picture& green, Picture& blue) {
     Picture* result = new Picture;
     int length = *red.lengthOfPixelData;

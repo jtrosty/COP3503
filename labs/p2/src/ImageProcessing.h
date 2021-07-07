@@ -12,7 +12,7 @@ using std::cout;
 using std::endl;
 using std::boolalpha;
 
-//#include "leaker.h"
+#include "leaker.h"
 
 class ImageProcessingTGA {
 
