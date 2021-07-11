@@ -12,7 +12,7 @@ using std::cout;
 using std::endl;
 using std::boolalpha;
 
-#include "leaker.h"
+//#include "leaker.h"
 
 class ImageProcessingTGA {
 
@@ -40,8 +40,8 @@ class ImageProcessingTGA {
 
     struct Picture {
         HeaderTGA* header;
-        Pixel* pixelData;
         int* lengthOfPixelData;
+        Pixel* pixelData;
     };
     
     ifstream fileInput;
@@ -50,6 +50,10 @@ class ImageProcessingTGA {
 
     // constructor
     ImageProcessingTGA();
+    //Copy Constructor
+    ImageProcessingTGA(const ImageProcessingTGA& rhs);
+    // Copy assignment Operator
+    ImageProcessingTGA& operator=(const ImageProcessingTGA& rhs);
 
     // Destructor
     ~ImageProcessingTGA();
@@ -82,10 +86,9 @@ class ImageProcessingTGA {
     // Printing Behaviour 
     void printHeader(HeaderTGA& header); 
 
-    // Helper math functions
+    // Helper and math functions
     unsigned char clampSubtractChar(unsigned char& lhs, unsigned char& rhs);
     unsigned char clampAddChar(unsigned char& lhs, unsigned char& rhs);
     unsigned char clampScaleChar(unsigned char& color, float& scale);
-
-    
+    void copyHeader(HeaderTGA* dest, HeaderTGA* src);
 };

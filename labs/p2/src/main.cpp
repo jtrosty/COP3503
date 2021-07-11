@@ -142,6 +142,132 @@ int main() { //string fileToCopy = "..\\input\\layer1.tga";
     imageProcessor.extraCreditCombine4Pics(imageProcessor.getPicture(4), imageProcessor.getPicture(10), imageProcessor.getPicture(7), imageProcessor.getPicture(1));
     imageProcessor.writeFileTGA(imageProcessor.getPicture(25), "output\\extracredit.tga");
     imageProcessor.testPictures("output\\extracredit.tga", "examples\\EXAMPLE_extracredit.tga");
-
     return 0;
+    char layer1[] = "input\\Layer1.tga";
+
+/*
+    char pattern1[] = "input\\patern1.tga";
+    char pattern2[] = "input\\patern2.tga";
+    char layer2[] = "input\\Layer2.tga";
+    char car[] = "input\\car.tga";
+    char text[] = "input\\text.tga";
+    char circles[] = "input\\circles.tga";
+    char layerRed[] = "input\\layer_red.tga";
+    char layerGreen[] = "input\\layer_green.tga";
+    char layerBlue[] = "input\\layer_blue.tga";
+    char text2[] = "input\\text2.tga";
+
+    char outPart1[] = "output\\part1.tga";
+    char outPart2[] = "output\\part2.tga";
+    char outPart3[] = "output\\part3.tga";
+    char outPart4[] = "output\\part4.tga";
+    char outPart5[] = "output\\part5.tga";
+    char outPart6[] = "output\\part6.tga";
+    char outPart7[] = "output\\part7.tga";
+    char outPart8Red[] = "output\\part8_r.tga";
+    char outPart8Green[] = "output\\part8_g.tga";
+    char outPart8Blue[] = "output\\part8_b.tga";
+    char outPart9[] = "output\\part9.tga";
+    char outPart10[] = "output\\part10.tga";
+    char outExtraCredit[] = "output\\extracredit.tga";
+
+    char exPart1[] = "examples\\EXAMPLE_part1.tga";
+    char exPart2[] = "examples\\EXAMPLE_part2.tga";
+    char exPart3[] = "examples\\EXAMPLE_part3.tga";
+    char exPart4[] = "examples\\EXAMPLE_part4.tga";
+    char exPart5[] = "examples\\EXAMPLE_part5.tga";
+    char exPart6[] = "examples\\EXAMPLE_part6.tga";
+    char exPart7[] = "examples\\EXAMPLE_part7.tga";
+    char exPart8_r[] = "examples\\EXAMPLE_part8_r.tga";
+    char exPart8_g[] = "examples\\EXAMPLE_part8_g.tga";
+    char exPart8_b[] = "examples\\EXAMPLE_part8_b.tga";
+    char exPart9[] = "examples\\EXAMPLE_part9.tga";
+    char exPart10[] = "examples\\EXAMPLE_part10.tga";
+    char exExtraCredit[] = "examples\\EXAMPLE_extracredit.tga";
+
+    // PART 1 ##############################################
+    cout << "Part 1 Multiply ################################################" << endl;
+    imageProcessor.readInFileTGA(layer1);
+    imageProcessor.readInFileTGA(pattern1);
+    imageProcessor.multiply(imageProcessor.getPicture(0), imageProcessor.getPicture(1));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(2), outPart1);
+    imageProcessor.testPictures(outPart1, exPart1);
+    
+    // PART 2 #############################################
+    cout << "Begin Part 2 ####################################################" << endl;
+    imageProcessor.readInFileTGA(layer2);
+    imageProcessor.readInFileTGA(car);
+    imageProcessor.subtract(imageProcessor.getPicture(4), imageProcessor.getPicture(3));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(5), outPart2);
+    imageProcessor.testPictures(outPart2, exPart2);
+
+    // PART 3 #############################################
+    cout << "Begin Part 3 ####################################################" << endl;
+    imageProcessor.readInFileTGA(pattern2);
+    imageProcessor.readInFileTGA(text);
+    imageProcessor.multiply(imageProcessor.getPicture(0), imageProcessor.getPicture(6));
+    imageProcessor.screen(imageProcessor.getPicture(8), imageProcessor.getPicture(7));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(9), outPart3);
+    imageProcessor.testPictures(outPart3, exPart3);
+
+    // PART 4 #############################################
+    cout << "Begin Part 4 ####################################################" << endl;
+    imageProcessor.readInFileTGA(circles);
+    imageProcessor.multiply(imageProcessor.getPicture(3), imageProcessor.getPicture(10));
+    imageProcessor.subtract(imageProcessor.getPicture(11), imageProcessor.getPicture(6));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(12), outPart4);
+    imageProcessor.testPictures(outPart4, exPart4);
+
+    // PART 5 #############################################
+    cout << "Begin Part 5 ####################################################" << endl;
+    imageProcessor.overlay(imageProcessor.getPicture(0), imageProcessor.getPicture(1));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(13), outPart5);
+    imageProcessor.testPictures(outPart5, exPart5);
+
+    // PART 6 #############################################
+    cout << "Begin Part 6 ####################################################" << endl;
+    imageProcessor.addAdjustRGB(imageProcessor.getPicture(4), 0, 200, 0);
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(14), outPart6);
+    imageProcessor.testPictures(outPart6, exPart6);
+
+    // PART 7 #############################################
+    cout << "Begin Part 7 ####################################################" << endl;
+    imageProcessor.scaleAdjustRGB(imageProcessor.getPicture(4), 4.0f, 1.0f, 0.0f);
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(15), outPart7);
+    imageProcessor.testPictures(outPart7, exPart7);
+
+    // PART 8 #############################################
+    cout << "Begin Part 8 ####################################################" << endl;
+    imageProcessor.individualChannel(imageProcessor.getPicture(4), 'r');
+    imageProcessor.individualChannel(imageProcessor.getPicture(4), 'g');
+    imageProcessor.individualChannel(imageProcessor.getPicture(4), 'b');
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(16), outPart8Red);
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(17), outPart8Green);
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(18), outPart8Blue);
+    imageProcessor.testPictures(outPart8Red, exPart8_r);
+    imageProcessor.testPictures(outPart8Green, exPart8_g);
+    imageProcessor.testPictures(outPart8Blue, exPart8_b);
+
+    // PART 9 #############################################
+    cout << "Begin Part 9 ####################################################" << endl;
+    imageProcessor.readInFileTGA(layerRed);
+    imageProcessor.readInFileTGA(layerGreen);
+    imageProcessor.readInFileTGA(layerBlue);
+    imageProcessor.combinePicsEachOneChannel(imageProcessor.getPicture(19), imageProcessor.getPicture(20), imageProcessor.getPicture(21));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(22), outPart9);
+    imageProcessor.testPictures(outPart9, exPart9);
+
+    // PART 10 #############################################
+    cout << "Begin Part 10 ####################################################" << endl;
+    imageProcessor.readInFileTGA(text2);
+    imageProcessor.rotate180(imageProcessor.getPicture(23));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(24), outPart10);
+    imageProcessor.testPictures(outPart10, exPart10);
+
+    // PART EXTRA CREDIT #############################################
+    cout << "Begin Extra Credit ####################################################" << endl;
+    imageProcessor.extraCreditCombine4Pics(imageProcessor.getPicture(4), imageProcessor.getPicture(10), imageProcessor.getPicture(7), imageProcessor.getPicture(1));
+    imageProcessor.writeFileTGA(imageProcessor.getPicture(25), outExtraCredit);
+    imageProcessor.testPictures(outExtraCredit, exExtraCredit);
+*/
 }

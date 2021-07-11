@@ -1,5 +1,5 @@
 #include "ImageProcessing.h"
-#include "leaker.h"
+//#include "leaker.h"
 
 /**************************************************************
  * ********** Constructor/Copy Assignment/Destructor **********
@@ -10,6 +10,60 @@ ImageProcessingTGA::ImageProcessingTGA() {
     ifstream fileInput;
     ofstream fileOutput;
 }
+
+// Copy Contrucutor
+ImageProcessingTGA::ImageProcessingTGA(const ImageProcessingTGA& rhs) {
+    int size = rhs.pictures.size();
+    for (int i = 0; i < size; i++) {
+        HeaderTGA* newHeader = new HeaderTGA;
+        ImageProcessingTGA::copyHeader(newHeader, rhs.pictures.at(i)->header);
+        /*
+        newHeader->idLength = rhs.pictures.at(i)->header->idLength;
+        newHeader->colorMapType = rhs.pictures.at(i)->header->colorMapType;
+        newHeader->dataTypeCode = rhs.pictures.at(i)->header->colorMapType;
+        newHeader->colorMapOrigin = rhs.pictures.at(i)->header->colorMapOrigin;
+        newHeader->colorMapLength = rhs.pictures.at(i)->header->colorMapLength;
+        newHeader->colorMapDepth = rhs.pictures.at(i)->header->colorMapDepth;
+        newHeader->xOrigin = rhs.pictures.at(i)->header->xOrigin;
+        newHeader->yOrigin = rhs.pictures.at(i)->header->yOrigin;
+        newHeader->width = rhs.pictures.at(i)->header->width;
+        newHeader->height = rhs.pictures.at(i)->header->height;
+        newHeader->bitsPerPixel = rhs.pictures.at(i)->header->bitsPerPixel;
+        newHeader->imageDescriptor = rhs.pictures.at(i)->header->imageDescriptor;
+        */
+
+        int* newLengthOfPixel = new int(*rhs.pictures.at(i)->lengthOfPixelData);
+        Pixel* newPixelData = new Pixel[*newLengthOfPixel];
+
+        for (int j = 0; j < *newLengthOfPixel; j++) {
+            newPixelData[j] = rhs.pictures.at(i)->pixelData[j];
+        }
+        this->pictures.at(i)->header = newHeader;
+        this->pictures.at(i)->lengthOfPixelData = newLengthOfPixel;
+        this->pictures.at(i)->pixelData = newPixelData;
+    }
+}
+
+// Copy Assignment overload
+ImageProcessingTGA& ImageProcessingTGA::operator=(const ImageProcessingTGA& rhs) {
+    int size = rhs.pictures.size();
+    for (int i = 0; i < size; i++) {
+        HeaderTGA* newHeader = new HeaderTGA;
+        ImageProcessingTGA::copyHeader(newHeader, rhs.pictures.at(i)->header);
+
+        int* newLengthOfPixel = new int(*rhs.pictures.at(i)->lengthOfPixelData);
+        Pixel* newPixelDatat = new Pixel[*newLengthOfPixel];
+
+        for (int j = 0; j < *newLengthOfPixel; j++) {
+            newPixelDatat[j] = rhs.pictures.at(i)->pixelData[j];
+        }
+        this->pictures.at(i)->header = newHeader;
+        this->pictures.at(i)->lengthOfPixelData = newLengthOfPixel;
+        this->pictures.at(i)->pixelData = newPixelDatat;
+    }
+    return *this;
+}
+
 
 // Destructor
 ImageProcessingTGA::~ImageProcessingTGA() {
@@ -153,24 +207,19 @@ void ImageProcessingTGA::multiply(Picture& lhs, Picture& rhs) {
     const float ROUND = 0.5f;
 
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
-        result->header = lhs.header;
-        result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
+        HeaderTGA* newHeader = new HeaderTGA;
+        copyHeader(newHeader, lhs.header);
+        result->header = newHeader;
+        int* newLength = new int(*lhs.lengthOfPixelData);
+        result->lengthOfPixelData = newLength;
         longest = *lhs.lengthOfPixelData;
         isSameLength = 0;
     }
     else if (*lhs.lengthOfPixelData > *rhs.lengthOfPixelData) {
-        longest = *lhs.lengthOfPixelData;
-        result->header = lhs.header;
-        result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
-        shortest = *rhs.lengthOfPixelData;
-        isSameLength = -1;
+        // Logic if the size is not the same and lhs is bigger
     }
     else {
-        longest = *rhs.lengthOfPixelData;
-        result->header = rhs.header;
-        result->lengthOfPixelData = new int(*rhs.lengthOfPixelData);
-        shortest = *lhs.lengthOfPixelData;
-        isSameLength = 1;
+        // TODO possible future make it so it can take pictures of different sizes.
     }
     if (isSameLength == 0) {
         Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
@@ -204,7 +253,9 @@ void ImageProcessingTGA::subtract(Picture& lhs, Picture& rhs) {
     int shortest = 0;
 
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
-        result->header = lhs.header;
+        HeaderTGA* newHeader = new HeaderTGA;
+        copyHeader(newHeader, lhs.header);
+        result->header = newHeader;
         result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
         longest = *lhs.lengthOfPixelData;
         isSameLength = 0;
@@ -244,7 +295,9 @@ void ImageProcessingTGA::screen(Picture& lhs, Picture& rhs) {
     const float ROUND = 0.5f;
 
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
-        result->header = lhs.header;
+        HeaderTGA* newHeader = new HeaderTGA;
+        copyHeader(newHeader, lhs.header);
+        result->header = newHeader;
         result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
         longest = *lhs.lengthOfPixelData;
         isSameLength = 0;
@@ -290,7 +343,9 @@ void ImageProcessingTGA::overlay(Picture& lhs, Picture& rhs) {
     const float ROUND = 0.5f;
 
     if (*lhs.lengthOfPixelData == *rhs.lengthOfPixelData) {
-        result->header = lhs.header;
+        HeaderTGA* newHeader = new HeaderTGA;
+        copyHeader(newHeader, lhs.header);
+        result->header = newHeader;
         result->lengthOfPixelData = new int(*lhs.lengthOfPixelData);
         longest = *lhs.lengthOfPixelData;
         isSameLength = 0;
@@ -343,8 +398,10 @@ void ImageProcessingTGA::overlay(Picture& lhs, Picture& rhs) {
 void ImageProcessingTGA::addAdjustRGB(Picture& pic, unsigned char r, unsigned char g, unsigned char b) {
     Picture* result = new Picture;
     int length = *pic.lengthOfPixelData;
-    result->header = pic.header;
-    result->lengthOfPixelData = pic.lengthOfPixelData;
+    HeaderTGA* newHeader = new HeaderTGA;
+    copyHeader(newHeader, pic.header);
+    result->header = newHeader;
+    result->lengthOfPixelData = new int(*pic.lengthOfPixelData);
 
     Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
 
@@ -363,8 +420,10 @@ void ImageProcessingTGA::addAdjustRGB(Picture& pic, unsigned char r, unsigned ch
 void ImageProcessingTGA::scaleAdjustRGB(Picture& pic, float r, float g, float b) {
     Picture* result = new Picture;
     int length = *pic.lengthOfPixelData;
-    result->header = pic.header;
-    result->lengthOfPixelData = pic.lengthOfPixelData;
+    HeaderTGA* newHeader = new HeaderTGA;
+    copyHeader(newHeader, pic.header);
+    result->header = newHeader;
+    result->lengthOfPixelData = new int(*pic.lengthOfPixelData);
 
     Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
 
@@ -383,8 +442,10 @@ void ImageProcessingTGA::scaleAdjustRGB(Picture& pic, float r, float g, float b)
 void ImageProcessingTGA::individualChannel(Picture& pic, char channel) {
     Picture* result = new Picture;
     int length = *pic.lengthOfPixelData;
-    result->header = pic.header;
-    result->lengthOfPixelData = pic.lengthOfPixelData;
+    HeaderTGA* newHeader = new HeaderTGA;
+    copyHeader(newHeader, pic.header);
+    result->header = newHeader;
+    result->lengthOfPixelData = new int(*pic.lengthOfPixelData);
     unsigned char value;
 
     Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
@@ -408,8 +469,10 @@ void ImageProcessingTGA::individualChannel(Picture& pic, char channel) {
 void ImageProcessingTGA::combinePicsEachOneChannel(Picture& red, Picture& green, Picture& blue) {
     Picture* result = new Picture;
     int length = *red.lengthOfPixelData;
-    result->header = red.header;
-    result->lengthOfPixelData = red.lengthOfPixelData;
+    HeaderTGA* newHeader = new HeaderTGA;
+    copyHeader(newHeader, red.header);
+    result->header = newHeader;
+    result->lengthOfPixelData = new int(*red.lengthOfPixelData);
 
     Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
 
@@ -428,8 +491,10 @@ void ImageProcessingTGA::combinePicsEachOneChannel(Picture& red, Picture& green,
 void ImageProcessingTGA::rotate180(Picture& pic) {
     Picture* result = new Picture;
     int length = *pic.lengthOfPixelData;
-    result->header = pic.header;
-    result->lengthOfPixelData = pic.lengthOfPixelData;
+    HeaderTGA* newHeader = new HeaderTGA;
+    copyHeader(newHeader, pic.header);
+    result->header = newHeader;
+    result->lengthOfPixelData = new int(*pic.lengthOfPixelData);
 
     Pixel* resultPixels = new Pixel[*result->lengthOfPixelData];
 
@@ -451,7 +516,9 @@ void ImageProcessingTGA::extraCreditCombine4Pics(Picture& topLeft, Picture& topR
     int* lengthFinal = new int(lengthInitial * 4);
     int halfWay = *lengthFinal / 2;
     int width = topLeft.header->width;
-    result->header = topLeft.header;
+    HeaderTGA* newHeader = new HeaderTGA;
+    copyHeader(newHeader, topLeft.header);
+    result->header = newHeader;
     result->header->width = width * 2;
     result->header->height = topLeft.header->height * 2;
     result->lengthOfPixelData = lengthFinal;
@@ -612,4 +679,19 @@ unsigned char ImageProcessingTGA::clampScaleChar(unsigned char& color, float& sc
     if ((color * scale) > 255) return (char)255;
     else if ((color * scale) < 0) return (char)0;
     else return (char)((color * scale) + 0.5f);
+}
+
+void ImageProcessingTGA::copyHeader(HeaderTGA* dest, HeaderTGA* src) {
+    dest->idLength = src->idLength;
+    dest->colorMapType = src->colorMapType;
+    dest->dataTypeCode = src->dataTypeCode;
+    dest->colorMapOrigin = src->colorMapOrigin;
+    dest->colorMapLength = src->colorMapLength;
+    dest->colorMapDepth = src->colorMapDepth;
+    dest->xOrigin = src->xOrigin;
+    dest->yOrigin = src->yOrigin;
+    dest->width = src->width;
+    dest->height = src->height;
+    dest->bitsPerPixel = src->bitsPerPixel;
+    dest->imageDescriptor = src->imageDescriptor;
 }
