@@ -1,8 +1,8 @@
 default:
-	g++ test.cpp Shapes.cpp -Wall -o main
-	main.exe
+	g++ test.cpp Shapes.cpp -Wall -o test
+	./test
 
 clean:
 
 run:
-	main.exe
+	test.exe
