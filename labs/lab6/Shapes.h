@@ -10,10 +10,10 @@ class Shape {
     public:
         virtual void Scale(float scaleFactor) = 0;
         virtual void Display() const = 0;
-
+        virtual ~Shape();
 };
 
-class Shape2D {
+class Shape2D : virtual public Shape {
     public:
         virtual float Area() const = 0;
         void ShowArea() const;
@@ -23,7 +23,7 @@ class Shape2D {
         bool operator==(const Shape2D& rhs) const;
 };
 
-class Square : public Shape2D {
+class Square : virtual public Shape2D {
     float sideLength;
     public:
     // Constructors
@@ -36,7 +36,7 @@ class Square : public Shape2D {
     string GetName2D() const;
 };
 
-class Triangle : public Shape2D {
+class Triangle : virtual public Shape2D {
     protected:
         float baseLength;
         float heigth;
@@ -51,7 +51,7 @@ class Triangle : public Shape2D {
         string GetName2D() const;
 };
 
-class Circle : public Shape2D {
+class Circle : virtual public Shape2D {
     float radius;
     public:
     // Constructors
@@ -64,7 +64,7 @@ class Circle : public Shape2D {
     string GetName2D() const;
 };
 
-class Shape3D {
+class Shape3D : virtual public Shape {
     public:
         virtual float Volume() const = 0;
         void ShowVolume() const;
@@ -74,8 +74,8 @@ class Shape3D {
         bool operator==(const Shape3D& rhs) const;
 };
 
-class TriangularPyramid : virtual private Triangle, public Shape3D {
-    double pyramidHeight;
+class TriangularPyramid : private Triangle, public Shape3D {
+    float pyramidHeight;
 
     public:
     // Constructors
@@ -89,14 +89,31 @@ class TriangularPyramid : virtual private Triangle, public Shape3D {
 
 };
 
-/*
 
-class Cylinder : public Circle, public Shape3D {
+class Cylinder : private Circle, public Shape3D {
     double height; 
 
+    public:
+    // Constructors
+    Cylinder();
+    Cylinder(float _height, float _radius);
+
+    void Scale(float _scale);
+    void Display() const;
+    float Volume() const;
+    string GetName3D() const;
 };
 
-class Sphere : public Circle, public Shape3D {
+class Sphere : private Circle, public Shape3D {
+    float radius;
 
+    public:
+    // Constructor
+    Sphere();
+    Sphere(float _radius);
+
+    void Scale(float _scale);
+    void Display() const;
+    float Volume() const;
+    string GetName3D() const;
 };
-*/

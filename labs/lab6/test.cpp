@@ -20,6 +20,11 @@ int main(void) {
     test2.Scale(3.0f);
     test2.Display();
 
+    Sphere test3(2.0f);
+    test3.Display();
+    test3.Scale(2.0f);
+    test3.Display();
+
 
 
 

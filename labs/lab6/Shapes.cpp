@@ -1,6 +1,12 @@
 #include "Shapes.h"
 
 /* ************************************************
+******************** SHAPE ************************
+***************************************************/
+// Virtual Destructor
+Shape::~Shape(){}
+
+/* ************************************************
 ******************** SHAPE 2D *********************
 ***************************************************/
 bool Shape2D::operator>(const Shape2D& rhs) const {
@@ -19,7 +25,7 @@ bool Shape2D::operator==(const Shape2D& rhs) const {
 }
 
 void Shape2D::ShowArea() const {
-    cout << Area() << endl;
+    cout << "The area of the " << GetName2D() << " is : " << Area() << endl;
 }
 
 /* ************************************************
@@ -41,7 +47,7 @@ bool Shape3D::operator==(const Shape3D& rhs) const {
 }
 
 void Shape3D::ShowVolume() const {
-    cout << Volume() << endl;
+    cout << "The volume of the " << GetName3D() << " is : " << Volume() << endl;
 }
 
 /* ************************************************
@@ -141,8 +147,7 @@ string Circle::GetName2D() const {
 **************** Trianglular Pyramid **************
 ***************************************************/
 // Constructors
-TriangularPyramid::TriangularPyramid() 
-        : Triangle() {
+TriangularPyramid::TriangularPyramid() {
     pyramidHeight = 0.0f;
 }
 
@@ -158,8 +163,8 @@ void TriangularPyramid::Scale(float _scaleFactor) {
 }
 
 void TriangularPyramid::Display() const {
-    cout << "The Volume of the Pyramid is: " << Volume() << endl;
-    cout << "height is: " << pyramidHeight << endl;
+    cout << "The volume of the TriangularPyramid is: " << Volume() << endl;
+    cout << "The height is: " << pyramidHeight << endl;
     Triangle::Display();
 }
 
@@ -169,4 +174,65 @@ float TriangularPyramid::Volume() const {
 
 string TriangularPyramid::GetName3D() const {
     return "Triangular Pyramid";
+}
+
+/* ************************************************
+******************** Cylinder *********************
+***************************************************/
+// Constructors
+Cylinder::Cylinder() : Circle() {
+    height = 0.0f;
+}
+
+Cylinder::Cylinder(float _height, float _radius) 
+        : Circle(_radius) {
+    height = _height;
+}
+
+void Cylinder::Scale(float _scale) {
+    height *= _scale;
+    Circle::Scale(_scale);
+}
+
+void Cylinder::Display() const {
+    cout << "The volume of the Cylinder is : " << Volume() << endl;
+    cout << "The height is: " << height << endl;
+    Circle::Display();
+}
+
+float Cylinder::Volume() const {
+    return (Circle::Area() * height);
+}
+
+string Cylinder::GetName3D() const {
+    return "Cylinder"; 
+}
+
+/* ************************************************
+********************** Sphere *********************
+***************************************************/
+
+Sphere::Sphere() : Circle() {
+    radius = 0.0f;
+}
+
+Sphere::Sphere(float _radius) : Circle(_radius) {
+    radius = _radius;
+}
+
+void Sphere::Scale(float _scale) {
+    Circle::Scale(_scale);
+}
+
+void Sphere::Display() const {
+    cout << "The volume of the Sphere is : " << Volume() << endl;
+    Circle::Display();
+}
+
+float Sphere::Volume() const {
+    return ((float) 4 / 3) * radius * (Circle::Area());
+}
+
+string Sphere::GetName3D() const {
+    return "Sphere";
 }

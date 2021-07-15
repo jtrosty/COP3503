@@ -1,5 +1,5 @@
 default:
-	g++ test.cpp Shapes.cpp -Wall -o test
+	g++ main.cpp Shapes.cpp -Wall -o test
 	./test
 
 clean:
