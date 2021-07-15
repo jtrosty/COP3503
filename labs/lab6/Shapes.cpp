@@ -1,7 +1,7 @@
 #include "Shapes.h"
 
 /* ************************************************
-******************** SHAPE ************************
+************* BASE CLASS: SHAPE *******************
 ***************************************************/
 // Virtual Destructor
 Shape::~Shape(){}
@@ -151,7 +151,7 @@ TriangularPyramid::TriangularPyramid() {
     pyramidHeight = 0.0f;
 }
 
-TriangularPyramid::TriangularPyramid(float _pyramidHeight, float _triangleHeight, float _triangleBase)
+TriangularPyramid::TriangularPyramid(float _pyramidHeight, float _triangleBase, float _triangleHeight)
         : Triangle(_triangleBase, _triangleHeight) {
     pyramidHeight = _pyramidHeight;
 }
@@ -173,7 +173,7 @@ float TriangularPyramid::Volume() const {
 }
 
 string TriangularPyramid::GetName3D() const {
-    return "Triangular Pyramid";
+    return "TriangularPyramid";
 }
 
 /* ************************************************

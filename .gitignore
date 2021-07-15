@@ -58,6 +58,11 @@ dkms.conf
 
 # Pictures
 *.tga
+*.png
 
 # etc
 *.zip
+*.brd
+*.cfg
+*.pdf
+
