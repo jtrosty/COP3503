@@ -139,6 +139,10 @@ float Circle::Area() const {
     return (PI * (radius * radius));
 }
 
+float Circle::GetRadius() const {
+    return radius;
+}
+
 string Circle::GetName2D() const {
     return "Circle";
 }
@@ -212,13 +216,9 @@ string Cylinder::GetName3D() const {
 ********************** Sphere *********************
 ***************************************************/
 
-Sphere::Sphere() : Circle() {
-    radius = 0.0f;
-}
+Sphere::Sphere() : Circle() { }
 
-Sphere::Sphere(float _radius) : Circle(_radius) {
-    radius = _radius;
-}
+Sphere::Sphere(float _radius) : Circle(_radius) { }
 
 void Sphere::Scale(float _scale) {
     Circle::Scale(_scale);
@@ -230,7 +230,7 @@ void Sphere::Display() const {
 }
 
 float Sphere::Volume() const {
-    return ((float) 4 / 3) * radius * (Circle::Area());
+    return ((float) 4 / 3) * (Circle::GetRadius()) * (Circle::Area());
 }
 
 string Sphere::GetName3D() const {

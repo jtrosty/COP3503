@@ -65,4 +65,14 @@ dkms.conf
 *.brd
 *.cfg
 *.pdf
+*.rdbg
+*.vs
+*.tlog
+*.lastbuildstate
+*.recipe
+*.user
+*.vcxproj
+*.sln
+*.log
+*.filters
 

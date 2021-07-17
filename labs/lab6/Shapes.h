@@ -66,6 +66,7 @@ class Circle : virtual public Shape2D {
     void Scale(float scale);
     void Display() const;
     float Area() const;
+    float GetRadius() const;
     string GetName2D() const;
 };
 
@@ -114,7 +115,6 @@ class Cylinder : private Circle, public Shape3D {
 
 // Sphere has a Circle and is a Shape3d is a Shape
 class Sphere : private Circle, public Shape3D {
-    float radius;
 
     public:
     // Constructor
