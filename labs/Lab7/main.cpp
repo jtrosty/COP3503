@@ -7,6 +7,9 @@ using std::map;
 
 mt19937 random_mt;
 
+// Prototypes
+void RollDice(int numberOfRolls, int numberOfSides);
+
 int Random(int min, int max)
 {
 	uniform_int_distribution<int> dist(min, max);
@@ -14,6 +17,7 @@ int Random(int min, int max)
 }
 
 void RollDice(int numberOfRolls, int numberOfSides) {
+	cout << "entered funciton" << endl;
 	map<int, int> rollResults;
 	map<int, int>::iterator iter = rollResults.begin();
 	map<int, string> myMap;
@@ -23,16 +27,18 @@ void RollDice(int numberOfRolls, int numberOfSides) {
 		rollResults[i] = 0; 
 	}
 
+	cout << "part 1" << endl;
+
 	for (int i = 0; i < numberOfRolls; i++) {
 		rollResults[Random(1, numberOfSides)]++;
 	}
+
+	cout << "part 2" << endl;
 
 	for (; iter != rollResults.end(); ++iter) {
 		cout << "key is: " << iter->first;
 		cout << "Value is: " << iter->second;
 	}
-
-	
 }
 
 int main()
@@ -40,8 +46,8 @@ int main()
 	cout << "1. Random Numbers\n";
 	cout << "2. State Info\n";
 
-	int option;
-	cin >> option;
+	int option = 1;
+	//cin >> option;
 
 	if (option == 1)
 	{
