@@ -1,8 +1,12 @@
 #include <SFML/Graphics.hpp>
+#include "TextureManager.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(1920, 1080), "Jon Trost RuleZ");
+
+    // the cirlce
+    // TODO (Jon)
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
 
@@ -14,7 +18,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
- 
+
         window.clear();
         window.draw(shape);
         window.display();
