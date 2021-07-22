@@ -2,7 +2,7 @@
 #include <iostream>
 #include "TextureSpriteManager.h"
 #include "LoadConfig.h"
-
+#include "Random.h"
 
 using std::cout;
 using std::endl;
@@ -26,9 +26,11 @@ int main()
     //Config file
     FileLoading fileLoader;
     fileLoader.loadFileHelper("config", fileLoader.config);
-    //cout << fileLoader.configData.column << endl;
-    //cout << fileLoader.configData.rows << endl;
-    //cout << fileLoader.configData.numOfMines << endl;
+
+    // Random Test
+    int randomX = Random::Int(0, 400);
+    cout << randomX << endl;
+   
 
 
     textureSpriteManager.GetTexture("face_happy");

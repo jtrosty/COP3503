@@ -1,6 +1,10 @@
 #include "LoadConfig.h"
 
-//FileLoading::ConfigData configData;
+FileLoading::ConfigData staticConfigData;
+
+FileLoading::FileLoading() {
+	configData = new ConfigData;
+}
 
 void FileLoading::loadFileHelper(string fileName, fileTypeToLoad type) {
 	string path = "boards/";
@@ -8,7 +12,7 @@ void FileLoading::loadFileHelper(string fileName, fileTypeToLoad type) {
 	{
 	case FileLoading::config:
 		path += fileName + ".cfg";
-		loadConfig(fileName);
+		loadConfig(path);
 		break;
 	case FileLoading::board:
 		path += fileName + ".brd";
@@ -16,21 +20,26 @@ void FileLoading::loadFileHelper(string fileName, fileTypeToLoad type) {
 	default:
 		break;
 	}
-
 }
 
-void FileLoading::loadConfig(string fileName) {
-	ifstream fileIn(fileName);
-	int column;
-	int rows;
-	int numOfMines;
-	fileIn >> column; 
-	fileIn >> rows;
-	fileIn >> numOfMines;
-	//configData.column = column;
-	//configData.rows = rows;
-	//configData.numOfMines = numOfMines;
-	//cout << configData.column << endl;
-	cout << "The column is " << column << endl;
+void FileLoading::loadConfig(string path) {
+	ifstream fileIn(path);
+	if (fileIn.is_open()) {
+		fileIn >> configData->column;
+		fileIn >> configData->rows;
+		fileIn >> configData->numOfMines;
+		//FileLoading::staticConfigData.column = configData->column;
 
+		//TODO (Jon) remove the following:
+		cout << "The column is " << configData->column << endl;
+		cout << "The column is " << configData->rows << endl;
+		cout << "The column is " << configData->numOfMines << endl;
+	}
+	else {
+		cout << "ERROR: " << path << " did not open." << endl;
+	}
+}
+
+FileLoading::~FileLoading() {
+	delete configData;
 }

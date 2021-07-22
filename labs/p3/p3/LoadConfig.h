@@ -9,16 +9,20 @@ using std::string;
 using std::ifstream;
 
 class FileLoading {
-
-	static void loadConfig(string fileName);
+	void loadConfig(string fileName);
 
 public:
-	enum fileTypeToLoad {config, board};
 	struct ConfigData {
 		int column;
 		int rows;
 		int numOfMines;
 	};
-	static ConfigData configData;
-	static void loadFileHelper(string fileName, fileTypeToLoad type);
+	FileLoading();
+	// TODO copy contructor
+	// TODO copy assignment
+	~FileLoading();
+	static ConfigData staticConfigData;
+	ConfigData* configData;
+	enum fileTypeToLoad {config, board};
+	void loadFileHelper(string fileName, fileTypeToLoad type);
 };
