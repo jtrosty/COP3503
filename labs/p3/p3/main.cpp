@@ -12,8 +12,10 @@ int main()
     struct TileInfo {
         int xPos;
         int yPos;
-
-        char numOfMinesOrMine; // 1-8 then that is num of mines, or >8 has mine
+        char revealed;
+        char mine;
+        char flag;
+        char numOfMines; // 1-8 then that is num of mines, or >8 has mine
     };
 
     sf::Sprite sprite; 
@@ -46,9 +48,12 @@ int main()
     for (int i = 0; i < numOfTiles; i++) {
         x = i % fileLoader.configData->column;
         y = i / fileLoader.configData->column;
-        tileInfo->xPos = (x * lengthOfTile);
-        tileInfo->yPos = (y * lengthOfTile);
-        tileInfo->numOfMinesOrMine = 9;
+        tileInfo[i].xPos = (x * lengthOfTile);
+        tileInfo[i].yPos = (y * lengthOfTile);
+        tileInfo[i].revealed = 0;
+        tileInfo[i].numOfMines = 0;
+        tileInfo[i].flag = 0;
+        tileInfo[i].mine = 1;
     }
 
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Jon Trost RuleZ");
@@ -82,7 +87,11 @@ int main()
 
         window.clear();
 
-		sf::Sprite tileSprite = textureSpriteManager.GetSprite("tile_hidden");
+		/// <summary>
+		/// /////////////////////////////// display stuff
+		/// </summary>
+		/// <returns></returns>
+		sf::Sprite tileSprite = textureSpriteManager.GetSprite("mine");
 		int xPos = 0;
 		int yPos = 0;
 		for (int i = 0; i < fileLoader.configData->rows; i++) {
@@ -94,12 +103,23 @@ int main()
             xPos = 0;
 			yPos += lengthOfTile;
 		}
+        ////////////////////////////////////////////////////////////////////////////////
         sf::Sprite* hidden = &textureSpriteManager.GetSprite("tile_hidden");
         sf::Sprite* mine = &textureSpriteManager.GetSprite("mine");
         sf::Sprite* revealed = &textureSpriteManager.GetSprite("tile_revealed");
-		for (int i = 0; i < fileLoader.configData->rows; i++) {
-
-			window.draw(tileSprite);
+        sf::Sprite* flag = &textureSpriteManager.GetSprite("flag");
+		for (int i = 0; i < numOfTiles; i++) {
+            if (tileInfo[i].revealed == 0) {
+                hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+                window.draw(*hidden);
+                if (tileInfo[i].flag != 0) {
+					flag->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+					window.draw(*flag);
+                }
+            }
+            else {
+                hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+            }
 		}
 
         window.draw(shape);
