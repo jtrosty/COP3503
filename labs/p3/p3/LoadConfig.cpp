@@ -49,7 +49,6 @@ void FileLoading::loadBoard(string path) {
 		while (getline(fileIn, buffer)) {
 			testBoardString += buffer;
 		}
-		cout << testBoardString;
 	}
 	else {
 		cout << "ERROR: " << path << " did not open." << endl;
@@ -58,4 +57,9 @@ void FileLoading::loadBoard(string path) {
 
 FileLoading::~FileLoading() {
 	delete configData;
+}
+
+string FileLoading::getTestBoardString()
+{
+	return testBoardString;
 }
