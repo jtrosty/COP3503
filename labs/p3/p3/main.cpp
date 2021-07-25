@@ -33,6 +33,7 @@ int main()
     // DRAW THE BOARD:
     // 
     //Config file
+    ////////////////////////////////////////////////// Creates tile data
     FileLoading fileLoader;
     fileLoader.loadFileHelper("config", fileLoader.config);
 
@@ -56,11 +57,15 @@ int main()
         tileInfo[i].mine = 1;
     }
 
+    /// <summary>
+    /// /////////////////////////////////////////setup window
+    /// </summary>
+    /// <returns></returns>
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Jon Trost RuleZ");
 
 
-    cout << "column num " <<  fileLoader.configData->column << endl;
     
+    // DELETE DELETE DELETE
     // Random Test
     int randomX = Random::Int(0, 400);
     cout << randomX << endl;
@@ -76,13 +81,33 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
+            switch (event.type) {
+                //      // window closed
+				case sf::Event::Closed:
+					window.close();
+					break;
+
+				// key pressed
+                case sf::Event::MouseButtonPressed: 
+                    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                        textureSpriteManager.GetSprite("test_3").setPosition(mousePos.x, mousePos.y);
+                        //cout << "X is: " << mousePos.x << " Y is: " << mousePos.y << endl;
+
+                        int columnClicked = mousePos.x / lengthOfTile;
+                        int rowClicked = mousePos.y / lengthOfTile;
+                        cout << "Column is: " << columnClicked << " Row is: " << rowClicked << endl;
+                    }
+			        break;
+			    // we don't process other types of events
+				default:
+					break;
+            }
+            /*
             if (event.type == sf::Event::Closed)
                 window.close();
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                textureSpriteManager.GetSprite("test_3").setPosition(mousePos.x, mousePos.y);
-                cout << "X is: " << mousePos.x << " Y is: " << mousePos.y << endl;
             }
+            */
         }
 
         window.clear();
@@ -90,7 +115,6 @@ int main()
 		/// <summary>
 		/// /////////////////////////////// display stuff
 		/// </summary>
-		/// <returns></returns>
 		sf::Sprite tileSprite = textureSpriteManager.GetSprite("mine");
 		int xPos = 0;
 		int yPos = 0;
@@ -121,6 +145,7 @@ int main()
                 hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
             }
 		}
+        ////////////////////////////////////////////////////////////////////////////////////
 
         window.draw(shape);
         window.draw(sprite);
