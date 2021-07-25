@@ -16,6 +16,7 @@ void FileLoading::loadFileHelper(string fileName, fileTypeToLoad type) {
 		break;
 	case FileLoading::board:
 		path += fileName + ".brd";
+		loadBoard(path);
 		break;
 	default:
 		break;
@@ -34,6 +35,21 @@ void FileLoading::loadConfig(string path) {
 		cout << "The column is " << configData->column << endl;
 		cout << "The column is " << configData->rows << endl;
 		cout << "The column is " << configData->numOfMines << endl;
+	}
+	else {
+		cout << "ERROR: " << path << " did not open." << endl;
+	}
+}
+
+void FileLoading::loadBoard(string path) {
+	ifstream fileIn(path);
+	string buffer;
+	if (fileIn.is_open()) {
+		//FileLoading::staticConfigData.column = configData->column;
+		while (getline(fileIn, buffer)) {
+			testBoardString += buffer;
+		}
+		cout << testBoardString;
 	}
 	else {
 		cout << "ERROR: " << path << " did not open." << endl;

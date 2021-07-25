@@ -20,13 +20,6 @@ int main()
         std::vector<TileInfo*> adjacentTiles;
     };
 
-    sf::Sprite sprite; 
-
-    // the cirlce
-    // TODO (Jon)
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-
     //Load textures
     TextureSpriteManager textureSpriteManager;
     textureSpriteManager.LoadAllTextures();
@@ -38,6 +31,7 @@ int main()
     ////////////////////////////////////////////////// Creates tile data
     FileLoading fileLoader;
     fileLoader.loadFileHelper("config", fileLoader.config);
+    fileLoader.loadFileHelper("testboard1", fileLoader.board);
 
     int heightOfMenu = 88;
     int lengthOfTile = 32;
@@ -61,6 +55,15 @@ int main()
 
     // Add mines to tiles ##########################################################
     // Make it Random
+
+
+    // If chosen to load test board. 
+    for (int i = 0; i < numOfTiles; i++) {
+        if (fileLoader.testBoardString[i] == '0') {
+            tileInfo[i].mine = 0;
+        }
+        else tileInfo[i].mine = 1;
+    }
 
     // Setup pointers and count Mines $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     for (int i = 0; i < numOfTiles; i++) {
@@ -157,13 +160,6 @@ int main()
     // DELETE DELETE DELETE
     // Random Test
     int randomX = Random::Int(0, 400);
-    cout << randomX << endl;
-   
-
-
-    textureSpriteManager.GetTexture("face_happy");
-    sprite.setTexture(textureSpriteManager.GetTexture("face_happy"));
-    sprite.setPosition(500, 500);
 
     while (window.isOpen())
     {
@@ -260,8 +256,10 @@ int main()
                 revealed->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
                 window.draw(*revealed);
                 if (tileInfo[i].mine != 0) {
-					mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-					window.draw(*mine);
+                    mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+                    window.draw(*mine);
+                }
+                else {
                     switch (tileInfo[i].numOfMines) {
 						case 1:
                             numberOfMines = &textureSpriteManager.GetSprite("number_1");
@@ -306,17 +304,12 @@ int main()
 						default:
 							break;
                     }
-                }
-                else {
                     // NEED TO ADD THE LOGIC FOR DISPLAYING THE NUM OF MINES
                 }
             }
 		}
         ////////////////////////////////////////////////////////////////////////////////////
 
-        window.draw(shape);
-        window.draw(sprite);
-        window.draw(textureSpriteManager.GetSprite("test_3"));
         window.display();
     }
     delete[] tileInfo;

@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <string>
 using std::cout;
 using std::endl;
 
@@ -10,6 +12,7 @@ using std::ifstream;
 
 class FileLoading {
 	void loadConfig(string fileName);
+	void loadBoard(string fileName);
 
 public:
 	struct ConfigData {
@@ -17,6 +20,9 @@ public:
 		int rows;
 		int numOfMines;
 	};
+	std::vector<char> testBoard;
+	std::string testBoardString;
+
 	FileLoading();
 	// TODO copy contructor
 	// TODO copy assignment
