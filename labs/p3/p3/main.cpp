@@ -3,6 +3,7 @@
 #include "TextureSpriteManager.h"
 #include "LoadConfig.h"
 #include "Random.h"
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -16,6 +17,7 @@ int main()
         char mine;
         char flag;
         char numOfMines; // 1-8 then that is num of mines, or >8 has mine
+        std::vector<TileInfo*> adjacentTiles;
     };
 
     sf::Sprite sprite; 
@@ -57,6 +59,93 @@ int main()
         tileInfo[i].mine = 1;
     }
 
+    // Add mines to tiles ##########################################################
+    // Make it Random
+
+    // Setup pointers and count Mines $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    for (int i = 0; i < numOfTiles; i++) {
+        x = i % fileLoader.configData->column;
+        y = i / fileLoader.configData->column;
+        // Set up pointers to adjacent tiles
+
+        // Most common case
+        if (x != 0 && x != fileLoader.configData->column - 1 && y != 0 && y!= fileLoader.configData->rows - 1) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column + 1]);
+        }
+        // Top Left Corner
+        else if (x == 0 && y == 0) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column + 1]);
+        }
+        // Top Right Corner
+        else if (x == fileLoader.configData->column && y == 0) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column]);
+        }
+        // Bottom Left Corner
+        else if (x == 0 && y == fileLoader.configData->column - 1) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + 1]);
+        }
+        // Bottom Right Corner
+        else if (x == fileLoader.configData->column - 1 && y == fileLoader.configData->rows - 1) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - 1]);
+        }
+        // Left Edge
+        else if (x == 0) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column + 1]);
+        }
+        // Rigth Edge
+        else if (x == fileLoader.configData->column - 1) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column]);
+        }
+        // Bottom Edge
+        else if (y == 0) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + fileLoader.configData->column + 1]);
+        }
+        // Top Edge
+        else if (y == fileLoader.configData->rows - 1) {
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - fileLoader.configData->column + 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i - 1]);
+            tileInfo[i].adjacentTiles.push_back(&tileInfo[i + 1]);
+        }
+
+        int size = tileInfo[i].adjacentTiles.size();
+        for (int j = 0; j < size; j++) {
+            if (tileInfo[i].adjacentTiles.at(j)->mine == 1) {
+                tileInfo[i].numOfMines++;
+            }
+        }
+    }
+    
+    // Determine Number of mines nearby
+
     /// <summary>
     /// /////////////////////////////////////////setup window
     /// </summary>
@@ -89,7 +178,7 @@ int main()
 
 				// key pressed
                 case sf::Event::MouseButtonPressed: 
-                    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                    if (event.key.code == sf::Mouse::Left) {
                         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                         textureSpriteManager.GetSprite("test_3").setPosition(mousePos.x, mousePos.y);
                         //cout << "X is: " << mousePos.x << " Y is: " << mousePos.y << endl;
@@ -97,7 +186,31 @@ int main()
                         int columnClicked = mousePos.x / lengthOfTile;
                         int rowClicked = mousePos.y / lengthOfTile;
                         cout << "Column is: " << columnClicked << " Row is: " << rowClicked << endl;
+                        int cellClicked = (rowClicked * fileLoader.configData->column) + columnClicked;
+                        if (tileInfo[cellClicked].revealed == 0) {
+                            tileInfo[cellClicked].revealed = 1;
+                        }
+                        else {
+                            tileInfo[cellClicked].revealed = 0;
+                        }
                     }
+                    else if (event.key.code == sf::Mouse::Right) {
+                        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                        textureSpriteManager.GetSprite("test_3").setPosition(mousePos.x, mousePos.y);
+                        //cout << "X is: " << mousePos.x << " Y is: " << mousePos.y << endl;
+
+                        int columnClicked = mousePos.x / lengthOfTile;
+                        int rowClicked = mousePos.y / lengthOfTile;
+                        int cellClicked = (rowClicked * fileLoader.configData->column) + columnClicked;
+                        cout << "Column is: " << columnClicked << " Row is: " << rowClicked << endl;
+                        if (tileInfo[cellClicked].flag == 0) {
+                            tileInfo[cellClicked].flag = 1;
+                            cout << "Num Of mines: " << (short)tileInfo[cellClicked].numOfMines << endl;
+                        }
+                        else {
+                            tileInfo[cellClicked].flag = 0;
+                        }
+                    } 
 			        break;
 			    // we don't process other types of events
 				default:
@@ -128,10 +241,12 @@ int main()
 			yPos += lengthOfTile;
 		}
         ////////////////////////////////////////////////////////////////////////////////
+        // Draw Sprites
         sf::Sprite* hidden = &textureSpriteManager.GetSprite("tile_hidden");
         sf::Sprite* mine = &textureSpriteManager.GetSprite("mine");
         sf::Sprite* revealed = &textureSpriteManager.GetSprite("tile_revealed");
         sf::Sprite* flag = &textureSpriteManager.GetSprite("flag");
+        sf::Sprite* numberOfMines;
 		for (int i = 0; i < numOfTiles; i++) {
             if (tileInfo[i].revealed == 0) {
                 hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
@@ -142,7 +257,59 @@ int main()
                 }
             }
             else {
-                hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+                revealed->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+                window.draw(*revealed);
+                if (tileInfo[i].mine != 0) {
+					mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+					window.draw(*mine);
+                    switch (tileInfo[i].numOfMines) {
+						case 1:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_1");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						case 2:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_2");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						case 3:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_3");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						case 4:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_4");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						case 5:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_5");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						case 6:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_6");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						case 7:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_7");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						case 8:
+                            numberOfMines = &textureSpriteManager.GetSprite("number_8");
+							numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+							window.draw(*numberOfMines);
+							break;
+						default:
+							break;
+                    }
+                }
+                else {
+                    // NEED TO ADD THE LOGIC FOR DISPLAYING THE NUM OF MINES
+                }
             }
 		}
         ////////////////////////////////////////////////////////////////////////////////////
@@ -152,5 +319,6 @@ int main()
         window.draw(textureSpriteManager.GetSprite("test_3"));
         window.display();
     }
+    delete[] tileInfo;
     return 0;
 }
