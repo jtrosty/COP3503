@@ -80,6 +80,8 @@ void GameLogic::loadGameData()
     gameData.columns = fileLoader.configData->column;
     gameData.numOfMines = fileLoader.configData->numOfMines;
     gameData.numOfTiles = (gameData.rows * gameData.columns);
+    gameData.showMines = 0;
+    gameData.smileyFace = 0;
 
     tileInfo = new TileInfo[gameData.numOfTiles];
     zeroBoard(tileInfo);

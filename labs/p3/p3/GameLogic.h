@@ -5,16 +5,19 @@
 
 class GameLogic
 {
+public:
+
     struct GameData {
         int rows;
         int columns;
         int numOfMines;
         int numOfTiles;
-        int lengthOfTile = 32;
+        short lengthOfTile = 32;
+        short sizeOfInterfaceTiles = 64;
+        char smileyFace;
+        char showMines;
     };
 
-
-public:
     struct TileInfo {
         int xPos;
         int yPos;

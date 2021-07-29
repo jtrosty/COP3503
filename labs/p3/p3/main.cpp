@@ -13,13 +13,14 @@ using std::endl;
 
 int main()
 {
+    sf::RenderWindow window;
     GameLogic gameLogic;
     Render render;
+    render.windowSize(gameLogic.gameData.columns, gameLogic.gameData.rows, window);
     TextureSpriteManager textureSpriteManager;
 
     textureSpriteManager.LoadAllTextures();
 
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "Jon Trost RuleZ");
     int heightOfMenu = 88;
     int lengthOfTile = 32;
 
@@ -54,7 +55,7 @@ int main()
 
         window.clear();
         // RENDER RENDER
-        render.updateAndDisplayBoard(gameLogic.tileInfo, gameLogic.gameData.numOfTiles, window, textureSpriteManager);
+        render.updateAndDisplayBoard(gameLogic.tileInfo, gameLogic.gameData, window, textureSpriteManager);
 
         window.display();
     }
