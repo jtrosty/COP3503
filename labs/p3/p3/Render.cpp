@@ -1,6 +1,7 @@
 #include "Render.h"
 #include "TextureSpriteManager.h"
 #include "GameLogic.h"
+#include <math.h>
 
 void Render::updateAndDisplayBoard(GameLogic::TileInfo tileInfo[],
 								   GameLogic::GameData& gameData,
@@ -9,6 +10,7 @@ void Render::updateAndDisplayBoard(GameLogic::TileInfo tileInfo[],
     ////////////////////////////////////////////////////////////////////////////////
     // Draw Sprites
 	userInterface(gameData, textureSpriteManager, window);
+	mineCounter(gameData, textureSpriteManager, window);
     sf::Sprite* hidden = &textureSpriteManager.GetSprite("tile_hidden");
     sf::Sprite* mine = &textureSpriteManager.GetSprite("mine");
     sf::Sprite* revealed = &textureSpriteManager.GetSprite("tile_revealed");
@@ -83,6 +85,52 @@ void Render::userInterface(GameLogic::GameData gameData, TextureSpriteManager& t
 	window.draw(testIcon);
 }
 
+void Render::mineCounter(GameLogic::GameData gameData, TextureSpriteManager& textureSpriteManager, sf::RenderWindow& window) {
+	int sizeOfDigit = 21;
+	int counter = gameData.numOfMines - gameData.numOfFlags;
+	std::string counterStr = std::to_string(std::abs(counter));
+	//cout << "coutner string: " << counterStr << endl;
+	sf::Sprite* digits = &textureSpriteManager.GetSprite("digits");
+	sf::Vector2f rectSize(sizeOfDigit, gameData.lengthOfTile);
+	int yPos = (gameData.rows * gameData.lengthOfTile);
+	int xPos = sizeOfDigit;
+	int xDigit = 0;
+	short size = counterStr.size();
+
+	if (counter < 0) {
+		xDigit = digitOffset('-', sizeOfDigit);
+		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
+		digits->setPosition(0, yPos);
+		window.draw(*digits);
+	}
+	if (size == 1) {
+		xDigit = digitOffset('0', sizeOfDigit);
+		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
+		digits->setPosition(xPos, yPos);
+		window.draw(*digits);
+		xPos += 21;
+		digits->setPosition(xPos, yPos);
+		window.draw(*digits);
+		xPos += 21;
+	}
+	if (size == 2) {
+		xDigit = digitOffset('0', sizeOfDigit);
+		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
+		digits->setPosition(xPos, yPos);
+		window.draw(*digits);
+		xPos += 21;
+	}
+
+	for (int i = 0; i < size; i++) {
+		xDigit = digitOffset(counterStr[i], sizeOfDigit);
+
+		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
+		digits->setPosition(xPos, yPos);
+		window.draw(*digits);
+		xPos += 21;
+	}
+}
+
 void Render::windowSize(int columns, int rows, sf::RenderWindow& window){
 	int minColumns = 22;
 	short textureWidth = 32;
@@ -95,6 +143,7 @@ void Render::windowSize(int columns, int rows, sf::RenderWindow& window){
 	int windowHeight = (rows * textureWidth) + heightUI;
 
 	window.create(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
+	window.clear(sf::Color::White);
 }
 
 void Render::displayNumOfMines(GameLogic::TileInfo& tileInfo, TextureSpriteManager& textureSpriteManager, sf::RenderWindow& window, sf::Sprite& numberOfMines) {
@@ -143,4 +192,42 @@ void Render::displayNumOfMines(GameLogic::TileInfo& tileInfo, TextureSpriteManag
 		default:
 			break;
     }
+}
+
+int Render::digitOffset(char digit, int offset) {
+	switch (digit) {
+	case '0':
+		return 0;
+		break;
+	case '1':
+		return offset;
+		break;
+	case '2':
+		return offset * 2;
+		break;
+	case '3':
+		return offset * 3;
+		break;
+	case '4':
+		return offset * 4;
+		break;
+	case '5':
+		return offset * 5;
+		break;
+	case '6':
+		return offset * 6;
+		break;
+	case '7':
+		return offset * 7;
+		break;
+	case '8':
+		return offset * 8;
+		break;
+	case '9':
+		return offset * 9;
+		break;
+	case '-':
+		return offset * 10;
+		break;
+	}
 }

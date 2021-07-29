@@ -2,15 +2,19 @@
 #include <string>
 #include <vector>
 #include"LoadConfig.h"
+#include "Random.h"
 
 class GameLogic
 {
+
+
 public:
 
     struct GameData {
         int rows;
         int columns;
         int numOfMines;
+        int numOfFlags;
         int numOfTiles;
         short lengthOfTile = 32;
         short sizeOfInterfaceTiles = 64;
@@ -30,6 +34,8 @@ public:
     TileInfo* tileInfo;
     GameData gameData;
 
+    void randomMines(TileInfo tileInfo[], GameData& gameData);
+    void emptyTileAutoOpen(TileInfo& tile);
     void setUpAdjacentTiles(TileInfo tiles[]);
     void loadTestBoard(TileInfo tiles[], string testBoard);
 	void zeroBoard(TileInfo tiles[]);

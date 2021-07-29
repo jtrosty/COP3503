@@ -8,6 +8,7 @@ int Random::x = 100;
 int Random::Int(int min, int max)
 {
 	std::uniform_int_distribution<int> dist(min, max);
+
 	return dist(random);
 }
 
