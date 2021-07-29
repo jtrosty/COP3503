@@ -14,7 +14,6 @@ class GameLogic
     };
 
 
-
 public:
     struct TileInfo {
         int xPos;
@@ -25,7 +24,7 @@ public:
         char numOfMines; // 1-8 then that is num of mines, or >8 has mine
         std::vector<TileInfo*> adjacentTiles;
     };
-    static TileInfo* tileInfo = nullptr;
+    TileInfo* tileInfo;
     GameData gameData;
 
     void setUpAdjacentTiles(TileInfo tiles[]);

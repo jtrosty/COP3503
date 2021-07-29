@@ -16,7 +16,9 @@ int main()
     GameLogic gameLogic;
     Render render;
     TextureSpriteManager textureSpriteManager;
+
     textureSpriteManager.LoadAllTextures();
+
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Jon Trost RuleZ");
     int heightOfMenu = 88;
     int lengthOfTile = 32;
@@ -52,7 +54,7 @@ int main()
 
         window.clear();
         // RENDER RENDER
-        render.updateAndDisplayBoard(gameLogic.tileInfo, &window, &textureSpriteManager);
+        render.updateAndDisplayBoard(gameLogic.tileInfo, gameLogic.gameData.numOfTiles, window, textureSpriteManager);
 
         window.display();
     }

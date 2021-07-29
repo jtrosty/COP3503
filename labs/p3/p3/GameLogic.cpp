@@ -4,15 +4,8 @@ GameLogic::TileInfo* tileInfo;
 
 
 GameLogic::GameLogic() {
-    FileLoading fileLoader;
-    fileLoader.loadFileHelper("config", fileLoader.config);
-    gameData.rows = fileLoader.configData->rows;
-    gameData.columns = fileLoader.configData->column;
-    gameData.numOfMines = fileLoader.configData->numOfMines;
-    gameData.numOfTiles = (gameData.rows * gameData.columns);
-
-    tileInfo = new TileInfo[gameData.numOfTiles];
-    zeroBoard(tileInfo);
+    loadGameData();
+    cout << "success" << endl;
 }
 
 GameLogic::~GameLogic() {
@@ -46,7 +39,7 @@ void GameLogic::zeroBoard(TileInfo tileInfo[])
         tileInfo[i].revealed = 0;
         tileInfo[i].numOfMines = 0;
         tileInfo[i].flag = 0;
-        tileInfo[i].mine = 0;
+        tileInfo[i].mine = 1;
     }
 }
 
@@ -60,7 +53,7 @@ void GameLogic::leftClick(int x, int y)
 		tileInfo[cellClicked].revealed = 1;
 	}
 	else {
-		tileInfo[cellClicked].revealed = 0;
+        // You cannot undo reveal
 	}
 }
 
@@ -90,6 +83,7 @@ void GameLogic::loadGameData()
 
     tileInfo = new TileInfo[gameData.numOfTiles];
     zeroBoard(tileInfo);
+    setUpAdjacentTiles(tileInfo);
 }
 
 

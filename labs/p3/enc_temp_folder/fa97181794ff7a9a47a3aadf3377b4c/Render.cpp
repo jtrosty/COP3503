@@ -33,6 +33,52 @@ void Render::updateAndDisplayBoard(GameLogic::TileInfo tileInfo[],
             }
             else {
                 displayNumOfMines(tileInfo[i], textureSpriteManager, window, *numberOfMines);
+                // NEED TO ADD THE LOGIC FOR DISPLAYING THE NUM OF MINES
+                /*
+switch (tileInfo[i].numOfMines) {
+    case 1:
+        numberOfMines = &textureSpriteManager.GetSprite("number_1");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    case 2:
+        numberOfMines = &textureSpriteManager.GetSprite("number_2");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    case 3:
+        numberOfMines = &textureSpriteManager.GetSprite("number_3");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    case 4:
+        numberOfMines = &textureSpriteManager.GetSprite("number_4");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    case 5:
+        numberOfMines = &textureSpriteManager.GetSprite("number_5");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    case 6:
+        numberOfMines = &textureSpriteManager.GetSprite("number_6");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    case 7:
+        numberOfMines = &textureSpriteManager.GetSprite("number_7");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    case 8:
+        numberOfMines = &textureSpriteManager.GetSprite("number_8");
+        numberOfMines->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+        window.draw(*numberOfMines);
+        break;
+    default:
+        break;
+        */
             }
         }
     }
