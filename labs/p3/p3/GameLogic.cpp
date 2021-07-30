@@ -47,12 +47,16 @@ void GameLogic::leftClick(int x, int y)
 {
 	int columnClicked = x / gameData.lengthOfTile;
 	int rowClicked = y / gameData.lengthOfTile;
-	cout << "Column is: " << columnClicked << " Row is: " << rowClicked << endl;
 	int cellClicked = (rowClicked * gameData.columns) + columnClicked;
-	if (tileInfo[cellClicked].revealed == 0) {
+	cout << "Column is: " << columnClicked << " Row is: " << rowClicked << " num Mines " << (short)tileInfo[cellClicked].numOfMines << endl;
+
+	if (tileInfo[cellClicked].revealed == 0 && cellClicked < gameData.numOfTiles) {
         if (tileInfo[cellClicked].numOfMines == 0 && tileInfo[cellClicked].mine == 0) {
             // Open up all ties that don't ahve mines that touch one another
             emptyTileAutoOpen(tileInfo[cellClicked]);
+        }
+        else if (tileInfo[cellClicked].mine == 1) {
+            //  YOU LOSEjj
         }
         tileInfo[cellClicked].revealed = 1;
 	}
@@ -60,21 +64,46 @@ void GameLogic::leftClick(int x, int y)
         // You cannot undo reveal
                // cout << "Index " << i << " " << tileInfo[i].adjacentTiles.size() << endl;
 	}
+    userInterfaceControls(x, y);
+}
+
+void GameLogic::userInterfaceControls(int x, int y) {
+	if (y > (gameData.rows * gameData.lengthOfTile) &&
+		y < ((gameData.rows * gameData.lengthOfTile) + gameData.sizeOfInterfaceTiles)) {
+		if (x > gameData.debug_ShowMinesX && x < (gameData.debug_ShowMinesX + gameData.sizeOfInterfaceTiles)) {
+            if (gameData.debugShowMine == 0) {
+                gameData.debugShowMine = 1;
+            }
+            else {
+                gameData.debugShowMine = 0;
+            }
+		}
+		else if (x > gameData.test_1X && x < (gameData.test_1X + gameData.sizeOfInterfaceTiles)) {
+
+		}
+		else if (x > gameData.test_2X && x < (gameData.test_2X + gameData.sizeOfInterfaceTiles)) {
+
+		}
+		else if (x > gameData.test_3X && x < (gameData.test_3X + gameData.sizeOfInterfaceTiles)) {
+
+		}
+		else if (x > gameData.smileX && x < (gameData.smileX + gameData.sizeOfInterfaceTiles)) {
+
+		}
+	}
+
 }
 
 void GameLogic::emptyTileAutoOpen(TileInfo& tile) {
-    if (tile.xPos == 0 && tile.yPos == 448) {
-        cout << "here" << endl;
-    }
     if (tile.revealed == 1) return;
-    if (tile.numOfMines != 0) {
+    if ((short)tile.numOfMines != 0) {
         tile.revealed = 1;
         return;
     }
     int size = tile.adjacentTiles.size();
     for (int i = 0; i < size; i++) {
         tile.revealed = 1;
-        if (tile.adjacentTiles.at(i) == nullptr) continue;
+        //if (tile.adjacentTiles.at(i) == nullptr) continue;
         emptyTileAutoOpen(*tile.adjacentTiles.at(i));
     }
 }
@@ -84,7 +113,7 @@ void GameLogic::rightClick(int x, int y)
 	int columnClicked = x / gameData.lengthOfTile;
 	int rowClicked = y / gameData.lengthOfTile;
 	int cellClicked = (rowClicked * gameData.columns) + columnClicked;
-	cout << "Column is: " << columnClicked << " Row is: " << rowClicked << endl;
+	cout << "Column is: " << columnClicked << " Row is: " << rowClicked << " num Mines " << (short)tileInfo[cellClicked].numOfMines << endl;
 	if (tileInfo[cellClicked].flag == 0) {
 		tileInfo[cellClicked].flag = 1;
         gameData.numOfFlags++;
@@ -111,6 +140,8 @@ void GameLogic::loadGameData()
     gameData.test_3X = (gameData.columns * gameData.lengthOfTile) - gameData.sizeOfInterfaceTiles;
     gameData.test_2X = gameData.test_3X - gameData.sizeOfInterfaceTiles;
     gameData.test_1X = gameData.test_2X - gameData.sizeOfInterfaceTiles;
+    gameData.debug_ShowMinesX = gameData.test_1X - gameData.sizeOfInterfaceTiles;
+    gameData.debugShowMine = 0;
 
     tileInfo = new TileInfo[gameData.numOfTiles];
     zeroBoard(tileInfo);
@@ -216,5 +247,6 @@ void GameLogic::setUpAdjacentTiles(TileInfo tileInfo[])
                 tileInfo[i].numOfMines++;
             }
         }
+        cout << " item " << i << ": " << (short)tileInfo[i].numOfMines << ", " << endl;
     }
 }

@@ -15,29 +15,38 @@ void Render::updateAndDisplayBoard(GameLogic::TileInfo tileInfo[],
     sf::Sprite* mine = &textureSpriteManager.GetSprite("mine");
     sf::Sprite* revealed = &textureSpriteManager.GetSprite("tile_revealed");
     sf::Sprite* flag = &textureSpriteManager.GetSprite("flag");
-    sf::Sprite* numberOfMines = &textureSpriteManager.GetSprite("number_1");
-    for (int i = 0; i < gameData.numOfTiles; i++) {
-        if (tileInfo[i].revealed == 0) {
-            hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-            window.draw(*hidden);
-            if (tileInfo[i].flag != 0) {
-                flag->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-                window.draw(*flag);
-            }
-        }
-        else {
-            revealed->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-            window.draw(*revealed);
-            if (tileInfo[i].mine != 0) {
-                mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-                window.draw(*mine);
-                // ****************************** FOR TESTING
-                displayNumOfMines(tileInfo[i], textureSpriteManager, window, *numberOfMines);
-            }
-            else {
-                displayNumOfMines(tileInfo[i], textureSpriteManager, window, *numberOfMines);
-            }
-        }
+    //sf::Sprite* numberOfMines = &textureSpriteManager.GetSprite("number_1");
+	for (int i = 0; i < gameData.numOfTiles; i++) {
+		if (tileInfo[i].revealed == 0) {
+			hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+			window.draw(*hidden);
+			if (tileInfo[i].flag != 0) {
+				flag->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+				window.draw(*flag);
+			}
+		}
+		else {
+			revealed->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+			window.draw(*revealed);
+			if (tileInfo[i].mine != 0) {
+				mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+				window.draw(*mine);
+			}
+			else {
+				displayNumOfMines(tileInfo[i], textureSpriteManager, window); //*numberOfMines);
+			}
+		}
+		if (gameData.debugShowMine == 1) {
+			if (tileInfo[i].mine == 1) {
+				mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+				window.draw(*mine);
+			}
+		}
+
+		int testTile = 399 - 24;
+		for (int k = 0; k < tileInfo[testTile].adjacentTiles.size(); k++) {
+			tileInfo[testTile].adjacentTiles.at(k)->flag = 1;
+		}
     }
 }
 
@@ -81,6 +90,10 @@ void Render::userInterface(GameLogic::GameData gameData, TextureSpriteManager& t
 	// Test 1 draw
 	xPos = gameData.test_1X;
 	testIcon = textureSpriteManager.GetSprite("test_1");
+	testIcon.setPosition(xPos, yPos);
+	window.draw(testIcon);
+	xPos = gameData.debug_ShowMinesX;
+	testIcon = textureSpriteManager.GetSprite("debug");
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
 }
@@ -146,48 +159,50 @@ void Render::windowSize(int columns, int rows, sf::RenderWindow& window){
 	window.clear(sf::Color::White);
 }
 
-void Render::displayNumOfMines(GameLogic::TileInfo& tileInfo, TextureSpriteManager& textureSpriteManager, sf::RenderWindow& window, sf::Sprite& numberOfMines) {
-
-    switch (tileInfo.numOfMines) {
+void Render::displayNumOfMines(const GameLogic::TileInfo& tileInfo,
+								const TextureSpriteManager& textureSpriteManager,
+							 	sf::RenderWindow& window) {
+	sf::Sprite* numberOfMines;
+    switch ((short)tileInfo.numOfMines) {
 		case 1:
-			numberOfMines = textureSpriteManager.GetSprite("number_1");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_1");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		case 2:
-			numberOfMines = textureSpriteManager.GetSprite("number_2");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_2");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		case 3:
-			numberOfMines = textureSpriteManager.GetSprite("number_3");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_3");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		case 4:
-			numberOfMines = textureSpriteManager.GetSprite("number_4");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_4");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		case 5:
-			numberOfMines = textureSpriteManager.GetSprite("number_5");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_5");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		case 6:
-			numberOfMines = textureSpriteManager.GetSprite("number_6");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_6");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		case 7:
-			numberOfMines = textureSpriteManager.GetSprite("number_7");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_7");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		case 8:
-			numberOfMines = textureSpriteManager.GetSprite("number_8");
-			numberOfMines.setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(numberOfMines);
+			numberOfMines = &textureSpriteManager.GetSprite("number_8");
+			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
+			window.draw(*numberOfMines);
 			break;
 		default:
 			break;

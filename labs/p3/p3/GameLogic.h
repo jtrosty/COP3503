@@ -24,7 +24,8 @@ public:
         int test_1X;
         int test_2X;
         int test_3X;
-        int debug_ShowMines;
+        int debug_ShowMinesX;
+        char debugShowMine;
     };
 
     struct TileInfo {
@@ -39,6 +40,7 @@ public:
     TileInfo* tileInfo;
     GameData gameData;
 
+    void userInterfaceControls(int x, int y);
     void randomMines(TileInfo tileInfo[], GameData& gameData);
     void emptyTileAutoOpen(TileInfo& tile);
     void setUpAdjacentTiles(TileInfo tiles[]);

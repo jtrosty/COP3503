@@ -6,11 +6,10 @@
 class Render {
 
     int digitOffset(char digit, int offset);
-    void displayNumOfMines(GameLogic::TileInfo& tileInfo,
-                           TextureSpriteManager& textureSpriteManager,
-                           sf::RenderWindow& window, 
-                           sf::Sprite& numberOfMines);
-    
+    void displayNumOfMines(const GameLogic::TileInfo& tileInfo,
+                            const TextureSpriteManager& textureSpriteManager,
+                            sf::RenderWindow& window);    
+
     void userInterface(GameLogic::GameData gameData, TextureSpriteManager& textureSpriteManager, sf::RenderWindow& window);
     void mineCounter(GameLogic::GameData gameData, TextureSpriteManager& textureSpriteManager, sf::RenderWindow& window);
 
