@@ -107,6 +107,10 @@ void GameLogic::loadGameData()
     gameData.showMines = 0;
     gameData.smileyFace = 0;
     gameData.numOfFlags = 0;
+    gameData.smileX = (((gameData.columns * gameData.lengthOfTile) - (gameData.sizeOfInterfaceTiles)) / 2);
+    gameData.test_3X = (gameData.columns * gameData.lengthOfTile) - gameData.sizeOfInterfaceTiles;
+    gameData.test_2X = gameData.test_3X - gameData.sizeOfInterfaceTiles;
+    gameData.test_1X = gameData.test_2X - gameData.sizeOfInterfaceTiles;
 
     tileInfo = new TileInfo[gameData.numOfTiles];
     zeroBoard(tileInfo);
@@ -204,7 +208,8 @@ void GameLogic::setUpAdjacentTiles(TileInfo tileInfo[])
             tileInfo[i].adjacentTiles.push_back(&tileInfo[i - 1]);
             tileInfo[i].adjacentTiles.push_back(&tileInfo[i + 1]);
         }
-
+    }
+    for (int i = 0; i < gameData.numOfTiles; i++) {
         int size = tileInfo[i].adjacentTiles.size();
         for (int j = 0; j < size; j++) {
             if (tileInfo[i].adjacentTiles.at(j)->mine == 1) {

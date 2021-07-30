@@ -20,6 +20,11 @@ public:
         short sizeOfInterfaceTiles = 64;
         char smileyFace;
         char showMines;
+        int smileX;
+        int test_1X;
+        int test_2X;
+        int test_3X;
+        int debug_ShowMines;
     };
 
     struct TileInfo {

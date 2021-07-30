@@ -46,7 +46,7 @@ void Render::userInterface(GameLogic::GameData gameData, TextureSpriteManager& t
 	// Happy face
     sf::Sprite smiley = textureSpriteManager.GetSprite("face_happy");
 	// Center of width offset by widht of smileyface (64 pixels)
-	int xPos = (((gameData.columns * gameData.lengthOfTile) - (gameData.sizeOfInterfaceTiles)) / 2);
+	int xPos = gameData.smileX;
 	int yPos = (gameData.rows * gameData.lengthOfTile);
 	//window.draw(smiley);
 	
@@ -70,16 +70,16 @@ void Render::userInterface(GameLogic::GameData gameData, TextureSpriteManager& t
 	// yPos doesnt' have to change
 	// Test 3 draw
 	sf::Sprite testIcon = textureSpriteManager.GetSprite("test_3");
-	xPos = (gameData.columns * gameData.lengthOfTile) - gameData.sizeOfInterfaceTiles;
+	xPos = gameData.test_3X;
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
 	// Test 2 draw
-	xPos = xPos - gameData.sizeOfInterfaceTiles;
+	xPos = gameData.test_2X;
 	testIcon = textureSpriteManager.GetSprite("test_2");
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
 	// Test 1 draw
-	xPos = xPos - gameData.sizeOfInterfaceTiles;
+	xPos = gameData.test_1X;
 	testIcon = textureSpriteManager.GetSprite("test_1");
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
