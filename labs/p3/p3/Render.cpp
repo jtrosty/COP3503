@@ -15,7 +15,6 @@ void Render::updateAndDisplayBoard(GameLogic::TileInfo tileInfo[],
     sf::Sprite* mine = &textureSpriteManager.GetSprite("mine");
     sf::Sprite* revealed = &textureSpriteManager.GetSprite("tile_revealed");
     sf::Sprite* flag = &textureSpriteManager.GetSprite("flag");
-    //sf::Sprite* numberOfMines = &textureSpriteManager.GetSprite("number_1");
 	for (int i = 0; i < gameData.numOfTiles; i++) {
 		if (tileInfo[i].revealed == 0) {
 			hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
@@ -40,12 +39,11 @@ void Render::updateAndDisplayBoard(GameLogic::TileInfo tileInfo[],
 			if (tileInfo[i].mine == 1) {
 				mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
 				window.draw(*mine);
+				if (gameData.winLose == 'W') {
+					flag->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
+					window.draw(*flag);
+				}
 			}
-		}
-
-		int testTile = 399 - 24;
-		for (int k = 0; k < tileInfo[testTile].adjacentTiles.size(); k++) {
-			tileInfo[testTile].adjacentTiles.at(k)->flag = 1;
 		}
     }
 }
@@ -57,19 +55,18 @@ void Render::userInterface(GameLogic::GameData gameData, TextureSpriteManager& t
 	// Center of width offset by widht of smileyface (64 pixels)
 	int xPos = gameData.smileX;
 	int yPos = (gameData.rows * gameData.lengthOfTile);
-	//window.draw(smiley);
 	
-	if (gameData.smileyFace == 0) {
+	if (gameData.winLose == 'P') {
 		smiley = textureSpriteManager.GetSprite("face_happy");
 		smiley.setPosition(xPos, yPos);
 		window.draw(smiley);
 	}
-	else if (gameData.smileyFace == 1) {
+	else if (gameData.winLose == 'L') {
 		smiley = textureSpriteManager.GetSprite("face_lose");
 		smiley.setPosition(xPos, yPos);
 		window.draw(smiley);
 	}
-	else {
+	else if (gameData.winLose == 'W') {
 		smiley = textureSpriteManager.GetSprite("face_win");
 		smiley.setPosition(xPos, yPos);
 		window.draw(smiley);

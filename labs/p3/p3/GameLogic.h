@@ -7,7 +7,6 @@
 class GameLogic
 {
 
-
 public:
 
     struct GameData {
@@ -26,6 +25,7 @@ public:
         int test_3X;
         int debug_ShowMinesX;
         char debugShowMine;
+        char winLose;
     };
 
     struct TileInfo {
@@ -39,7 +39,11 @@ public:
     };
     TileInfo* tileInfo;
     GameData gameData;
+    FileLoading fileLoader;
 
+    void checkIfWinner();
+    void showMines();
+    void resetGame(TileInfo tileInfo[]);
     void userInterfaceControls(int x, int y);
     void randomMines(TileInfo tileInfo[], GameData& gameData);
     void emptyTileAutoOpen(TileInfo& tile);

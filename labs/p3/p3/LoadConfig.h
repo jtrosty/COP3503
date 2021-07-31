@@ -32,4 +32,5 @@ public:
 	enum fileTypeToLoad {config, board};
 	void loadFileHelper(string fileName, fileTypeToLoad type);
 	string getTestBoardString();
+	void deleteTestBoardString();
 };

@@ -7,7 +7,6 @@
 #include "GameLogic.h"
 #include "Render.h"
 
-
 using std::cout;
 using std::endl;
 
@@ -23,7 +22,6 @@ int main()
 
     int heightOfMenu = 88;
     int lengthOfTile = 32;
-    sf::Sprite test1 = textureSpriteManager.GetSprite("number_1");
 
     while (window.isOpen())
     {
@@ -41,8 +39,6 @@ int main()
                     if (event.key.code == sf::Mouse::Left) {
                         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                         gameLogic.leftClick(mousePos.x, mousePos.y);
-                        test1.setPosition(mousePos.x, mousePos.y);
-
                     }
                     else if (event.key.code == sf::Mouse::Right) {
                         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -59,10 +55,8 @@ int main()
 
         // RENDER RENDER
         render.updateAndDisplayBoard(gameLogic.tileInfo, gameLogic.gameData, window, textureSpriteManager);
-        
-        window.draw(test1);
-
         window.display();
     }
+
     return 0;
 }

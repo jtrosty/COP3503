@@ -4,7 +4,7 @@
 ****************** Texture Manger Class Definition *********************
 ************************************************************************/
 
-// "Redeclare" the variable, so this faile knows it exists and can use it
+// "Redeclare" the variable, so this class knows it exists and can use it
 unordered_map<string, sf::Texture> TextureSpriteManager::textures;
 unordered_map<string, sf::Sprite> TextureSpriteManager::sprites;
 

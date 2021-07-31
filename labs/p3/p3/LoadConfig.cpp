@@ -29,7 +29,6 @@ void FileLoading::loadConfig(string path) {
 		fileIn >> configData->column;
 		fileIn >> configData->rows;
 		fileIn >> configData->numOfMines;
-		//FileLoading::staticConfigData.column = configData->column;
 
 		//TODO (Jon) remove the following:
 		cout << "The column is " << configData->column << endl;
@@ -45,7 +44,6 @@ void FileLoading::loadBoard(string path) {
 	ifstream fileIn(path);
 	string buffer;
 	if (fileIn.is_open()) {
-		//FileLoading::staticConfigData.column = configData->column;
 		while (getline(fileIn, buffer)) {
 			testBoardString += buffer;
 		}
@@ -62,4 +60,8 @@ FileLoading::~FileLoading() {
 string FileLoading::getTestBoardString()
 {
 	return testBoardString;
+}
+
+void FileLoading::deleteTestBoardString() {
+	testBoardString.clear();
 }
