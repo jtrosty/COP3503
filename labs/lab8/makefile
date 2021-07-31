@@ -1,5 +1,5 @@
 default:
-	g++ main.cpp Color.cpp -o main.out
+	g++ -Werror main.cpp Color.cpp -o main.out
 	main.out
 
 run:

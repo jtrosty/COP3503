@@ -73,12 +73,11 @@ void ReadFile(const char* filename, map<string, Color>& colors)
 		getline(file, tempColorValueStr, '\n');
 		tempColorValue = stoi(tempColorValueStr);
 
-		// Mkae a new color
-		//Color testColor;
+		// Make a new color
 		Color tempColor(tempsChar, tempColorValue);
 	    colors.emplace(tempColorName, tempColor);
 
-		cout << tempsChar << " " << tempColorValue << endl;
+		//cout << tempsChar << " " << tempColorValue << endl;
 
 	   delete tempsChar;
    }
@@ -86,13 +85,12 @@ void ReadFile(const char* filename, map<string, Color>& colors)
 
 void PrintColors(const map<string, Color>& colors)
 {
-   // TODO: iterate through all entries in the map and print each color, one at a time
    // Print out the color count afterward
    map<string, Color>::const_iterator iter = colors.begin();
-
    for (; iter != colors.end(); ++iter) {
-	   cout << iter->first << " " << iter->second.GetInt() << endl;
+	   PrintColor(iter->second);
    }
+   cout << "Number of colors: " << colors.size();
 }
 
 void PrintColor(const Color& color)
@@ -103,7 +101,7 @@ void PrintColor(const Color& color)
 }
 void SearchForColor(map<string, Color>& colors)
 {
-	// TODO: Get some input, check if that key exists, then print out the color (or an error message)
+	// Get some input, check if that key exists, then print out the color (or an error message)
 	string userInput;
 	cin >> userInput;
 

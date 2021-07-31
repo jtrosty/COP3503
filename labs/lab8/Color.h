@@ -5,12 +5,16 @@ using std::cout;
 using std::endl;
 
 class Color {
-    const char* nameOfColor;
+    std::string nameOfColor;
     int colorValue;
+    std::string hexValue;
+
+    void hexFromInt();
+    unsigned char numToHex(int in) const;
+
 
     public:
     // Contructor
-    Color();
     Color(const char* _name, int _color);
 
     // Given an integer value, convert it to RGB and Hex values
@@ -18,7 +22,7 @@ class Color {
     void SetName(const char *name);
 
     // Accessors
-    const int GetInt() const;
+    int GetInt() const;
     unsigned char GetR() const;
     unsigned char GetG() const;
     unsigned char GetB() const;
