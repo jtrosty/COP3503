@@ -1,14 +1,27 @@
 #include "Color.h"
 
-void Color::SetValue(int value) {
-
+Color::Color() {
+    cout << "made it" << endl;
 }
 
-void Color::SetName(const char *name) {
+Color::Color(const char* _name, int _color) {
+    SetName(_name);
+    SetValue(_color);
+}
 
+void Color::SetValue(int value) {
+    colorValue = value;
+}
+
+void Color::SetName(const char* name) {
+    nameOfColor = name;
 }
 
 // Accessors
+const int Color::GetInt() const {
+    return colorValue;
+}
+
 unsigned char Color::GetR() const {
 
 }
@@ -21,10 +34,10 @@ unsigned char Color::GetB() const {
 
 }
 
-string Color::GetHexValue() const {
+std::string Color::GetHexValue() const {
 
 }
 
-string Color::GetName() const {
+std::string Color::GetName() const {
 
 }
