@@ -4,7 +4,7 @@ GameLogic::TileInfo* tileInfo;
 
 GameLogic::GameLogic() {
     loadGameData();
-    cout << "success" << endl;
+    //cout << "success" << endl;
 }
 
 GameLogic::~GameLogic() {
@@ -67,7 +67,8 @@ void GameLogic::leftClick(int x, int y)
 	int columnClicked = x / gameData.lengthOfTile;
 	int rowClicked = y / gameData.lengthOfTile;
 	int cellClicked = (rowClicked * gameData.columns) + columnClicked;
-	cout << "Column is: " << columnClicked << " Row is: " << rowClicked << " num Mines " << (short)tileInfo[cellClicked].numOfMines << endl;
+    // DEBUG displays where you are clicking in the command line.
+	//cout << "Column is: " << columnClicked << " Row is: " << rowClicked << " num Mines " << (short)tileInfo[cellClicked].numOfMines << endl;
 
 	if (tileInfo[cellClicked].revealed == 0 
         && tileInfo[cellClicked].flag != 1
@@ -84,10 +85,9 @@ void GameLogic::leftClick(int x, int y)
         }
         tileInfo[cellClicked].revealed = 1;
 	}
-	else {
-        // You cannot undo reveal
-               // cout << "Index " << i << " " << tileInfo[i].adjacentTiles.size() << endl;
-	}
+	else {/* You cannot undo reveal */}
+
+    // Checks if you left clicked on the user interface. 
     userInterfaceControls(x, y);
     // Check If You win
     checkIfWinner();
@@ -121,6 +121,7 @@ void GameLogic::checkIfWinner() {
     }
 }
 
+// TODO: There has got to be a better way to do collision detection.
 void GameLogic::userInterfaceControls(int x, int y) {
 	if (y > (gameData.rows * gameData.lengthOfTile) &&
 		y < ((gameData.rows * gameData.lengthOfTile) + gameData.sizeOfInterfaceTiles)) {
@@ -178,13 +179,13 @@ void GameLogic::rightClick(int x, int y)
 	int columnClicked = x / gameData.lengthOfTile;
 	int rowClicked = y / gameData.lengthOfTile;
 	int cellClicked = (rowClicked * gameData.columns) + columnClicked;
-	cout << "Column is: " << columnClicked << " Row is: " << rowClicked << " num Mines " << (short)tileInfo[cellClicked].numOfMines << endl;
+	//cout << "Column is: " << columnClicked << " Row is: " << rowClicked << " num Mines " << (short)tileInfo[cellClicked].numOfMines << endl;
     if (gameData.winLose == 'P') {
 		if (tileInfo[cellClicked].flag == 0) {
 			tileInfo[cellClicked].flag = 1;
 			tileInfo[cellClicked].revealed = 0;
 			gameData.numOfFlags++;
-			cout << "Num Of mines aroud: " << (short)tileInfo[cellClicked].numOfMines << endl;
+			//cout << "Num Of mines aroud: " << (short)tileInfo[cellClicked].numOfMines << endl;
 		}
 		else {
 			tileInfo[cellClicked].flag = 0;
@@ -316,6 +317,7 @@ void GameLogic::setUpAdjacentTiles(TileInfo tileInfo[])
                 tileInfo[i].numOfMines++;
             }
         }
-        cout << " item " << i << ": " << (short)tileInfo[i].numOfMines << ", " << endl;
+        // DEBUG line, displays the number of mines adjacent to a tile. 
+        //cout << " item " << i << ": " << (short)tileInfo[i].numOfMines << ", " << endl;
     }
 }

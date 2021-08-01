@@ -9,6 +9,28 @@
 
 using std::cout;
 using std::endl;
+/************************************************************************************
+    The heart of the program are 2 structs contained within game logic:
+           GameData and TileInfo
+    1. GameData is made 1 time. TileInfo is turned into a array based on the number of
+    tiles required (contained in GameData struct).
+    2. GameLogic sets up GameData and TileInfo.
+        2.a See 'loadGameData' for setup of GameData
+        2.b TileInfo[] gets zeroed
+        2.c TileInfo[] gets random mines added
+        3.d TileInfo[] has the adjacentTile vector setup and so each tile has a pointer 
+        to it's neighbors.
+    3. Render than takes both structs and uses them to draw to the board. 
+    4. Game logic takes user input and modifies the TileInfo[] based on the user input. 
+
+    LoadConfig loads other boards and config files, GameLogic applies the data to the
+    Game Data file.
+
+    TextureSprite manager handles 'textures' and 'sprites' so that 'Render' may pull 
+    them for drawing. 
+
+
+*************************************************************************************/
 
 int main()
 {
@@ -51,7 +73,7 @@ int main()
             }
         }
 
-        window.clear();
+        window.clear(sf::Color(255, 255, 255));
 
         // RENDER RENDER
         render.updateAndDisplayBoard(gameLogic.tileInfo, gameLogic.gameData, window, textureSpriteManager);

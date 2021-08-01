@@ -31,9 +31,11 @@ void FileLoading::loadConfig(string path) {
 		fileIn >> configData->numOfMines;
 
 		//TODO (Jon) remove the following:
+		/*
 		cout << "The column is " << configData->column << endl;
 		cout << "The column is " << configData->rows << endl;
 		cout << "The column is " << configData->numOfMines << endl;
+		*/
 	}
 	else {
 		cout << "ERROR: " << path << " did not open." << endl;
