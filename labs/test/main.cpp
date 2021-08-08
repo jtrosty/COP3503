@@ -6,22 +6,58 @@ using std::cout;
 using std::endl;
 using std::string;
 
+
+class Foo {
+    public:
+    int classValue;
+    const Foo& SomeClassFunction() {
+        this->classValue = 4;
+        return *this;
+    }
+};
+
 class second {
     public:
+    int hello;
     second();
+    int constTestClass(int& value) const;
     char* bye;
     std::vector<test> vectOfTest;
 };
 
-
+int second::constTestClass(int& value) const {
+    value++;
+    cout << value << endl;
+    return value;
+}
 
 second::second() {
     bye = "hello";
 }
+
+void swappyBoi(int* swapA, int* swapB) {
+    *swapA = *swapB;
+    *swapB = *swapA;
+    cout << swapA << " " << swapB << endl;
+}
+
+
 int main(void) {
+    int a = 10;
+    int b = 20;
+    swappyBoi(&a, &b);
+    cout << a << " " << b << endl;
+
+    Foo foo;
+    cout << foo.SomeClassFunction().classValue << endl;
+    auto var = 1;
     test myClass;
     second otherClass;
+    otherClass.hello = 2;
     // See if I can check if the class objects are equal
+    int test = 300;
+    cout << "cout of the thign: " << otherClass.constTestClass(otherClass.hello) << endl;
+    cout << otherClass.hello << endl;
     
     // See if the char* are equal
     if ( myClass.hello == otherClass.bye) {
