@@ -1,14 +1,9 @@
 @echo off
 
-pushd \build    
-
-cl -Zi -nologo ..\src\test.cpp
-
+pushd ..\build    
+cl -Zi -nologo ..\src\win32_platform.cpp /link User32.lib Gdi32.lib
 
 popd
-
-
-
 
 
 REM Compiler Flags:
