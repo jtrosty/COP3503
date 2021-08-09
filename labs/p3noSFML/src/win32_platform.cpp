@@ -3,12 +3,13 @@
 #endif
 
 //#include "LoadConfig.h"
-/*
 #include <string>
 #include <fstream>
 #include <iostream>
 
-*/
+#include <fstream>
+#include <iostream>
+//#include <string>
 #include <windows.h>
 
 struct {
@@ -19,14 +20,15 @@ struct {
     BITMAPINFO bitmap_info;
 } typedef RenderBuffer;
 
+// GLOBAL VARIABLE DELETE LATER
+char run = 1;
 
-void readPNGfile(std::string fileName) {
+void readPNGfile(std::string fileName); 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void OnSize(HWND hwnd, UINT flag, int width, int height);
 
 // CALLBACK ????? in the docs it says WINAPI
 int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
-    bool run = TRUE;
 
     // Register the window class.
     //const wchar_t CLASS_NAME[]  = "Sample Window Class";
@@ -45,9 +47,9 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         0,                              // Optional window styles.
         wc.lpszClassName,                     // Window class
         L"Learn to Program Windows",    // Window text
-        WS_OVERLAPPEDWINDOW,            // Window style
+        WS_VISIBLE | WS_OVERLAPPEDWINDOW,            // Window style
         // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720,
         NULL,       // Parent window    
         NULL,       // Menu
         hInstance,  // Instance handle
@@ -61,8 +63,31 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
     ShowWindow(hwnd, nCmdShow);
 
+    RECT rectWindow;
+    GetClientRect(hwnd, &rectWindow);
 
-//askldjfklasdjkl this is where I want to laod the config
+// LETs map a test bitmap data
+    int sideOfSquare = 64;
+    int size = sideOfSquare * sideOfSquare;
+
+    // 24 bit colors
+    BYTE* testBitMap = new BYTE[4 * size];
+    for (int i = 0; i < size; i += 4) {
+        testBitMap[i] = 255;
+        testBitMap[i + 1] = 0;
+        testBitMap[i + 2] = 0;
+        testBitMap[i + 3] = 0;
+    }
+    BITMAPINFO bitMapInfo;
+    bitMapInfo.bmiHeader.biSize = sizeof(bitMapInfo.bmiHeader);
+    bitMapInfo.bmiHeader.biWidth = sideOfSquare;
+    bitMapInfo.bmiHeader.biHeight = sideOfSquare;
+    bitMapInfo.bmiHeader.biPlanes = 1;
+    bitMapInfo.bmiHeader.biBitCount = 32;
+    bitMapInfo.bmiHeader.biCompression = BI_RGB;
+    bitMapInfo.bmiHeader.biSizeImage = 0;
+    bitMapInfo.bmiHeader.biXPelsPerMeter = 0;
+
 
     // The game loop
     MSG msg = { };
@@ -78,42 +103,19 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
             }
         }
 
-/*
-        RECT rectWindow;
-        GetClientRect(hwnd, &rectWindow);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
         int destHeight = rectWindow.bottom - rectWindow.top;
         StretchDIBits(deviceContext,
-                        10, 10, 
-                        destWidth, destHeight,
+                        0, 0, destWidth, destHeight,
                         0, 0, 64, 64, // size of the happy face
-            const VOID       *lpBits,
-            const BITMAPINFO *lpbmi,
-            UINT             iUsage,
-            DWORD            rop
-        );
-*/
+                        testBitMap, &bitMapInfo,
+                        DIB_RGB_COLORS, SRCCOPY);
+
         // GAME LOOP AREA
-        /*
-        HDC deviceContext = GetDC(hwnd);
-        StretchDIBits(deviceContext,
-            int              xDest,
-            int              yDest,
-            int              DestWidth,
-            int              DestHeight,
-            int              xSrc,
-            int              ySrc,
-            int              SrcWidth,
-            int              SrcHeight,
-            const VOID       *lpBits,
-            const BITMAPINFO *lpbmi,
-            UINT             iUsage,
-            DWORD            rop
-        );
-        */
     }
+    delete[] testBitMap;
     return 0;
 }
 
@@ -122,14 +124,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg)
     {
         case WM_DESTROY: {
+            run = 0;
             PostQuitMessage(0);
             return 0;
             break;
         }
         case WM_CLOSE: {
-            if (MessageBox(hwnd, L"Realy Quit", L"My Application", MB_OKCANCEL) == IDOK) {
-                DestroyWindow(hwnd);
-            }
+            run = 0;
+            DestroyWindow(hwnd);
+            //if (MessageBox(hwnd, L"Realy Quit", L"My Application", MB_OKCANCEL) == IDOK) 
             return 0;
         }
         case WM_PAINT: {
@@ -141,7 +144,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hwnd, &ps);
             // Perform all painting
             // DELETE LATER FOR DEBUGGING
-            HBRUSH brush = CreateSolidBrush(0x000000FF);
+            HBRUSH brush = CreateSolidBrush(0x88888800);
 
             FillRect(hdc, &ps.rcPaint, brush);
             EndPaint(hwnd, &ps);
@@ -178,19 +181,34 @@ void OnSize(HWND hwnd, UINT flag, int width, int height) {
     // Handle resizing
 }
 
-void readPNGfile(string fileName) {
-	string path = "../images";
+/*
+void readPNGfile(std::string fileName) {
+	std::string path = "../images";
 	path += fileName + ".cfg";
 	int size = 8;
-	textureData = new unsigned char[size];
-	fstream fileInput;
+	unsigned char* textureData = new unsigned char[size];
+	std::fstream fileInput;
 	fileInput.open(path, std::ios_base::in | std::ios_base::binary);
 	for (int i = 0; i < size; i++) {
 		fileInput.read((char*)textureData[i], sizeof(char));
 	}
 	for (int i = 0; i < size; i++) {
-		cout << textureData[i] << " ";
+		std::cout << textureData[i] << " ";
 	}
-	cout << endl;
+	std::cout << std::endl;
 	fileInput.close();
 }
+	const char* path = "../images.png";
+	int size = 8;
+	unsigned char* textureData = new unsigned char[size];
+	std::fstream fileInput;
+	fileInput.open(path, std::ios_base::in | std::ios_base::binary);
+	for (int i = 0; i < size; i++) {
+		fileInput.read((char*)textureData[i], sizeof(char));
+	}
+	for (int i = 0; i < size; i++) {
+		std::cout << textureData[i] << " ";
+	}
+	std::cout << std::endl;
+	fileInput.close();
+*/
