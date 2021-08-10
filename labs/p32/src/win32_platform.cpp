@@ -49,7 +49,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         L"Learn to Program Windows",    // Window text
         WS_VISIBLE | WS_OVERLAPPEDWINDOW,            // Window style
         // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720,
+        CW_USEDEFAULT, CW_USEDEFAULT, 720, 720,
         NULL,       // Parent window    
         NULL,       // Menu
         hInstance,  // Instance handle
@@ -70,18 +70,16 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     int sideOfSquare = 64;
     int size = sideOfSquare * sideOfSquare;
 
+
     // 24 bit colors
-    BYTE* testBitMap = new BYTE[4 * size];
-    for (int i = 0; i < size; i += 4) {
-        testBitMap[i] = 255;
-        testBitMap[i + 1] = 0;
-        testBitMap[i + 2] = 0;
-        testBitMap[i + 3] = 0;
+    UINT32* testBitMap = new UINT32[size];
+    for (int i = 0; i < size; i++) {
+        testBitMap[i] = 0xff4400;
     }
-    BITMAPINFO bitMapInfo;
+    BITMAPINFO bitMapInfo = {0};
     bitMapInfo.bmiHeader.biSize = sizeof(bitMapInfo.bmiHeader);
     bitMapInfo.bmiHeader.biWidth = sideOfSquare;
-    bitMapInfo.bmiHeader.biHeight = sideOfSquare;
+    bitMapInfo.bmiHeader.biHeight = -sideOfSquare;
     bitMapInfo.bmiHeader.biPlanes = 1;
     bitMapInfo.bmiHeader.biBitCount = 32;
     bitMapInfo.bmiHeader.biCompression = BI_RGB;
@@ -108,8 +106,8 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         int destWidth = rectWindow.right - rectWindow.left;
         int destHeight = rectWindow.bottom - rectWindow.top;
         StretchDIBits(deviceContext,
-                        0, 0, destWidth, destHeight,
-                        0, 0, 64, 64, // size of the happy face
+                        0, 0, sideOfSquare, sideOfSquare,
+                        0, 0, sideOfSquare, sideOfSquare, // size of the happy face
                         testBitMap, &bitMapInfo,
                         DIB_RGB_COLORS, SRCCOPY);
 
