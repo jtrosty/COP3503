@@ -7,8 +7,8 @@
 #include <fstream>
 #include <iostream>
 
-#include <fstream>
-#include <iostream>
+#include <wincodec.h>
+
 //#include <string>
 #include <windows.h>
 
@@ -26,6 +26,38 @@ char run = 1;
 void readPNGfile(std::string fileName); 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void OnSize(HWND hwnd, UINT flag, int width, int height);
+
+////// FILE LOADING ////////////////////////////////////////////////////////////////
+
+struct FileData {
+    LPVOID data;
+    DWORD size;
+};
+
+static FileData readEntireFile(char* path) {
+    FileData result = {0};
+
+    DWORD fileSizeHigh = 0;
+    DWORD bytesRead = 0;
+
+    HANDLE fileHandle = CreateFileA( path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    result.size = GetFileSize(fileHandle, &fileSizeHigh);
+    
+    // Allocate memory for the file to be read
+    result.data = VirtualAlloc( NULL, result.size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+    if (ReadFile( fileHandle, result.data, result.size, &bytesRead, NULL) && result.size == bytesRead) {
+        // Success, We read the file.
+    }  
+    else {
+        // Fail!!!
+    }
+
+    return result;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
 
 // CALLBACK ????? in the docs it says WINAPI
 int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
@@ -66,7 +98,13 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     RECT rectWindow;
     GetClientRect(hwnd, &rectWindow);
 
-// LETs map a test bitmap data
+    // FILE LOADING TEST /////////////////////////////
+
+
+
+//////////////////////////////////////////////////////////////////
+
+// LETs map a test bitmap data /////////////////////////////////////
     int sideOfSquare = 64;
     int size = sideOfSquare * sideOfSquare;
 
@@ -85,7 +123,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     bitMapInfo.bmiHeader.biCompression = BI_RGB;
     bitMapInfo.bmiHeader.biSizeImage = 0;
     bitMapInfo.bmiHeader.biXPelsPerMeter = 0;
-
+    ////////////////////////////////////////////////////////////////////////////////
 
     // The game loop
     MSG msg = { };
@@ -178,35 +216,3 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void OnSize(HWND hwnd, UINT flag, int width, int height) {
     // Handle resizing
 }
-
-/*
-void readPNGfile(std::string fileName) {
-	std::string path = "../images";
-	path += fileName + ".cfg";
-	int size = 8;
-	unsigned char* textureData = new unsigned char[size];
-	std::fstream fileInput;
-	fileInput.open(path, std::ios_base::in | std::ios_base::binary);
-	for (int i = 0; i < size; i++) {
-		fileInput.read((char*)textureData[i], sizeof(char));
-	}
-	for (int i = 0; i < size; i++) {
-		std::cout << textureData[i] << " ";
-	}
-	std::cout << std::endl;
-	fileInput.close();
-}
-	const char* path = "../images.png";
-	int size = 8;
-	unsigned char* textureData = new unsigned char[size];
-	std::fstream fileInput;
-	fileInput.open(path, std::ios_base::in | std::ios_base::binary);
-	for (int i = 0; i < size; i++) {
-		fileInput.read((char*)textureData[i], sizeof(char));
-	}
-	for (int i = 0; i < size; i++) {
-		std::cout << textureData[i] << " ";
-	}
-	std::cout << std::endl;
-	fileInput.close();
-*/

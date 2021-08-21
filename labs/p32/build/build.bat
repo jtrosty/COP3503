@@ -1,7 +1,7 @@
 @echo off
 
 pushd ..\build    
-cl -Zi -nologo ..\src\win32_platform.cpp /link User32.lib Gdi32.lib
+cl -Zi -nologo ..\src\win32_platform.cpp /link User32.lib Gdi32.lib windowscodecs.lib
 
 popd
 
