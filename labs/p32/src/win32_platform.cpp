@@ -2,11 +2,7 @@
 #define UNICODE
 #endif
 
-//#include "LoadConfig.h"
-#include <string>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "FileLoader.h"
 
 #include <windows.h>
 
@@ -21,41 +17,8 @@ struct {
 // GLOBAL VARIABLE DELETE LATER
 char run = 1;
 
-void readPNGfile(std::string fileName); 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void OnSize(HWND hwnd, UINT flag, int width, int height);
-
-////// FILE LOADING ////////////////////////////////////////////////////////////////
-
-struct FileReadInData {
-    LPVOID data;
-    DWORD size;
-};
-
-static FileReadInData readEntireFile(char* path) {
-    FileReadInData result = {0};
-
-    DWORD fileSizeHigh = 0;
-    DWORD bytesRead = 0;
-
-    HANDLE fileHandle = CreateFileA( path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    result.size = GetFileSize(fileHandle, &fileSizeHigh);
-    
-    // Allocate memory for the file to be read
-    result.data = VirtualAlloc( NULL, result.size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-
-    if (ReadFile( fileHandle, result.data, result.size, &bytesRead, NULL) && result.size == bytesRead) {
-        // Success, We read the file.
-    }  
-    else {
-        // Fail!!!
-    }
-
-    return result;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////
 
 // CALLBACK ????? in the docs it says WINAPI
 int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
@@ -95,28 +58,13 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
     RECT rectWindow;
     GetClientRect(hwnd, &rectWindow);
+    FileLoader fileLoader;
+    FileLoader::TextureData testPNG;
+    testPNG = FileLoader::getTexture("../images/test_3.png");
 
     // FILE LOADING TEST /////////////////////////////
+//    FileReadInData test3 = readEntireFile("../images/test_3.png");
 
-    FileReadInData test3 = readEntireFile("../images/test_3.png");
-    int x, y, n;
-    //unsigned char* pixelDataTest = stbi_load(test3, &x, &y, &n, 0);
-    unsigned char* pixelDataTest = stbi_load_from_memory((stbi_uc*)test3.data, test3.size, &x, &y, &n, 4);
-
-//////////////////////////////////////////////////////////////////
-
-// TEST DISPLAYING PNG PIXEL DATA
-    int testPNGSize = 64;
-
-    BITMAPINFO testBitMapInfo = {0};
-    testBitMapInfo.bmiHeader.biSize = sizeof(testBitMapInfo.bmiHeader);
-    testBitMapInfo.bmiHeader.biWidth = testPNGSize;
-    testBitMapInfo.bmiHeader.biHeight = -testPNGSize;
-    testBitMapInfo.bmiHeader.biPlanes = 1;
-    testBitMapInfo.bmiHeader.biBitCount = 32;
-    testBitMapInfo.bmiHeader.biCompression = BI_RGB;
-    testBitMapInfo.bmiHeader.biSizeImage = 0;
-    testBitMapInfo.bmiHeader.biXPelsPerMeter = 0;
 
 // LETs map a test png data /////////////////////////////////////
     int sideOfSquare = 64;
@@ -168,9 +116,9 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
                         DIB_RGB_COLORS, SRCCOPY);
 
         StretchDIBits(deviceContext,
-                        64, 64, testPNGSize, testPNGSize,
-                        0, 0, sideOfSquare, sideOfSquare, // size of the happy face
-                        pixelDataTest, &testBitMapInfo,
+                        64, 64, testPNG.width, testPNG.height,
+                        0, 0, testPNG.width, testPNG.height, // size of the happy face
+                        testPNG.pixelData, &testPNG.bitMapInfo,
                         DIB_RGB_COLORS, SRCCOPY);
 
         // GAME LOOP AREA
