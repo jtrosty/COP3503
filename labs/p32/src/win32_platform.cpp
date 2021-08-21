@@ -4,12 +4,10 @@
 
 //#include "LoadConfig.h"
 #include <string>
-#include <fstream>
-#include <iostream>
 
-#include <wincodec.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
-//#include <string>
 #include <windows.h>
 
 struct {
@@ -29,13 +27,13 @@ void OnSize(HWND hwnd, UINT flag, int width, int height);
 
 ////// FILE LOADING ////////////////////////////////////////////////////////////////
 
-struct FileData {
+struct FileReadInData {
     LPVOID data;
     DWORD size;
 };
 
-static FileData readEntireFile(char* path) {
-    FileData result = {0};
+static FileReadInData readEntireFile(char* path) {
+    FileReadInData result = {0};
 
     DWORD fileSizeHigh = 0;
     DWORD bytesRead = 0;
@@ -100,19 +98,39 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
     // FILE LOADING TEST /////////////////////////////
 
-
+    FileReadInData test3 = readEntireFile("../images/test_3.png");
+    int x, y, n;
+    //unsigned char* pixelDataTest = stbi_load(test3, &x, &y, &n, 0);
+    unsigned char* pixelDataTest = stbi_load_from_memory((stbi_uc*)test3.data, test3.size, &x, &y, &n, 4);
 
 //////////////////////////////////////////////////////////////////
 
-// LETs map a test bitmap data /////////////////////////////////////
+// TEST DISPLAYING PNG PIXEL DATA
+    int testPNGSize = 64;
+
+    BITMAPINFO testBitMapInfo = {0};
+    testBitMapInfo.bmiHeader.biSize = sizeof(testBitMapInfo.bmiHeader);
+    testBitMapInfo.bmiHeader.biWidth = testPNGSize;
+    testBitMapInfo.bmiHeader.biHeight = -testPNGSize;
+    testBitMapInfo.bmiHeader.biPlanes = 1;
+    testBitMapInfo.bmiHeader.biBitCount = 32;
+    testBitMapInfo.bmiHeader.biCompression = BI_RGB;
+    testBitMapInfo.bmiHeader.biSizeImage = 0;
+    testBitMapInfo.bmiHeader.biXPelsPerMeter = 0;
+
+// LETs map a test png data /////////////////////////////////////
     int sideOfSquare = 64;
     int size = sideOfSquare * sideOfSquare;
+    int midPoint = 10 * 64;
 
 
     // 24 bit colors
     UINT32* testBitMap = new UINT32[size];
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < midPoint; i++) {
         testBitMap[i] = 0xff4400;
+    }
+    for (int i = midPoint; i < size; i++) {
+        testBitMap[i] = 0x444444;
     }
     BITMAPINFO bitMapInfo = {0};
     bitMapInfo.bmiHeader.biSize = sizeof(bitMapInfo.bmiHeader);
@@ -147,6 +165,12 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
                         0, 0, sideOfSquare, sideOfSquare,
                         0, 0, sideOfSquare, sideOfSquare, // size of the happy face
                         testBitMap, &bitMapInfo,
+                        DIB_RGB_COLORS, SRCCOPY);
+
+        StretchDIBits(deviceContext,
+                        64, 64, testPNGSize, testPNGSize,
+                        0, 0, sideOfSquare, sideOfSquare, // size of the happy face
+                        pixelDataTest, &testBitMapInfo,
                         DIB_RGB_COLORS, SRCCOPY);
 
         // GAME LOOP AREA
