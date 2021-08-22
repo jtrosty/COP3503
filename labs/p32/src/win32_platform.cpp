@@ -2,20 +2,16 @@
 #define UNICODE
 #endif
 
+// GLOBAL VARIABLE DELETE LATER
+char run = 1;
+
 #include "FileLoader.h"
+#include "Draw.h"
 
 #include <windows.h>
 
-struct {
-    int width;
-    int height;
-    UINT32 *pixels;
 
-    BITMAPINFO bitmap_info;
-} typedef RenderBuffer;
-
-// GLOBAL VARIABLE DELETE LATER
-char run = 1;
+RenderBuffer GlobalRenderBuffer = {0};
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void OnSize(HWND hwnd, UINT flag, int width, int height);
@@ -24,7 +20,7 @@ void OnSize(HWND hwnd, UINT flag, int width, int height);
 int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 
     // Register the window class.
-    //const wchar_t CLASS_NAME[]  = "Sample Window Class";
+    // TODO get config data here.  
 
     WNDCLASS wc = { };
 
@@ -35,6 +31,10 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     
     RegisterClass(&wc);
 
+    GlobalRenderBuffer.pixels = nullptr;
+    int windowWidth = 720;
+    int windowHeight = 720;
+
     //Create a window
     HWND hwnd = CreateWindowEx(
         0,                              // Optional window styles.
@@ -42,7 +42,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         L"Learn to Program Windows",    // Window text
         WS_VISIBLE | WS_OVERLAPPEDWINDOW,            // Window style
         // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, 720, 720,
+        CW_USEDEFAULT, CW_USEDEFAULT, windowWidth, windowHeight,
         NULL,       // Parent window    
         NULL,       // Menu
         hInstance,  // Instance handle
@@ -58,37 +58,24 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
     RECT rectWindow;
     GetClientRect(hwnd, &rectWindow);
+
+    // FILE LOADING//////////////////////////////////////////////////
     FileLoader fileLoader;
     FileLoader::TextureData testPNG;
     testPNG = FileLoader::getTexture("../images/test_3.png");
 
-    // FILE LOADING TEST /////////////////////////////
-//    FileReadInData test3 = readEntireFile("../images/test_3.png");
-
-
 // LETs map a test png data /////////////////////////////////////
-    int sideOfSquare = 64;
-    int size = sideOfSquare * sideOfSquare;
-    int midPoint = 10 * 64;
-
-
-    // 24 bit colors
-    UINT32* testBitMap = new UINT32[size];
-    for (int i = 0; i < midPoint; i++) {
-        testBitMap[i] = 0xff4400;
-    }
-    for (int i = midPoint; i < size; i++) {
-        testBitMap[i] = 0x444444;
-    }
-    BITMAPINFO bitMapInfo = {0};
-    bitMapInfo.bmiHeader.biSize = sizeof(bitMapInfo.bmiHeader);
-    bitMapInfo.bmiHeader.biWidth = sideOfSquare;
-    bitMapInfo.bmiHeader.biHeight = -sideOfSquare;
-    bitMapInfo.bmiHeader.biPlanes = 1;
-    bitMapInfo.bmiHeader.biBitCount = 32;
-    bitMapInfo.bmiHeader.biCompression = BI_RGB;
-    bitMapInfo.bmiHeader.biSizeImage = 0;
-    bitMapInfo.bmiHeader.biXPelsPerMeter = 0;
+    //int sideOfSquare = 64;
+    //int size = sideOfSquare * sideOfSquare;
+    //int midPoint = 10 * 64;
+    //// 24 bit colors
+    //UINT32* testBitMap = new UINT32[size];
+    //for (int i = 0; i < midPoint; i++) {
+        //testBitMap[i] = 0xff4400;
+    //}
+    //for (int i = midPoint; i < size; i++) {
+        //testBitMap[i] = 0x444444;
+    //}
     ////////////////////////////////////////////////////////////////////////////////
 
     // The game loop
@@ -105,25 +92,17 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
             }
         }
 
-
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
         int destHeight = rectWindow.bottom - rectWindow.top;
         StretchDIBits(deviceContext,
-                        0, 0, sideOfSquare, sideOfSquare,
-                        0, 0, sideOfSquare, sideOfSquare, // size of the happy face
-                        testBitMap, &bitMapInfo,
+                        0, 0, GlobalRenderBuffer.width, GlobalRenderBuffer.height,
+                        0, 0, destHeight, destHeight, // size of the happy face
+                        GlobalRenderBuffer.pixels, &GlobalRenderBuffer.bitmap_info,
                         DIB_RGB_COLORS, SRCCOPY);
 
-        StretchDIBits(deviceContext,
-                        64, 64, testPNG.width, testPNG.height,
-                        0, 0, testPNG.width, testPNG.height, // size of the happy face
-                        testPNG.pixelData, &testPNG.bitMapInfo,
-                        DIB_RGB_COLORS, SRCCOPY);
-
-        // GAME LOOP AREA
+        // GAME LOOP AREA END
     }
-    delete[] testBitMap;
     return 0;
 }
 
@@ -146,8 +125,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_PAINT: {
             RECT rect; 
             GetClientRect(hwnd, &rect);
-
-
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
             // Perform all painting
@@ -163,11 +140,37 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 int width = LOWORD(lParam);  // Macro to get the low-order word.
                 int height = HIWORD(lParam); // Macro to get the high-order word.
 
-            RECT rectWindow;
-            GetClientRect(hwnd, &rectWindow);
-            //renderBufferWidth = rectWindow.right - rectWindow.left;
+                RECT rectWindow;
+                GetClientRect(hwnd, &rectWindow);
+                int renderBufferWidth = rectWindow.right - rectWindow.left;
+                int renderBufferHeight = rectWindow.right - rectWindow.left;
+                if (GlobalRenderBuffer.pixels == nullptr) {
+                    if (VirtualFree(GlobalRenderBuffer.pixels, GlobalRenderBuffer.width * GlobalRenderBuffer.height, MEM_RELEASE)) {
+                        // Success
+                    }
+                    else {
+                        // Fail
+                    }
+                }
+               if (VirtualAlloc(GlobalRenderBuffer.pixels, (renderBufferWidth * renderBufferHeight), 
+                                MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE)) {
+                    // Success allocation
+                }
+                else {
+                    // fail
+                }
 
-
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biSize = sizeof(GlobalRenderBuffer.bitmap_info.bmiHeader);
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biWidth = renderBufferWidth;
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biHeight = -renderBufferHeight;
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biPlanes = 1;
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biBitCount = 32;
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biCompression = BI_RGB;
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biSizeImage = 0;
+                GlobalRenderBuffer.bitmap_info.bmiHeader.biXPelsPerMeter = 0;
+                GlobalRenderBuffer.width = renderBufferWidth;
+                GlobalRenderBuffer.height = renderBufferHeight;
+                
                 // Respond to the message:
                 OnSize(hwnd, (UINT)wParam, width, height);
             }
