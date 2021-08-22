@@ -65,22 +65,9 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
     // FILE LOADING//////////////////////////////////////////////////
     FileLoader fileLoader;
+    //fileLoader.loadAllTextures();
     FileLoader::TextureData testPNG;
-    testPNG = FileLoader::getTexture("../images/test_3.png");
-
-// LETs map a test png data /////////////////////////////////////
-    //int sideOfSquare = 64;
-    //int size = sideOfSquare * sideOfSquare;
-    //int midPoint = 10 * 64;
-    //// 24 bit colors
-    //UINT32* testBitMap = new UINT32[size];
-    //for (int i = 0; i < midPoint; i++) {
-        //testBitMap[i] = 0xff4400;
-    //}
-    //for (int i = midPoint; i < size; i++) {
-        //testBitMap[i] = 0x444444;
-    //}
-    ////////////////////////////////////////////////////////////////////////////////
+    testPNG = FileLoader::getTextureChar("../images/test_1.png");
 
     // The game loop
     MSG msg = { };
@@ -96,7 +83,8 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
             }
         }
 //fileLoader.getTexture("../images/test_2.png")
-        // Draw
+        // Draw 
+        //fileLoader.getTextureString("test_1")
         draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
         draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
 

@@ -1,7 +1,10 @@
 #pragma once
 
 #include <windows.h>
-
+#include <unordered_map>
+using std::unordered_map;
+#include <string.h>
+using std::string;
 
 class FileLoader {
 
@@ -18,12 +21,16 @@ class FileLoader {
         unsigned char* pixelData;
         BITMAPINFO bitMapInfo; 
     };
+    static unordered_map< string, TextureData& > textures;
 
-    static TextureData& getTexture(char* path);
+    static TextureData& getTextureChar(char* name);
+    static TextureData& getTextureString(string name);
+    static void loadAllTextures();
+    TextureData& getTextureBMP(string name);
+
+    static const unordered_map< string, TextureData& > getTextureMap();
 
     private:
     static FileReadInData readEntireFile(char* path);
     static TextureData& loadTextureData32Bit(FileReadInData data);
-
-
 };

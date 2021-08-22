@@ -3,8 +3,53 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-FileLoader::TextureData& FileLoader::getTexture(char* path) {
-    return loadTextureData32Bit(readEntireFile(path));
+unordered_map< string, FileLoader::TextureData& > FileLoader::textures;
+
+void FileLoader::loadAllTextures() {
+    string listFileNames[] = { "mine",       "tile_hidden", "tile_revealed", 
+                               "number_1",   "number_2",    "number_3", 
+                               "number_4",   "number_5",    "number_6", 
+                               "number_7",   "number_8",    "flag", 
+                               "face_happy", "face_win",    "face_lose", 
+                               "digits",     "debug",       "test_1", 
+                               "test_2",     "test_3" };
+    int size = 20;
+
+    for (int i = 0; i < size; i++) {
+        FileLoader::textures.emplace(listFileNames[i], getTextureString(listFileNames[i]));
+    }
+}
+
+FileLoader::TextureData& FileLoader::getTextureBMP(string name) {
+    return FileLoader::textures.at(name);
+}
+
+const unordered_map< string, FileLoader::TextureData& > getTextureMap() {
+    return FileLoader::textures;
+}
+
+FileLoader::TextureData& FileLoader::getTextureChar(char* name) {
+    return loadTextureData32Bit(readEntireFile(name));
+}
+
+FileLoader::TextureData& FileLoader::getTextureString(string name) {
+    TextureData* result;
+    string fileLocation = "../images/";
+    string fileType = ".png";
+    name = (fileLocation + name + fileType);
+    int sizeString = name.size();
+    char* pathChar = new char[sizeString + 1];
+
+    // Copy String to Char
+    for (int i = 0; i < sizeString; i++) {
+        pathChar[i] = name.at(i);
+    }
+    pathChar[sizeString + 1] = '\0';
+    
+    result = &loadTextureData32Bit(readEntireFile(pathChar)); 
+    delete[] pathChar;
+
+    return *result;
 }
 
 FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
@@ -25,7 +70,6 @@ FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
     else {
         // Fail!!!
     }
-
     return result;
 }
 
