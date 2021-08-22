@@ -5,6 +5,8 @@
 // GLOBAL VARIABLE DELETE LATER
 char run = 1;
 
+#include "utils.h"
+
 #include "FileLoader.h"
 #include "Draw.h"
 
@@ -34,6 +36,8 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     GlobalRenderBuffer.pixels = nullptr;
     int windowWidth = 720;
     int windowHeight = 720;
+    Draw draw;
+    GlobalRenderBuffer.pixels = (UINT32*)VirtualAlloc(0, sizeof(UINT32) * (windowWidth * windowHeight), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
     //Create a window
     HWND hwnd = CreateWindowEx(
@@ -92,12 +96,15 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
             }
         }
 
+        // Draw
+        draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
+
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
         int destHeight = rectWindow.bottom - rectWindow.top;
         StretchDIBits(deviceContext,
-                        0, 0, GlobalRenderBuffer.width, GlobalRenderBuffer.height,
-                        0, 0, destHeight, destHeight, // size of the happy face
+                        0, 0, destHeight, destHeight, // Window size
+                        0, 0, GlobalRenderBuffer.width, GlobalRenderBuffer.height, // size of buffer
                         GlobalRenderBuffer.pixels, &GlobalRenderBuffer.bitmap_info,
                         DIB_RGB_COLORS, SRCCOPY);
 
@@ -144,21 +151,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 GetClientRect(hwnd, &rectWindow);
                 int renderBufferWidth = rectWindow.right - rectWindow.left;
                 int renderBufferHeight = rectWindow.right - rectWindow.left;
-                if (GlobalRenderBuffer.pixels == nullptr) {
-                    if (VirtualFree(GlobalRenderBuffer.pixels, GlobalRenderBuffer.width * GlobalRenderBuffer.height, MEM_RELEASE)) {
+                if (GlobalRenderBuffer.pixels != nullptr) {
+                    if (VirtualFree(GlobalRenderBuffer.pixels, 0, MEM_RELEASE)) {
                         // Success
                     }
                     else {
                         // Fail
                     }
                 }
-               if (VirtualAlloc(GlobalRenderBuffer.pixels, (renderBufferWidth * renderBufferHeight), 
-                                MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE)) {
-                    // Success allocation
-                }
-                else {
-                    // fail
-                }
+                GlobalRenderBuffer.pixels = (UINT32*)VirtualAlloc(0, sizeof(UINT32) * (renderBufferWidth * renderBufferHeight), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 
                 GlobalRenderBuffer.bitmap_info.bmiHeader.biSize = sizeof(GlobalRenderBuffer.bitmap_info.bmiHeader);
                 GlobalRenderBuffer.bitmap_info.bmiHeader.biWidth = renderBufferWidth;
