@@ -14,6 +14,21 @@ void Draw::drawRectangle(int x0, int y0, int x1, int y1, UINT32 color, RenderBuf
     }
 }
 
+void Draw::drawTexture(int x0, int y0, FileLoader::TextureData& texture, RenderBuffer& buffer) {
+    x0 = clamp(0, x0, buffer.width);
+    int x1 = clamp(0, x0 + texture.width, buffer.width);
+    y0 = clamp(0, y0, buffer.height);
+    int y1 = clamp(0, y0 + texture.height, buffer.height);
+    UINT32* srcPixel = (UINT32*)texture.pixelData;
+
+    for (int y = y0; y < y1; y++) {
+        UINT32* destPixel = buffer.pixels + x0 + (y * buffer.width);
+        for (int x = x0; x < x1; x++) {
+            *destPixel++ = *srcPixel++;
+        }
+    }
+}
+
 int Draw::clamp(int min, int value, int max) {
     if (value > max) return max;
     if (value < min) return min;

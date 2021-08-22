@@ -95,9 +95,10 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
                 }
             }
         }
-
+//fileLoader.getTexture("../images/test_2.png")
         // Draw
         draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
+        draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
