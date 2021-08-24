@@ -32,9 +32,16 @@ void Draw::drawTexture(int x0, int y0, FileLoader::TextureData& texture, RenderB
         UINT32* destPixel = buffer.pixels + x0 + (y * buffer.width);
         for (int x = x0; x < x1; x++) {
             //*destPixel++ = *srcPixel++;
-
-            *destPixel = ((*destPixel) | ((*srcPixel >> 24) & 0x000000ff));
+/*
+            *destPixel = ((*destPixel << 8) | ((*srcPixel) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel >> 8) & 0x000000ff));
+            *destPixel = ((*destPixel << 8) | ((*srcPixel >> 16) & 0x000000ff));
+            *destPixel = ((*destPixel << 8) | ((*srcPixel >> 24) & 0x000000ff));
+            *srcPixel++;
+            *destPixel++;
+            */
+            *destPixel = ((*destPixel) | ((*srcPixel >> 24) & 0x000000ff));
+            *destPixel = ((*destPixel << 8) | ((*srcPixel) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel >> 8) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel >> 16) & 0x000000ff));
             *srcPixel++;

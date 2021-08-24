@@ -67,7 +67,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     FileLoader fileLoader;
     //fileLoader.loadAllTextures();
     FileLoader::TextureData testPNG;
-    testPNG = FileLoader::getTextureChar("../images/test_1.png");
+    testPNG = FileLoader::getTextureChar("../images/face_happy.png");
 
     // The game loop
     MSG msg = { };
