@@ -75,6 +75,11 @@ FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
 
 FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
     TextureData* result = new TextureData;
+    unsigned char temp0;
+    unsigned char temp1;
+    unsigned char temp2;
+    unsigned char temp3;
+    UINT32* destPixel;
     result->pixelData = stbi_load_from_memory((stbi_uc*)data.data, data.size, &result->width, &result->height, &result->n, 4);
     result->bitMapInfo.bmiHeader.biSize = sizeof(result->bitMapInfo.bmiHeader);
     result->bitMapInfo.bmiHeader.biWidth = result->width;
@@ -84,5 +89,37 @@ FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
     result->bitMapInfo.bmiHeader.biCompression = BI_RGB;
     result->bitMapInfo.bmiHeader.biSizeImage = 0;
     result->bitMapInfo.bmiHeader.biXPelsPerMeter = 0;
+    int test = 0;
+
+
+/*
+    for (int i = 0; i < data.size; i = i + 4) {
+        // NEED THESE LINES
+        temp0 = result->pixelData[i];
+        temp1 = result->pixelData[i + 1];
+        temp2 = result->pixelData[i + 2];
+        temp3 = result->pixelData[i + 3];
+        
+        // THIS HAS SHOWN TO BE CORRECT
+        result->pixelData[i] = temp2;
+        result->pixelData[i + 1] = temp1;
+        result->pixelData[i + 2] = temp0;
+        result->pixelData[i + 3] = temp3;
+
+        // NOT USED
+        result->pixelData[i] = result->pixelData[i] & 0x00000000;
+        result->pixelData[i] = ((result->pixelData[i]) | ((temp >> 24) & 0x000000ff));
+        result->pixelData[i] = ((result->pixelData[i] << 8) | ((temp) & 0x000000ff));
+        result->pixelData[i] = ((result->pixelData[i] << 8) | ((temp >> 8) & 0x000000ff));
+        result->pixelData[i] = ((result->pixelData[i] << 8) | ((temp >> 16) & 0x000000ff));
+
+        *destPixel = ((*destPixel << 8) | ((temp) & 0x000000ff));
+        *destPixel = ((*destPixel << 8) | ((temp >> 8) & 0x000000ff));
+        *destPixel = ((*destPixel << 8) | ((temp >> 16) & 0x000000ff));
+        *destPixel++;
+       if (test == 100) break;
+    }
+ */
+
     return *result;
 }

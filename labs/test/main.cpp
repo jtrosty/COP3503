@@ -41,31 +41,24 @@ void swappyBoi(int* swapA, int* swapB) {
     cout << swapA << " " << swapB << endl;
 }
 
+bool checkPalindrome(string s) {
+    if (s.size() == 1) {
+        return true;
+    }
+    if (s.size() == 2) {
+        if (s.at(0) == s.at(1)) return true;
+        return false;
+    }
+    if (checkPalindrome(s.substr(1, s.size() - 2))) {
+        if (s.at(0) == s.at(s.size() - 1)) return true;
+        return false;
+    }
+    return false;
+}
+
 
 int main(void) {
-    int a = 10;
-    int b = 20;
-    swappyBoi(&a, &b);
-    cout << a << " " << b << endl;
-
-    Foo foo;
-    cout << foo.SomeClassFunction().classValue << endl;
-    auto var = 1;
-    test myClass;
-    second otherClass;
-    otherClass.hello = 2;
-    // See if I can check if the class objects are equal
-    int test = 300;
-    cout << "cout of the thign: " << otherClass.constTestClass(otherClass.hello) << endl;
-    cout << otherClass.hello << endl;
-    
-    // See if the char* are equal
-    if ( myClass.hello == otherClass.bye) {
-        cout << " they are equal" << endl;
-    }
-    else {
-        cout <<  "they are not equal" << endl;
-    }
+    cout << checkPalindrome("ABBBCA");
     
 
 
