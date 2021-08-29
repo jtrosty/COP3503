@@ -4,6 +4,23 @@
 #include "stb_image.h"
 
 unordered_map< string, FileLoader::TextureData& > FileLoader::textures;
+char* convertToChar;
+FileLoader::ConfigData staticConfigData;
+
+FileLoader::FileLoader() {
+	configData = new ConfigData;
+    convertToChar = nullptr;
+}
+
+FileLoader::~FileLoader() {
+	delete configData;
+    if (convertToChar == nullptr) {}
+    else delete[] convertToChar;
+}
+ /***************************************************************************
+  * ********************** Load Textures and Store them **********************
+  * *************************************************************************/
+
 
 void FileLoader::loadAllTextures() {
     string listFileNames[] = { "mine",       "tile_hidden", "tile_revealed", 
@@ -29,7 +46,7 @@ const unordered_map< string, FileLoader::TextureData& > getTextureMap() {
 }
 
 FileLoader::TextureData& FileLoader::getTextureChar(char* name) {
-    return loadTextureData32Bit(readEntireFile(name));
+    return loadTextureData32Bit(*readEntireFile(name));
 }
 
 FileLoader::TextureData& FileLoader::getTextureString(string name) {
@@ -37,22 +54,30 @@ FileLoader::TextureData& FileLoader::getTextureString(string name) {
     string fileLocation = "../images/";
     string fileType = ".png";
     name = (fileLocation + name + fileType);
-    int sizeString = name.size();
-    char* pathChar = new char[sizeString + 1];
-
-    // Copy String to Char
-    for (int i = 0; i < sizeString; i++) {
-        pathChar[i] = name.at(i);
-    }
-    pathChar[sizeString] = '\0';
-    
-    result = &loadTextureData32Bit(readEntireFile(pathChar)); 
-    delete[] pathChar;
+    result = &loadTextureData32Bit(*readEntireFile(stringToChar(name))); 
 
     return *result;
 }
 
-FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
+char* FileLoader::stringToChar(string str) {
+    int sizeString = str.size();
+    if (convertToChar == nullptr) {
+        convertToChar = new char[sizeString + 1];
+    }
+    else {
+        delete[] convertToChar;
+        convertToChar = new char[sizeString + 1];
+    }
+
+    // Copy String to Char
+    for (int i = 0; i < sizeString; i++) {
+        convertToChar[i] = str.at(i);
+    }
+    convertToChar[sizeString] = '\0';
+    return convertToChar;
+}
+
+FileLoader::FileReadInData* FileLoader::readEntireFile(char* path) {
     FileReadInData result = {0};
 
     DWORD fileSizeHigh = 0;
@@ -70,7 +95,7 @@ FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
     else {
         // Fail!!!
     }
-    return result;
+    return &result;
 }
 
 FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
@@ -127,3 +152,73 @@ FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
 
     return *result;
 }
+ 
+ /***************************************************************************
+  * ********************** Load Config and Test boards **********************
+  * *************************************************************************/
+
+
+void FileLoader::loadFileHelper(std::string fileName, fileTypeToLoad type) {
+	std::string path = "boards/";
+	switch (type)
+	{
+	case FileLoader::config:
+		path += fileName + ".cfg";
+		loadConfig(path);
+		break;
+	case FileLoader::board:
+		path += fileName + ".brd";
+		loadBoard(path);
+		break;
+	default:
+		break;
+	}
+}
+
+void FileLoader::loadConfig(std::string path) {
+
+	FileReadInData* configData = readEntireFile(stringToChar(path));
+	if (configData->size > 0) {
+		//fileIn >> configData->column;
+		//fileIn >> configData->rows;
+		//fileIn >> configData->numOfMines;
+
+		//TODO (Jon) remove the following:
+		/*
+		cout << "The column is " << configData->column << endl;
+		cout << "The column is " << configData->rows << endl;
+		cout << "The column is " << configData->numOfMines << endl;
+		*/
+	}
+	else {
+		cout << "ERROR: " << path << " did not open." << endl;
+	}
+}
+/*
+void FileLoader::loadBoard(std::string path) {
+	fstream fileIn(path);
+	std::string buffer;
+	if (fileIn.is_open()) {
+		while (getline(fileIn, buffer)) {
+			testBoardString += buffer;
+		}
+	}
+	else {
+		cout << "ERROR: " << path << " did not open." << endl;
+	}
+	fileIn.close();
+}
+
+FileLoader::~FileLoader() {
+	delete configData;
+}
+
+string FileLoader::getTestBoardString()
+{
+	return testBoardString;
+}
+
+void FileLoader::deleteTestBoardString() {
+	testBoardString.clear();
+}
+*/
