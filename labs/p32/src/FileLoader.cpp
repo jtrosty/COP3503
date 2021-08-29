@@ -4,7 +4,7 @@
 #include "stb_image.h"
 
 unordered_map< string, FileLoader::TextureData& > FileLoader::textures;
-char* convertToChar;
+char* FileLoader::convertToChar;
 FileLoader::ConfigData staticConfigData;
 
 FileLoader::FileLoader() {
@@ -46,7 +46,7 @@ const unordered_map< string, FileLoader::TextureData& > getTextureMap() {
 }
 
 FileLoader::TextureData& FileLoader::getTextureChar(char* name) {
-    return loadTextureData32Bit(*readEntireFile(name));
+    return loadTextureData32Bit(readEntireFile(name));
 }
 
 FileLoader::TextureData& FileLoader::getTextureString(string name) {
@@ -54,7 +54,7 @@ FileLoader::TextureData& FileLoader::getTextureString(string name) {
     string fileLocation = "../images/";
     string fileType = ".png";
     name = (fileLocation + name + fileType);
-    result = &loadTextureData32Bit(*readEntireFile(stringToChar(name))); 
+    result = &loadTextureData32Bit(readEntireFile(stringToChar(name))); 
 
     return *result;
 }
@@ -77,7 +77,7 @@ char* FileLoader::stringToChar(string str) {
     return convertToChar;
 }
 
-FileLoader::FileReadInData* FileLoader::readEntireFile(char* path) {
+FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
     FileReadInData result = {0};
 
     DWORD fileSizeHigh = 0;
@@ -95,10 +95,10 @@ FileLoader::FileReadInData* FileLoader::readEntireFile(char* path) {
     else {
         // Fail!!!
     }
-    return &result;
+    return result;
 }
 
-FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
+FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData& data) {
     TextureData* result = new TextureData;
     unsigned char temp0;
     unsigned char temp1;
@@ -168,7 +168,7 @@ void FileLoader::loadFileHelper(std::string fileName, fileTypeToLoad type) {
 		break;
 	case FileLoader::board:
 		path += fileName + ".brd";
-		loadBoard(path);
+		//loadBoard(path);
 		break;
 	default:
 		break;
@@ -177,8 +177,8 @@ void FileLoader::loadFileHelper(std::string fileName, fileTypeToLoad type) {
 
 void FileLoader::loadConfig(std::string path) {
 
-	FileReadInData* configData = readEntireFile(stringToChar(path));
-	if (configData->size > 0) {
+	FileReadInData configData = readEntireFile(stringToChar(path));
+	if (configData.size > 0) {
 		//fileIn >> configData->column;
 		//fileIn >> configData->rows;
 		//fileIn >> configData->numOfMines;
@@ -191,7 +191,7 @@ void FileLoader::loadConfig(std::string path) {
 		*/
 	}
 	else {
-		cout << "ERROR: " << path << " did not open." << endl;
+		//cout << "ERROR: " << path << " did not open." << endl;
 	}
 }
 /*

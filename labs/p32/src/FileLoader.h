@@ -31,6 +31,7 @@ class FileLoader {
         unsigned char* pixelData;
         BITMAPINFO bitMapInfo; 
     };
+    static char* convertToChar;
 
     FileLoader::FileLoader(); 
     FileLoader::~FileLoader();
@@ -57,15 +58,14 @@ class FileLoader {
 
     private:
     // char* for file names to be used in strToChar this is to prevent leaks
-    static char* convertToChar;
 
     // Helper functions for loading textures
 	void loadFileHelper(string fileName, fileTypeToLoad type);
-    static FileReadInData* readEntireFile(char* path);
-    static TextureData& loadTextureData32Bit(FileReadInData data);
+    static FileReadInData readEntireFile(char* path);
+    static TextureData& loadTextureData32Bit(FileReadInData& data);
 
     // Helper fucntion to load in board
 	void loadConfig(string fileName);
-	void loadBoard(string fileName);
+	//void loadBoard(string fileName);
     static char* stringToChar(string str);
 };
