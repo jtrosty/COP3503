@@ -3,8 +3,9 @@
 #include <windows.h>
 #include <unordered_map>
 using std::unordered_map;
-#include <string.h>
 #include <iostream>
+#include <string.h>
+using namespace std;
 using std::string;
 using std::endl;
 using std::cout;
@@ -32,6 +33,8 @@ class FileLoader {
         BITMAPINFO bitMapInfo; 
     };
     static char* convertToChar;
+	static std::string testBoardString;
+    ConfigData configData;
 
     FileLoader::FileLoader(); 
     FileLoader::~FileLoader();
@@ -51,21 +54,21 @@ class FileLoader {
     static const unordered_map< string, TextureData& > getTextureMap();
 
     // Functiosn in support of configuring and test boards
-	static ConfigData staticConfigData;
-	ConfigData* configData;
 	string getTestBoardString();
 	void deleteTestBoardString();
+	void loadFileHelper(string fileName, fileTypeToLoad type);
 
     private:
     // char* for file names to be used in strToChar this is to prevent leaks
 
     // Helper functions for loading textures
-	void loadFileHelper(string fileName, fileTypeToLoad type);
     static FileReadInData readEntireFile(char* path);
     static TextureData& loadTextureData32Bit(FileReadInData& data);
 
     // Helper fucntion to load in board
 	void loadConfig(string fileName);
-	//void loadBoard(string fileName);
+	void loadBoard(string fileName);
     static char* stringToChar(string str);
+
+    int stoi(string input);
 };

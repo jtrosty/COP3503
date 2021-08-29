@@ -66,6 +66,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     // FILE LOADING//////////////////////////////////////////////////
     FileLoader fileLoader;
     fileLoader.loadAllTextures();
+    fileLoader.loadFileHelper("config", FileLoader::config);
     FileLoader::TextureData testPNG;
     //testPNG = FileLoader::getTextureChar("../images/test_1.png");
     testPNG = fileLoader.getTextureChar("../images/test_1.png");

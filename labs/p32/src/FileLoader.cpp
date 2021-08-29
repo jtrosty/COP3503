@@ -3,17 +3,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+// STATIC VARIABLES
 unordered_map< string, FileLoader::TextureData& > FileLoader::textures;
 char* FileLoader::convertToChar;
-FileLoader::ConfigData staticConfigData;
+std::string FileLoader::testBoardString;
 
 FileLoader::FileLoader() {
-	configData = new ConfigData;
     convertToChar = nullptr;
+    ConfigData configData;
 }
 
 FileLoader::~FileLoader() {
-	delete configData;
     if (convertToChar == nullptr) {}
     else delete[] convertToChar;
 }
@@ -159,7 +159,7 @@ FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData& data) 
 
 
 void FileLoader::loadFileHelper(std::string fileName, fileTypeToLoad type) {
-	std::string path = "boards/";
+	std::string path = "../boards/";
 	switch (type)
 	{
 	case FileLoader::config:
@@ -177,40 +177,43 @@ void FileLoader::loadFileHelper(std::string fileName, fileTypeToLoad type) {
 
 void FileLoader::loadConfig(std::string path) {
 
-	FileReadInData configData = readEntireFile(stringToChar(path));
-	if (configData.size > 0) {
-		//fileIn >> configData->column;
-		//fileIn >> configData->rows;
-		//fileIn >> configData->numOfMines;
+	FileReadInData readConfigData = readEntireFile(stringToChar(path));
+    string results;
+	if (readConfigData.size > 0) {
+        char* data = (char*)readConfigData.data;
 
-		//TODO (Jon) remove the following:
-		/*
-		cout << "The column is " << configData->column << endl;
-		cout << "The column is " << configData->rows << endl;
-		cout << "The column is " << configData->numOfMines << endl;
-		*/
+        int i = 0;
+        while (data[i] > 30) {
+            results +=data[i];
+            i++;
+        }
+        configData.column = stoi(results);
+        results.clear();
+        i += 2;
+        while (data[i] > 30) {
+            results +=data[i];
+            i++;
+        }
+        configData.rows = stoi(results);
+        results.clear();
+        i += 2;
+        while (data[i] > 30) {
+            results +=data[i];
+            i++;
+        }
+        configData.numOfMines = stoi(results);
 	}
 	else {
 		//cout << "ERROR: " << path << " did not open." << endl;
 	}
 }
-/*
 void FileLoader::loadBoard(std::string path) {
-	fstream fileIn(path);
+	FileReadInData configData = readEntireFile(stringToChar(path));
 	std::string buffer;
-	if (fileIn.is_open()) {
-		while (getline(fileIn, buffer)) {
-			testBoardString += buffer;
-		}
+	if (configData.size > 0) {
 	}
 	else {
-		cout << "ERROR: " << path << " did not open." << endl;
 	}
-	fileIn.close();
-}
-
-FileLoader::~FileLoader() {
-	delete configData;
 }
 
 string FileLoader::getTestBoardString()
@@ -221,4 +224,17 @@ string FileLoader::getTestBoardString()
 void FileLoader::deleteTestBoardString() {
 	testBoardString.clear();
 }
-*/
+
+int FileLoader::stoi(string input) {
+    int result = 0;
+    int length = input.size();
+    int multiple = 1;
+    for (int i = 1; i < length; i++) {
+        multiple *= 10;
+    }
+    for (int i = 0; i < length; i++) {
+        result = result + ((input[i] - 48)  * multiple);
+        multiple /= 10;
+    }
+    return result;
+}

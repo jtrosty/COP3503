@@ -31,8 +31,12 @@ void Draw::drawTexture(int x0, int y0, FileLoader::TextureData& texture, RenderB
     for (int y = y0; y < y1; y++) {
         UINT32* destPixel = buffer.pixels + x0 + (y * buffer.width);
         for (int x = x0; x < x1; x++) {
+            // TODO: Fix file loader so this is all I need to display
             //*destPixel++ = *srcPixel++;
 
+            // TODO (Jon): this is done because the file loader because it loads 
+            // textures with the pixels a little out of order, see FileLoader for
+            // more. 
             *destPixel = ((*destPixel) | ((*srcPixel >> 24) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel >> 8) & 0x000000ff));
