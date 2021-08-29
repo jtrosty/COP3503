@@ -65,9 +65,10 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
     // FILE LOADING//////////////////////////////////////////////////
     FileLoader fileLoader;
-    //fileLoader.loadAllTextures();
+    fileLoader.loadAllTextures();
     FileLoader::TextureData testPNG;
-    testPNG = FileLoader::getTextureChar("../images/test_1.png");
+    //testPNG = FileLoader::getTextureChar("../images/test_1.png");
+    testPNG = fileLoader.getTextureChar("../images/test_1.png");
 
     // The game loop
     MSG msg = { };
@@ -82,11 +83,12 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
                 }
             }
         }
-//fileLoader.getTexture("../images/test_2.png")
         // Draw 
         //fileLoader.getTextureString("test_1")
         draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
         draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
+        draw.drawTexture(170, 100, fileLoader.textures.at("face_win"), GlobalRenderBuffer);
+        draw.drawTexture(200, 100, fileLoader.getTextureBMP("test_3"), GlobalRenderBuffer);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;

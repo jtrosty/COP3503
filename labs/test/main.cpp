@@ -36,9 +36,11 @@ second::second() {
 }
 
 void swappyBoi(int* swapA, int* swapB) {
-    *swapA = *swapB;
-    *swapB = *swapA;
-    cout << swapA << " " << swapB << endl;
+    swapA = swapB;
+}
+
+void swappyGuy(int& swapA, int& swapB) {
+    swapA = swapB;
 }
 
 bool checkPalindrome(string s) {
@@ -59,7 +61,17 @@ bool checkPalindrome(string s) {
 
 int main(void) {
     cout << checkPalindrome("ABBBCA");
+    int a = 5;
+    int b = 9;
+    swappyBoi(&a, &b); 
+    cout << endl;
+    cout << "test swappyBoi" << endl;
+    cout << a << b << endl;
     
+    swappyBoi(&a, &b); 
+    cout << endl;
+    cout << "test swappyGuy" << endl;
+    cout << a << b << endl;
 
 
 /*

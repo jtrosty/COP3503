@@ -44,7 +44,7 @@ FileLoader::TextureData& FileLoader::getTextureString(string name) {
     for (int i = 0; i < sizeString; i++) {
         pathChar[i] = name.at(i);
     }
-    pathChar[sizeString + 1] = '\0';
+    pathChar[sizeString] = '\0';
     
     result = &loadTextureData32Bit(readEntireFile(pathChar)); 
     delete[] pathChar;
@@ -93,6 +93,8 @@ FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
 
 
 /*
+    This is an attempt to fix the issue of data being loaded incorrectly.
+
     for (int i = 0; i < data.size; i = i + 4) {
         // NEED THESE LINES
         temp0 = result->pixelData[i];
@@ -100,7 +102,9 @@ FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
         temp2 = result->pixelData[i + 2];
         temp3 = result->pixelData[i + 3];
         
-        // THIS HAS SHOWN TO BE CORRECT
+        // THIS HAS SHOWN TO BE CORRECT but eventually ~14 lines into the texture, 
+        // the texture no longer shows correctly, looks liek r and b are flipped for some
+        // reason. Not sure why
         result->pixelData[i] = temp2;
         result->pixelData[i + 1] = temp1;
         result->pixelData[i + 2] = temp0;
