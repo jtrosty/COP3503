@@ -7,6 +7,7 @@ char run = 1;
 
 #include "utils.h"
 
+#include "GameLogic.h"
 #include "FileLoader.h"
 #include "Draw.h"
 
@@ -64,12 +65,15 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     GetClientRect(hwnd, &rectWindow);
 
     // FILE LOADING//////////////////////////////////////////////////
-    FileLoader fileLoader;
-    fileLoader.loadAllTextures();
-    fileLoader.loadFileHelper("config", FileLoader::config);
+    FileLoader fileLoaderTest;
+    fileLoaderTest.loadAllTextures();
+    fileLoaderTest.loadFileHelper("config", FileLoader::config);
+
+    GameLogic gameLogic;
+    gameLogic.loadGameData();
+
     FileLoader::TextureData testPNG;
     //testPNG = FileLoader::getTextureChar("../images/test_1.png");
-    testPNG = fileLoader.getTextureChar("../images/test_1.png");
 
     // The game loop
     MSG msg = { };
@@ -85,11 +89,11 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
             }
         }
         // Draw 
-        //fileLoader.getTextureString("test_1")
+        //fileLoaderTest.getTextureString("test_1")
         draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
         draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
-        draw.drawTexture(170, 100, fileLoader.textures.at("face_win"), GlobalRenderBuffer);
-        draw.drawTexture(200, 100, fileLoader.getTextureBMP("test_3"), GlobalRenderBuffer);
+        draw.drawTexture(170, 100, fileLoaderTest.textures.at("face_win"), GlobalRenderBuffer);
+        draw.drawTexture(200, 100, fileLoaderTest.getTextureBMP("test_3"), GlobalRenderBuffer);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;

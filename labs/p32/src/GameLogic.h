@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-#include"LoadConfig.h"
+//#include"LoadConfig.h"
 #include "Random.h"
+#include "Fileloader.h"
 
 class GameLogic
 {
@@ -39,7 +40,7 @@ public:
     };
     TileInfo* tileInfo;
     GameData gameData;
-    FileLoading fileLoader;
+    FileLoader fileLoader;
 
     void checkIfWinner();
     void showMines();

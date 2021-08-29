@@ -1,7 +1,7 @@
 @echo off
 
 pushd ..\build    
-cl -Zi -nologo ..\src\win32_platform.cpp ..\src\FileLoader.cpp ..\src\Draw.cpp /link User32.lib Gdi32.lib 
+cl -Zi -nologo ..\src\win32_platform.cpp ..\src\GameLogic.cpp ..\src\FileLoader.cpp ..\src\Draw.cpp /link User32.lib Gdi32.lib 
 
 popd
 

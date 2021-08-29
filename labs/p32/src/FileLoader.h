@@ -45,7 +45,7 @@ class FileLoader {
     static unordered_map< string, TextureData& > textures;
 
 
-    // Functionst in Support lof loading and getting textures
+    // Functionst in Support of loading and getting textures
     static TextureData& getTextureChar(char* name);
     static TextureData& getTextureString(string name);
     static void loadAllTextures();
@@ -70,5 +70,7 @@ class FileLoader {
 	void loadBoard(string fileName);
     static char* stringToChar(string str);
 
+
+    // Helper function, implemented my own stoi
     int stoi(string input);
 };

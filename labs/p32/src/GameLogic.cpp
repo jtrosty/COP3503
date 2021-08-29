@@ -40,7 +40,7 @@ void GameLogic::resetGame(TileInfo tileInfo[]) {
     gameData.numOfFlags = 0;
     gameData.winLose = 'P';
 	gameData.debugShowMine = 0;
-    gameData.numOfMines = fileLoader.configData->numOfMines;
+    gameData.numOfMines = fileLoader.configData.numOfMines;
     randomMines(tileInfo, gameData);
     setUpAdjacentTiles(tileInfo);
 }
@@ -197,10 +197,11 @@ void GameLogic::rightClick(int x, int y)
 void GameLogic::loadGameData()
 {
     //FileLoading fileLoader;
+    
     fileLoader.loadFileHelper("config", fileLoader.config);
-    gameData.rows = fileLoader.configData->rows;
-    gameData.columns = fileLoader.configData->column;
-    gameData.numOfMines = fileLoader.configData->numOfMines;
+    gameData.rows = fileLoader.configData.rows;
+    gameData.columns = fileLoader.configData.column;
+    gameData.numOfMines = fileLoader.configData.numOfMines;
     gameData.numOfTiles = (gameData.rows * gameData.columns);
     gameData.showMines = 0;
     gameData.smileyFace = 0;

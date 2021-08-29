@@ -208,12 +208,12 @@ void FileLoader::loadConfig(std::string path) {
 	}
 }
 void FileLoader::loadBoard(std::string path) {
-	FileReadInData configData = readEntireFile(stringToChar(path));
+	FileReadInData testBoardData = readEntireFile(stringToChar(path));
 	std::string buffer;
-	if (configData.size > 0) {
-	}
-	else {
-	}
+    char* data = (char*)testBoardData.data;
+    for (int i = 0; i < testBoardData.size; i++) {
+        testBoardString += data[i];
+    }
 }
 
 string FileLoader::getTestBoardString()
