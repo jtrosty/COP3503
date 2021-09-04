@@ -1,74 +1,64 @@
 #include "Render.h"
-#include "TextureSpriteManager.h"
-#include "draw.h"
-#include "GameLogic.h"
-#include <math.h>
 
-void Render::updateAndDisplayBoard(GameLogic::TileInfo tileInfo[],
-								   GameLogic::GameData& gameData,
-                                   sf::RenderWindow& window, 
-                                   TextureSpriteManager& textureSpriteManager) {
+void Render::updateAndDisplayBoard(GameLogic& gameLogic,
+                                   Draw& draw, 
+                                   FileLoader& fileLoader, 
+                                   RenderBuffer& buffer) {
     ////////////////////////////////////////////////////////////////////////////////
     // Draw Sprites
-	userInterface(gameData, textureSpriteManager, window);
-	mineCounter(gameData, textureSpriteManager, window);
-    sf::Sprite* hidden = &textureSpriteManager.GetSprite("tile_hidden");
-    sf::Sprite* mine = &textureSpriteManager.GetSprite("mine");
-    sf::Sprite* revealed = &textureSpriteManager.GetSprite("tile_revealed");
-    sf::Sprite* flag = &textureSpriteManager.GetSprite("flag");
-	for (int i = 0; i < gameData.numOfTiles; i++) {
-		if (tileInfo[i].revealed == 0) {
-			hidden->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-			window.draw(*hidden);
-			if (tileInfo[i].flag != 0) {
-				flag->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-				window.draw(*flag);
+	//userInterface(gameData, fileLoader, draw);
+	//mineCounter(gameData, fileLoader, draw);
+    FileLoader::TextureData* hidden = &fileLoader.getTextureBMP("tile_hidden");
+    FileLoader::TextureData* mine = &fileLoader.getTextureBMP("mine");
+    FileLoader::TextureData* revealed = &fileLoader.getTextureBMP("tile_revealed");
+    FileLoader::TextureData* flag = &fileLoader.getTextureBMP("flag");
+	for (int i = 0; i < gameLogic.gameData.numOfTiles; i++) {
+		if (gameLogic.tileInfo[i].revealed == 0) {
+            draw.drawTexture(gameLogic.tileInfo[i].xPos, gameLogic.tileInfo[i].yPos, *hidden, buffer);
+			if (gameLogic.tileInfo[i].flag != 0) {
+                draw.drawTexture(gameLogic.tileInfo[i].xPos, gameLogic.tileInfo[i].yPos, *flag, buffer);
 			}
 		}
 		else {
-			revealed->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-			window.draw(*revealed);
-			if (tileInfo[i].mine != 0) {
-				mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-				window.draw(*mine);
+            draw.drawTexture(gameLogic.tileInfo[i].xPos, gameLogic.tileInfo[i].yPos, *revealed, buffer);
+			if (gameLogic.tileInfo[i].mine != 0) {
+                draw.drawTexture(gameLogic.tileInfo[i].xPos, gameLogic.tileInfo[i].yPos, *mine, buffer);
 			}
 			else {
-				displayNumOfMines(tileInfo[i], textureSpriteManager, window); //*numberOfMines);
+				//displayNumOfMines(gameLogic.tileInfo[i], fileLoader, draw); //*numberOfMines);
 			}
 		}
-		if (gameData.debugShowMine == 1) {
-			if (tileInfo[i].mine == 1) {
-				mine->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-				window.draw(*mine);
-				if (gameData.winLose == 'W') {
-					flag->setPosition(tileInfo[i].xPos, tileInfo[i].yPos);
-					window.draw(*flag);
+		if (gameLogic.gameData.debugShowMine == 1) {
+			if (gameLogic.tileInfo[i].mine == 1) {
+                draw.drawTexture(gameLogic.tileInfo[i].xPos, gameLogic.tileInfo[i].yPos, *mine, buffer);
+				if (gameLogic.gameData.winLose == 'W') {
+                    draw.drawTexture(gameLogic.tileInfo[i].xPos, gameLogic.tileInfo[i].yPos, *flag, buffer);
 				}
 			}
 		}
     }
 }
-
-void Render::userInterface(GameLogic::GameData gameData, TextureSpriteManager& textureSpriteManager, sf::RenderWindow& window) {
+/*
+void Render::userInterface(GameLogic::GameData gameData, FileLoader& fileLoader, Draw& draw) {
 	
 	// Happy face
-    sf::Sprite smiley = textureSpriteManager.GetSprite("face_happy");
+    FileLoader::TextureData smiley = fileLoader.GetSprite("face_happy");
 	// Center of width offset by widht of smileyface (64 pixels)
 	int xPos = gameData.smileX;
 	int yPos = (gameData.rows * gameData.lengthOfTile);
 	
 	if (gameData.winLose == 'P') {
-		smiley = textureSpriteManager.GetSprite("face_happy");
+		smiley = fileLoader.GetSprite("face_happy");
 		smiley.setPosition(xPos, yPos);
 		window.draw(smiley);
 	}
 	else if (gameData.winLose == 'L') {
-		smiley = textureSpriteManager.GetSprite("face_lose");
+		smiley = fileLoader.GetSprite("face_lose");
 		smiley.setPosition(xPos, yPos);
 		window.draw(smiley);
 	}
 	else if (gameData.winLose == 'W') {
-		smiley = textureSpriteManager.GetSprite("face_win");
+		smiley = fileLoader.GetSprite("face_win");
 		smiley.setPosition(xPos, yPos);
 		window.draw(smiley);
 	}
@@ -76,32 +66,32 @@ void Render::userInterface(GameLogic::GameData gameData, TextureSpriteManager& t
 	// Test #1 #2 and #2
 	// yPos doesnt' have to change
 	// Test 3 draw
-	sf::Sprite testIcon = textureSpriteManager.GetSprite("test_3");
+	FileLoader::TextureData testIcon = fileLoader.GetSprite("test_3");
 	xPos = gameData.test_3X;
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
 	// Test 2 draw
 	xPos = gameData.test_2X;
-	testIcon = textureSpriteManager.GetSprite("test_2");
+	testIcon = fileLoader.GetSprite("test_2");
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
 	// Test 1 draw
 	xPos = gameData.test_1X;
-	testIcon = textureSpriteManager.GetSprite("test_1");
+	testIcon = fileLoader.GetSprite("test_1");
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
 	xPos = gameData.debug_ShowMinesX;
-	testIcon = textureSpriteManager.GetSprite("debug");
+	testIcon = fileLoader.GetSprite("debug");
 	testIcon.setPosition(xPos, yPos);
 	window.draw(testIcon);
 }
 
-void Render::mineCounter(GameLogic::GameData gameData, TextureSpriteManager& textureSpriteManager, sf::RenderWindow& window) {
+void Render::mineCounter(GameLogic::GameData gameData, FileLoader& fileLoader, Draw& draw) {
 	int sizeOfDigit = 21;
 	int counter = gameData.numOfMines - gameData.numOfFlags;
 	std::string counterStr = std::to_string(std::abs(counter));
 	//cout << "coutner string: " << counterStr << endl;
-	sf::Sprite* digits = &textureSpriteManager.GetSprite("digits");
+	FileLoader::TextureData* digits = &fileLoader.GetSprite("digits");
 	sf::Vector2f rectSize(sizeOfDigit, gameData.lengthOfTile);
 	int yPos = (gameData.rows * gameData.lengthOfTile);
 	int xPos = sizeOfDigit;
@@ -142,7 +132,7 @@ void Render::mineCounter(GameLogic::GameData gameData, TextureSpriteManager& tex
 	}
 }
 
-void Render::windowSize(int columns, int rows, sf::RenderWindow& window){
+void Render::windowSize(int columns, int rows, Draw& draw){
 	int minColumns = 22;
 	short textureWidth = 32;
 	short heightUI = 88;
@@ -158,47 +148,47 @@ void Render::windowSize(int columns, int rows, sf::RenderWindow& window){
 }
 
 void Render::displayNumOfMines(const GameLogic::TileInfo& tileInfo,
-								const TextureSpriteManager& textureSpriteManager,
-							 	sf::RenderWindow& window) {
-	sf::Sprite* numberOfMines;
+								const FileLoader& fileLoader,
+							 	Draw& draw) {
+	FileLoader::TextureData* numberOfMines;
     switch ((short)tileInfo.numOfMines) {
 		case 1:
-			numberOfMines = &textureSpriteManager.GetSprite("number_1");
+			numberOfMines = &fileLoader.GetSprite("number_1");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
 		case 2:
-			numberOfMines = &textureSpriteManager.GetSprite("number_2");
+			numberOfMines = &fileLoader.GetSprite("number_2");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
 		case 3:
-			numberOfMines = &textureSpriteManager.GetSprite("number_3");
+			numberOfMines = &fileLoader.GetSprite("number_3");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
 		case 4:
-			numberOfMines = &textureSpriteManager.GetSprite("number_4");
+			numberOfMines = &fileLoader.GetSprite("number_4");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
 		case 5:
-			numberOfMines = &textureSpriteManager.GetSprite("number_5");
+			numberOfMines = &fileLoader.GetSprite("number_5");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
 		case 6:
-			numberOfMines = &textureSpriteManager.GetSprite("number_6");
+			numberOfMines = &fileLoader.GetSprite("number_6");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
 		case 7:
-			numberOfMines = &textureSpriteManager.GetSprite("number_7");
+			numberOfMines = &fileLoader.GetSprite("number_7");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
 		case 8:
-			numberOfMines = &textureSpriteManager.GetSprite("number_8");
+			numberOfMines = &fileLoader.GetSprite("number_8");
 			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
 			window.draw(*numberOfMines);
 			break;
@@ -244,3 +234,4 @@ int Render::digitOffset(char digit, int offset) {
 		break;
 	}
 }
+*/

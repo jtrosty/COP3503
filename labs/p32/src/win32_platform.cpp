@@ -8,6 +8,7 @@ char run = 1;
 #include "utils.h"
 
 #include "GameLogic.h"
+#include "Render.h"
 #include "FileLoader.h"
 #include "Draw.h"
 
@@ -35,9 +36,21 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     RegisterClass(&wc);
 
     GlobalRenderBuffer.pixels = nullptr;
-    int windowWidth = 720;
-    int windowHeight = 720;
+
+    // FILE LOADING//////////////////////////////////////////////////
+    FileLoader fileLoaderTest;
+    fileLoaderTest.loadAllTextures();
+    fileLoaderTest.loadFileHelper("config", FileLoader::config);
+
+    Draw draw;
+    GameLogic gameLogic;
+    gameLogic.loadGameData();
+    int heightUI = 88;
+    int windowWidth = gameLogic.gameData.columns * gameLogic.gameData.lengthOfTile;
+    int windowHeight = (gameLogic.gameData.rows * gameLogic.gameData.lengthOfTile) + heightUI;
     GlobalRenderBuffer.pixels = (UINT32*)VirtualAlloc(0, sizeof(UINT32) * (windowWidth * windowHeight), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+    Render render;
 
     //Create a window
     HWND hwnd = CreateWindowEx(
@@ -63,14 +76,6 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     RECT rectWindow;
     GetClientRect(hwnd, &rectWindow);
 
-    // FILE LOADING//////////////////////////////////////////////////
-    FileLoader fileLoaderTest;
-    fileLoaderTest.loadAllTextures();
-    fileLoaderTest.loadFileHelper("config", FileLoader::config);
-
-    Draw draw;
-    GameLogic gameLogic;
-    gameLogic.loadGameData();
 
     FileLoader::TextureData testPNG;
     testPNG = FileLoader::getTextureChar("../images/test_1.png");
@@ -94,11 +99,13 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         draw.drawTexture(170, 100, fileLoaderTest.textures.at("face_win"), GlobalRenderBuffer);
         draw.drawTexture(200, 100, fileLoaderTest.getTextureBMP("test_3"), GlobalRenderBuffer);
 
+        render.updateAndDisplayBoard(gameLogic, draw, fileLoaderTest, GlobalRenderBuffer);
+
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
         int destHeight = rectWindow.bottom - rectWindow.top;
         StretchDIBits(deviceContext,
-                        0, 0, destHeight, destHeight, // Window size
+                        0, 0, destWidth, destHeight, // Window size
                         0, 0, GlobalRenderBuffer.width, GlobalRenderBuffer.height, // size of buffer
                         GlobalRenderBuffer.pixels, &GlobalRenderBuffer.bitmap_info,
                         DIB_RGB_COLORS, SRCCOPY);
@@ -145,7 +152,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 RECT rectWindow;
                 GetClientRect(hwnd, &rectWindow);
                 int renderBufferWidth = rectWindow.right - rectWindow.left;
-                int renderBufferHeight = rectWindow.right - rectWindow.left;
+                int renderBufferHeight = rectWindow.bottom - rectWindow.top;
                 if (GlobalRenderBuffer.pixels != nullptr) {
                     if (VirtualFree(GlobalRenderBuffer.pixels, 0, MEM_RELEASE)) {
                         // Success
