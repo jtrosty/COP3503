@@ -37,7 +37,6 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     GlobalRenderBuffer.pixels = nullptr;
     int windowWidth = 720;
     int windowHeight = 720;
-    Draw draw;
     GlobalRenderBuffer.pixels = (UINT32*)VirtualAlloc(0, sizeof(UINT32) * (windowWidth * windowHeight), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
     //Create a window
@@ -69,11 +68,12 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     fileLoaderTest.loadAllTextures();
     fileLoaderTest.loadFileHelper("config", FileLoader::config);
 
+    Draw draw;
     GameLogic gameLogic;
     gameLogic.loadGameData();
 
     FileLoader::TextureData testPNG;
-    //testPNG = FileLoader::getTextureChar("../images/test_1.png");
+    testPNG = FileLoader::getTextureChar("../images/test_1.png");
 
     // The game loop
     MSG msg = { };
@@ -89,7 +89,6 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
             }
         }
         // Draw 
-        //fileLoaderTest.getTextureString("test_1")
         draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
         draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
         draw.drawTexture(170, 100, fileLoaderTest.textures.at("face_win"), GlobalRenderBuffer);

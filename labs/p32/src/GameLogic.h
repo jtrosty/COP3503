@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-//#include"LoadConfig.h"
 #include "Random.h"
 #include "Fileloader.h"
+#include "Draw.h"
 
 class GameLogic
 {
