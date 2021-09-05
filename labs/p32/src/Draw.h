@@ -14,6 +14,7 @@ class Draw {
     void drawRectangle(int x0, int y0, int x1, int y1, UINT32 color, RenderBuffer& buffer);
     int clamp(int min, int value, int max);
     void drawTexture(int x0, int y0, FileLoader::TextureData& texture, RenderBuffer& buffer);
+    void drawTextureSubRectangle(int dextX, int destY, Rect subTexture, FileLoader::TextureData& texture, RenderBuffer& buffer);
     
     static unordered_map< string, FileLoader::TextureData > textures;
 

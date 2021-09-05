@@ -1,6 +1,6 @@
 @echo off
 
-pushd ..\build    
+pushd build    
 cl -Zi -nologo ..\src\win32_platform.cpp ..\src\GameLogic.cpp ..\src\Render.cpp ..\src\FileLoader.cpp ..\src\Draw.cpp ..\src\Random.cpp /EHsc /link User32.lib Gdi32.lib 
 
 popd

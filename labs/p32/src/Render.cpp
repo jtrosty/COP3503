@@ -6,8 +6,8 @@ void Render::updateAndDisplayBoard(GameLogic& gameLogic,
                                    RenderBuffer& buffer) {
     ////////////////////////////////////////////////////////////////////////////////
     // Draw Sprites
-	//userInterface(gameData, fileLoader, draw);
-	//mineCounter(gameData, fileLoader, draw);
+	userInterface(gameLogic.gameData, fileLoader, draw, buffer);
+	mineCounter(gameLogic.gameData, fileLoader, draw, buffer);
     FileLoader::TextureData* hidden = &fileLoader.getTextureBMP("tile_hidden");
     FileLoader::TextureData* mine = &fileLoader.getTextureBMP("mine");
     FileLoader::TextureData* revealed = &fileLoader.getTextureBMP("tile_revealed");
@@ -38,100 +38,89 @@ void Render::updateAndDisplayBoard(GameLogic& gameLogic,
 		}
     }
 }
-/*
-void Render::userInterface(GameLogic::GameData gameData, FileLoader& fileLoader, Draw& draw) {
-	
+
+void Render::userInterface(GameLogic::GameData& gameData, FileLoader& fileLoader, Draw& draw, RenderBuffer& buffer) {
 	// Happy face
-    FileLoader::TextureData smiley = fileLoader.GetSprite("face_happy");
+    FileLoader::TextureData* smiley; //= &fileLoader.getTextureBMP("face_happy");
 	// Center of width offset by widht of smileyface (64 pixels)
 	int xPos = gameData.smileX;
 	int yPos = (gameData.rows * gameData.lengthOfTile);
 	
 	if (gameData.winLose == 'P') {
-		smiley = fileLoader.GetSprite("face_happy");
-		smiley.setPosition(xPos, yPos);
-		window.draw(smiley);
+		smiley = &fileLoader.getTextureBMP("face_happy");
+    	draw.drawTexture(xPos, yPos, *smiley, buffer);
 	}
 	else if (gameData.winLose == 'L') {
-		smiley = fileLoader.GetSprite("face_lose");
-		smiley.setPosition(xPos, yPos);
-		window.draw(smiley);
+		smiley = &fileLoader.getTextureBMP("face_lose");
+    	draw.drawTexture(xPos, yPos, *smiley, buffer);
 	}
 	else if (gameData.winLose == 'W') {
-		smiley = fileLoader.GetSprite("face_win");
-		smiley.setPosition(xPos, yPos);
-		window.draw(smiley);
+		smiley = &fileLoader.getTextureBMP("face_win");
+    	draw.drawTexture(xPos, yPos, *smiley, buffer);
 	}
 
 	// Test #1 #2 and #2
 	// yPos doesnt' have to change
 	// Test 3 draw
-	FileLoader::TextureData testIcon = fileLoader.GetSprite("test_3");
+	FileLoader::TextureData* testIcon = &fileLoader.getTextureBMP("test_3");
 	xPos = gameData.test_3X;
-	testIcon.setPosition(xPos, yPos);
-	window.draw(testIcon);
+    draw.drawTexture(xPos, yPos, *testIcon, buffer);
 	// Test 2 draw
 	xPos = gameData.test_2X;
-	testIcon = fileLoader.GetSprite("test_2");
-	testIcon.setPosition(xPos, yPos);
-	window.draw(testIcon);
+	testIcon = &fileLoader.getTextureBMP("test_2");
+    draw.drawTexture(xPos, yPos, *testIcon, buffer);
 	// Test 1 draw
 	xPos = gameData.test_1X;
-	testIcon = fileLoader.GetSprite("test_1");
-	testIcon.setPosition(xPos, yPos);
-	window.draw(testIcon);
+	testIcon = &fileLoader.getTextureBMP("test_1");
+    draw.drawTexture(xPos, yPos, *testIcon, buffer);
 	xPos = gameData.debug_ShowMinesX;
-	testIcon = fileLoader.GetSprite("debug");
-	testIcon.setPosition(xPos, yPos);
-	window.draw(testIcon);
+	testIcon = &fileLoader.getTextureBMP("debug");
+    draw.drawTexture(xPos, yPos, *testIcon, buffer);
 }
 
-void Render::mineCounter(GameLogic::GameData gameData, FileLoader& fileLoader, Draw& draw) {
+void Render::mineCounter(GameLogic::GameData& gameData, FileLoader& fileLoader, Draw& draw, RenderBuffer& buffer) {
 	int sizeOfDigit = 21;
-	int counter = gameData.numOfMines - gameData.numOfFlags;
+	int counter = 000;//gameData.numOfMines - gameData.numOfFlags;
 	std::string counterStr = std::to_string(std::abs(counter));
-	//cout << "coutner string: " << counterStr << endl;
-	FileLoader::TextureData* digits = &fileLoader.GetSprite("digits");
-	sf::Vector2f rectSize(sizeOfDigit, gameData.lengthOfTile);
+	FileLoader::TextureData* digits = &fileLoader.getTextureBMP("digits");
+
+	// x0, will be pulled from digit offset function
+	Rect subTextureNum;
+	subTextureNum.x1 = 21; // Width in X
+	subTextureNum.y0 = 0;
+	subTextureNum.y1 = 32; // Width in Y
+	
+	// (sizeOfDigit, game.LenghtOfTile);
 	int yPos = (gameData.rows * gameData.lengthOfTile);
 	int xPos = sizeOfDigit;
 	int xDigit = 0;
 	short size = counterStr.size();
 
 	if (counter < 0) {
-		xDigit = digitOffset('-', sizeOfDigit);
-		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
-		digits->setPosition(0, yPos);
-		window.draw(*digits);
+		subTextureNum.x0 = digitOffset('-', sizeOfDigit);
+    	draw.drawTextureSubRectangle(xPos, yPos, subTextureNum, *digits, buffer);
 	}
 	if (size == 1) {
-		xDigit = digitOffset('0', sizeOfDigit);
-		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
-		digits->setPosition(xPos, yPos);
-		window.draw(*digits);
+		subTextureNum.x0 = digitOffset('0', sizeOfDigit);
+    	draw.drawTextureSubRectangle(xPos, yPos, subTextureNum, *digits, buffer);
 		xPos += 21;
-		digits->setPosition(xPos, yPos);
-		window.draw(*digits);
+    	draw.drawTextureSubRectangle(xPos, yPos, subTextureNum, *digits, buffer);
 		xPos += 21;
 	}
 	if (size == 2) {
-		xDigit = digitOffset('0', sizeOfDigit);
-		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
-		digits->setPosition(xPos, yPos);
-		window.draw(*digits);
+		subTextureNum.x0 = digitOffset('0', sizeOfDigit);
+    	draw.drawTextureSubRectangle(xPos, yPos, subTextureNum, *digits, buffer);
 		xPos += 21;
 	}
 
 	for (int i = 0; i < size; i++) {
-		xDigit = digitOffset(counterStr[i], sizeOfDigit);
-
-		digits->setTextureRect(sf::IntRect(xDigit, 0, 21, 32));
-		digits->setPosition(xPos, yPos);
-		window.draw(*digits);
+		subTextureNum.x0 = digitOffset(counterStr[i], sizeOfDigit);
+    	draw.drawTextureSubRectangle(xPos, yPos, subTextureNum, *digits, buffer);
 		xPos += 21;
 	}
 }
 
+/*
 void Render::windowSize(int columns, int rows, Draw& draw){
 	int minColumns = 22;
 	short textureWidth = 32;
@@ -196,6 +185,7 @@ void Render::displayNumOfMines(const GameLogic::TileInfo& tileInfo,
 			break;
     }
 }
+*/
 
 int Render::digitOffset(char digit, int offset) {
 	switch (digit) {
@@ -232,6 +222,8 @@ int Render::digitOffset(char digit, int offset) {
 	case '-':
 		return offset * 10;
 		break;
+	default: 
+		return 0;
+		break;
 	}
 }
-*/
