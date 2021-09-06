@@ -45,9 +45,10 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     Draw draw;
     GameLogic gameLogic;
     gameLogic.loadGameData();
+    int windowsExtra = 30;
     int heightUI = 88;
-    int windowWidth = gameLogic.gameData.columns * gameLogic.gameData.lengthOfTile;
-    int windowHeight = (gameLogic.gameData.rows * gameLogic.gameData.lengthOfTile) + heightUI;
+    int windowWidth = (gameLogic.gameData.columns * gameLogic.gameData.lengthOfTile) + windowsExtra;
+    int windowHeight = (gameLogic.gameData.rows * gameLogic.gameData.lengthOfTile) + heightUI + windowsExtra;
     GlobalRenderBuffer.pixels = (UINT32*)VirtualAlloc(0, sizeof(UINT32) * (windowWidth * windowHeight), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
     Render render;
@@ -100,6 +101,15 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         draw.drawTexture(200, 100, fileLoaderTest.getTextureBMP("test_3"), GlobalRenderBuffer);
 
         render.updateAndDisplayBoard(gameLogic, draw, fileLoaderTest, GlobalRenderBuffer);
+
+        Rect subTextureNum;
+        subTextureNum.x0 = 0;
+        subTextureNum.width = 50; // Width in X
+        subTextureNum.y0 = 0;
+        subTextureNum.heigth = 64; // Width in Y
+    	draw.drawTextureSubRectangle(400, 400, subTextureNum, fileLoaderTest.getTextureBMP("face_win"), GlobalRenderBuffer);
+
+        draw.drawTexture(300, 300, fileLoaderTest.getTextureBMP("face_win"), GlobalRenderBuffer);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;

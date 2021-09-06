@@ -11,7 +11,7 @@ struct {
 
 struct {
     int x0;
-    int x1;
     int y0;
-    int y1;
+    int width;
+    int heigth;
 } typedef Rect;

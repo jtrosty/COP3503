@@ -45,17 +45,20 @@ void Draw::drawTexture(int x0, int y0, FileLoader::TextureData& texture, RenderB
     }
 }
 
-void Draw::drawTextureSubRectangle(int destX, int destY, Rect subTexture, FileLoader::TextureData& texture, RenderBuffer& buffer) {
+void Draw::drawTextureSubRectangle(int destX, int destY, Rect subTexture, 
+                                    FileLoader::TextureData& texture, RenderBuffer& buffer) {
     //subTexture.x0 = clamp(0, subTexture.x0, buffer.width);
     //subTexture.x1 = clamp(0, subTexture.x1, buffer.width);
     //subTexture.y0 = clamp(0, subTexture.y0, buffer.height);
     //subTexture.y1 = clamp(0, subTexture.y1, buffer.height);
+    //Top Left of Texture on buffer, ensure it is in bounds
     destX = clamp(0, destX, buffer.width);
-    int destX1 = clamp(0, destX + (subTexture.x1 - subTexture.x0), buffer.width);
     destY = clamp(0, destY, buffer.height);
-    int destY1 = clamp(0, destY + (subTexture.y1 - subTexture.y0), buffer.height);
+    //Bottom Rigth of Texture on, ensure it is in bounds
+    int destX1 = clamp(0, destX + subTexture.width, buffer.width);
+    int destY1 = clamp(0, destY + subTexture.heigth, buffer.height);
 
-    int start = (subTexture.y0 * texture.width) + subTexture.x0;
+    int start = 0;
     UINT32* srcPixel;// = (UINT32*)texture.pixelData[start];
     UINT32* destPixel;
 

@@ -80,15 +80,15 @@ void Render::userInterface(GameLogic::GameData& gameData, FileLoader& fileLoader
 
 void Render::mineCounter(GameLogic::GameData& gameData, FileLoader& fileLoader, Draw& draw, RenderBuffer& buffer) {
 	int sizeOfDigit = 21;
-	int counter = 000;//gameData.numOfMines - gameData.numOfFlags;
+	int counter = 102;//gameData.numOfMines - gameData.numOfFlags;
 	std::string counterStr = std::to_string(std::abs(counter));
 	FileLoader::TextureData* digits = &fileLoader.getTextureBMP("digits");
 
 	// x0, will be pulled from digit offset function
 	Rect subTextureNum;
-	subTextureNum.x1 = 21; // Width in X
+	subTextureNum.width = 21; // Width in X
 	subTextureNum.y0 = 0;
-	subTextureNum.y1 = 32; // Width in Y
+	subTextureNum.heigth = 32; // Width in Y
 	
 	// (sizeOfDigit, game.LenghtOfTile);
 	int yPos = (gameData.rows * gameData.lengthOfTile);
