@@ -13,7 +13,8 @@ char run = 1;
 #include "Draw.h"
 
 #include <windows.h>
-
+#include <windowsx.h>
+#include <WinUser.h>
 
 RenderBuffer GlobalRenderBuffer = {0};
 
@@ -94,7 +95,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
                 }
             }
         }
-        // Draw 
+        // Draw test ********************************************** 
         draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
         draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
         draw.drawTexture(170, 100, fileLoaderTest.textures.at("face_win"), GlobalRenderBuffer);
@@ -127,6 +128,9 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    // MOUSE 
+    POINT mousePt;
+
     switch (uMsg)
     {
         case WM_DESTROY: {
@@ -153,6 +157,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             FillRect(hdc, &ps.rcPaint, brush);
             EndPaint(hwnd, &ps);
 
+            break;
+        }
+        case WM_LBUTTONDOWN: {
+            mousePt.x = GET_X_LPARAM(lParam);
+            mousePt.y = GET_Y_LPARAM(lParam);
+            break;
+        }
+        case WM_LBUTTONUP: {
+            break;
+        }
+        case WM_RBUTTONDOWN: {
+            break;
+        }
+        case WM_RBUTTONUP: {
+            break;
+        }
+        case WM_KEYDOWN: {
             break;
         }
         case WM_SIZE: {
@@ -200,6 +221,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 // **********************************************************************************
 //                               HELPER FUNCTIONS
 // **********************************************************************************
+
+void leftMouse(POINT mouse) {
+
+}
 
 void OnSize(HWND hwnd, UINT flag, int width, int height) {
     // Handle resizing

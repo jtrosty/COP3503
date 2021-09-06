@@ -25,7 +25,7 @@ void Render::updateAndDisplayBoard(GameLogic& gameLogic,
                 draw.drawTexture(gameLogic.tileInfo[i].xPos, gameLogic.tileInfo[i].yPos, *mine, buffer);
 			}
 			else {
-				//displayNumOfMines(gameLogic.tileInfo[i], fileLoader, draw); //*numberOfMines);
+				displayNumOfMines(gameLogic.tileInfo[i], fileLoader, draw, buffer); //*numberOfMines);
 			}
 		}
 		if (gameLogic.gameData.debugShowMine == 1) {
@@ -80,7 +80,7 @@ void Render::userInterface(GameLogic::GameData& gameData, FileLoader& fileLoader
 
 void Render::mineCounter(GameLogic::GameData& gameData, FileLoader& fileLoader, Draw& draw, RenderBuffer& buffer) {
 	int sizeOfDigit = 21;
-	int counter = 102;//gameData.numOfMines - gameData.numOfFlags;
+	int counter = gameData.numOfMines - gameData.numOfFlags;
 	std::string counterStr = std::to_string(std::abs(counter));
 	FileLoader::TextureData* digits = &fileLoader.getTextureBMP("digits");
 
@@ -135,57 +135,49 @@ void Render::windowSize(int columns, int rows, Draw& draw){
 	window.create(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
 	window.clear(sf::Color::White);
 }
+*/
 
 void Render::displayNumOfMines(const GameLogic::TileInfo& tileInfo,
-								const FileLoader& fileLoader,
-							 	Draw& draw) {
+								FileLoader& fileLoader,
+							 	Draw& draw, RenderBuffer& buffer) {
 	FileLoader::TextureData* numberOfMines;
     switch ((short)tileInfo.numOfMines) {
 		case 1:
-			numberOfMines = &fileLoader.GetSprite("number_1");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_1");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		case 2:
-			numberOfMines = &fileLoader.GetSprite("number_2");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_2");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		case 3:
-			numberOfMines = &fileLoader.GetSprite("number_3");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_3");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		case 4:
-			numberOfMines = &fileLoader.GetSprite("number_4");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_4");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		case 5:
-			numberOfMines = &fileLoader.GetSprite("number_5");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_5");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		case 6:
-			numberOfMines = &fileLoader.GetSprite("number_6");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_6");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		case 7:
-			numberOfMines = &fileLoader.GetSprite("number_7");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_7");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		case 8:
-			numberOfMines = &fileLoader.GetSprite("number_8");
-			numberOfMines->setPosition(tileInfo.xPos, tileInfo.yPos);
-			window.draw(*numberOfMines);
+			numberOfMines = &fileLoader.getTextureBMP("number_8");
+    		draw.drawTexture(tileInfo.xPos, tileInfo.yPos, *numberOfMines, buffer);
 			break;
 		default:
 			break;
     }
 }
-*/
 
 int Render::digitOffset(char digit, int offset) {
 	switch (digit) {

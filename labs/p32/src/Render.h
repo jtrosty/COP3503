@@ -7,9 +7,9 @@
 class Render {
 
     int digitOffset(char digit, int offset);
-    //void displayNumOfMines(const GameLogic::TileInfo& tileInfo,
-     //                       const FileLoader& fileLoader,
-      //                      Draw& draw);    
+    void displayNumOfMines(const GameLogic::TileInfo& tileInfo,
+                            FileLoader& fileLoader,
+                            Draw& draw, RenderBuffer& buffer);    
 
     void userInterface(GameLogic::GameData& gameData, FileLoader& fileLoader, Draw& draw, RenderBuffer& buffer);
     void mineCounter(GameLogic::GameData& gameData, FileLoader& fileLoader, Draw& draw, RenderBuffer& buffer);
