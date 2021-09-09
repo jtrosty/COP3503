@@ -128,14 +128,15 @@ void deleteTreeNode(tree** l, int data) {
     tree* temp;
     if (*l == nullptr) return;
     tree* nodeToDelete = searchTree(*l, data);
-    // NO children
-    if (nodeToDelete->left == nullptr && nodeToDelete->right == nullptr) {
+    // NO c
+    hildren
+        if (nodeToDelete->left == nullptr && nodeToDelete->right == nullptr) {
         delete nodeToDelete;
         nodeToDelete = nullptr;
     }
     // 1 child
     else if (   (nodeToDelete->left != nullptr && nodeToDelete->right == nullptr) 
-        || (nodeToDelete->left == nullptr && nodeToDelete->right != nullptr)) {
+             || (nodeToDelete->left == nullptr && nodeToDelete->right != nullptr)) {
         // left child
         if (nodeToDelete->left != nullptr) {
             temp = nodeToDelete->left;
@@ -152,9 +153,29 @@ void deleteTreeNode(tree** l, int data) {
     // 2 children 
     else if (nodeToDelete->left != nullptr && nodeToDelete->right != nullptr) {
         
-
+        
     }
 }
+
+
+string peakyString(string[] str) {
+    int numOfStrings = str.size();
+    if (numOfStrings == 1 || numOfStrings == 0) {
+        return NULL;
+    }
+    for (int i = 0; i < numOfStrings; i++) {
+        if (i == 0) {
+            if (str[0].size() > str[1].size()) return str[0];
+        }
+        else if (i == size - 1) {
+            if (str[i].size() > str[i - 1].size()) return str[i];
+        }
+        if (str[i].size() > str[i -1].size() && str[i].size() < str[i + 1].size()) 
+            return str[i];
+    }
+}
+
+
 
 
 int main(void) {
