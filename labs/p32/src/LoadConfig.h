@@ -27,8 +27,6 @@ public:
 	std::string testBoardString;
 
 	FileLoading();
-	// TODO copy contructor
-	// TODO copy assignment
 	~FileLoading();
 	static ConfigData staticConfigData;
 	ConfigData* configData;

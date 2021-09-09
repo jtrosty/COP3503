@@ -3,7 +3,24 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+// STATIC VARIABLES
 unordered_map< string, FileLoader::TextureData& > FileLoader::textures;
+char* FileLoader::convertToChar;
+std::string FileLoader::testBoardString;
+
+FileLoader::FileLoader() {
+    convertToChar = nullptr;
+    ConfigData configData;
+}
+
+FileLoader::~FileLoader() {
+    if (convertToChar == nullptr) {}
+    else delete[] convertToChar;
+}
+ /***************************************************************************
+  * ********************** Load Textures and Store them **********************
+  * *************************************************************************/
+
 
 void FileLoader::loadAllTextures() {
     string listFileNames[] = { "mine",       "tile_hidden", "tile_revealed", 
@@ -37,19 +54,27 @@ FileLoader::TextureData& FileLoader::getTextureString(string name) {
     string fileLocation = "../images/";
     string fileType = ".png";
     name = (fileLocation + name + fileType);
-    int sizeString = name.size();
-    char* pathChar = new char[sizeString + 1];
+    result = &loadTextureData32Bit(readEntireFile(stringToChar(name))); 
+
+    return *result;
+}
+
+char* FileLoader::stringToChar(string str) {
+    int sizeString = str.size();
+    if (convertToChar == nullptr) {
+        convertToChar = new char[sizeString + 1];
+    }
+    else {
+        delete[] convertToChar;
+        convertToChar = new char[sizeString + 1];
+    }
 
     // Copy String to Char
     for (int i = 0; i < sizeString; i++) {
-        pathChar[i] = name.at(i);
+        convertToChar[i] = str.at(i);
     }
-    pathChar[sizeString + 1] = '\0';
-    
-    result = &loadTextureData32Bit(readEntireFile(pathChar)); 
-    delete[] pathChar;
-
-    return *result;
+    convertToChar[sizeString] = '\0';
+    return convertToChar;
 }
 
 FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
@@ -73,8 +98,13 @@ FileLoader::FileReadInData FileLoader::readEntireFile(char* path) {
     return result;
 }
 
-FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
+FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData& data) {
     TextureData* result = new TextureData;
+    unsigned char temp0;
+    unsigned char temp1;
+    unsigned char temp2;
+    unsigned char temp3;
+    UINT32* destPixel;
     result->pixelData = stbi_load_from_memory((stbi_uc*)data.data, data.size, &result->width, &result->height, &result->n, 4);
     result->bitMapInfo.bmiHeader.biSize = sizeof(result->bitMapInfo.bmiHeader);
     result->bitMapInfo.bmiHeader.biWidth = result->width;
@@ -84,5 +114,127 @@ FileLoader::TextureData& FileLoader::loadTextureData32Bit(FileReadInData data) {
     result->bitMapInfo.bmiHeader.biCompression = BI_RGB;
     result->bitMapInfo.bmiHeader.biSizeImage = 0;
     result->bitMapInfo.bmiHeader.biXPelsPerMeter = 0;
+    int test = 0;
+
+
+/*
+    This is an attempt to fix the issue of data being loaded incorrectly.
+
+    for (int i = 0; i < data.size; i = i + 4) {
+        // NEED THESE LINES
+        temp0 = result->pixelData[i];
+        temp1 = result->pixelData[i + 1];
+        temp2 = result->pixelData[i + 2];
+        temp3 = result->pixelData[i + 3];
+        
+        // THIS HAS SHOWN TO BE CORRECT but eventually ~14 lines into the texture, 
+        // the texture no longer shows correctly, looks liek r and b are flipped for some
+        // reason. Not sure why
+        result->pixelData[i] = temp2;
+        result->pixelData[i + 1] = temp1;
+        result->pixelData[i + 2] = temp0;
+        result->pixelData[i + 3] = temp3;
+
+        // NOT USED
+        result->pixelData[i] = result->pixelData[i] & 0x00000000;
+        result->pixelData[i] = ((result->pixelData[i]) | ((temp >> 24) & 0x000000ff));
+        result->pixelData[i] = ((result->pixelData[i] << 8) | ((temp) & 0x000000ff));
+        result->pixelData[i] = ((result->pixelData[i] << 8) | ((temp >> 8) & 0x000000ff));
+        result->pixelData[i] = ((result->pixelData[i] << 8) | ((temp >> 16) & 0x000000ff));
+
+        *destPixel = ((*destPixel << 8) | ((temp) & 0x000000ff));
+        *destPixel = ((*destPixel << 8) | ((temp >> 8) & 0x000000ff));
+        *destPixel = ((*destPixel << 8) | ((temp >> 16) & 0x000000ff));
+        *destPixel++;
+       if (test == 100) break;
+    }
+ */
+
     return *result;
+}
+ 
+ /***************************************************************************
+  * ********************** Load Config and Test boards **********************
+  * *************************************************************************/
+
+
+void FileLoader::loadFileHelper(std::string fileName, fileTypeToLoad type) {
+	std::string path = "../boards/";
+	switch (type)
+	{
+	case FileLoader::config:
+		path += fileName + ".cfg";
+		loadConfig(path);
+		break;
+	case FileLoader::board:
+		path += fileName + ".brd";
+		//loadBoard(path);
+		break;
+	default:
+		break;
+	}
+}
+
+void FileLoader::loadConfig(std::string path) {
+
+	FileReadInData readConfigData = readEntireFile(stringToChar(path));
+    string results;
+	if (readConfigData.size > 0) {
+        char* data = (char*)readConfigData.data;
+
+        int i = 0;
+        while (data[i] > 30) {
+            results +=data[i];
+            i++;
+        }
+        configData.column = stoi(results);
+        results.clear();
+        i += 2;
+        while (data[i] > 30) {
+            results +=data[i];
+            i++;
+        }
+        configData.rows = stoi(results);
+        results.clear();
+        i += 2;
+        while (data[i] > 30) {
+            results +=data[i];
+            i++;
+        }
+        configData.numOfMines = stoi(results);
+	}
+	else {
+		//cout << "ERROR: " << path << " did not open." << endl;
+	}
+}
+void FileLoader::loadBoard(std::string path) {
+	FileReadInData testBoardData = readEntireFile(stringToChar(path));
+	std::string buffer;
+    char* data = (char*)testBoardData.data;
+    for (int i = 0; i < testBoardData.size; i++) {
+        testBoardString += data[i];
+    }
+}
+
+string FileLoader::getTestBoardString()
+{
+	return testBoardString;
+}
+
+void FileLoader::deleteTestBoardString() {
+	testBoardString.clear();
+}
+
+int FileLoader::stoi(string input) {
+    int result = 0;
+    int length = input.size();
+    int multiple = 1;
+    for (int i = 1; i < length; i++) {
+        multiple *= 10;
+    }
+    for (int i = 0; i < length; i++) {
+        result = result + ((input[i] - 48)  * multiple);
+        multiple /= 10;
+    }
+    return result;
 }

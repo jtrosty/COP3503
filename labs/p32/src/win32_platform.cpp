@@ -7,11 +7,14 @@ char run = 1;
 
 #include "utils.h"
 
+#include "GameLogic.h"
+#include "Render.h"
 #include "FileLoader.h"
 #include "Draw.h"
 
 #include <windows.h>
-
+#include <windowsx.h>
+#include <WinUser.h>
 
 RenderBuffer GlobalRenderBuffer = {0};
 
@@ -34,10 +37,22 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     RegisterClass(&wc);
 
     GlobalRenderBuffer.pixels = nullptr;
-    int windowWidth = 720;
-    int windowHeight = 720;
+
+    // FILE LOADING//////////////////////////////////////////////////
+    FileLoader fileLoaderTest;
+    fileLoaderTest.loadAllTextures();
+    fileLoaderTest.loadFileHelper("config", FileLoader::config);
+
     Draw draw;
+    GameLogic gameLogic;
+    gameLogic.loadGameData();
+    int windowsExtra = 30;
+    int heightUI = 88;
+    int windowWidth = (gameLogic.gameData.columns * gameLogic.gameData.lengthOfTile) + windowsExtra;
+    int windowHeight = (gameLogic.gameData.rows * gameLogic.gameData.lengthOfTile) + heightUI + windowsExtra;
     GlobalRenderBuffer.pixels = (UINT32*)VirtualAlloc(0, sizeof(UINT32) * (windowWidth * windowHeight), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+    Render render;
 
     //Create a window
     HWND hwnd = CreateWindowEx(
@@ -63,9 +78,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     RECT rectWindow;
     GetClientRect(hwnd, &rectWindow);
 
-    // FILE LOADING//////////////////////////////////////////////////
-    FileLoader fileLoader;
-    //fileLoader.loadAllTextures();
+
     FileLoader::TextureData testPNG;
     testPNG = FileLoader::getTextureChar("../images/test_1.png");
 
@@ -82,17 +95,28 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
                 }
             }
         }
-//fileLoader.getTexture("../images/test_2.png")
-        // Draw 
-        //fileLoader.getTextureString("test_1")
+        // Draw test ********************************************** 
         draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
         draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
+        draw.drawTexture(170, 100, fileLoaderTest.textures.at("face_win"), GlobalRenderBuffer);
+        draw.drawTexture(200, 100, fileLoaderTest.getTextureBMP("test_3"), GlobalRenderBuffer);
+
+        render.updateAndDisplayBoard(gameLogic, draw, fileLoaderTest, GlobalRenderBuffer);
+
+        Rect subTextureNum;
+        subTextureNum.x0 = 0;
+        subTextureNum.width = 50; // Width in X
+        subTextureNum.y0 = 0;
+        subTextureNum.heigth = 64; // Width in Y
+    	draw.drawTextureSubRectangle(400, 400, subTextureNum, fileLoaderTest.getTextureBMP("face_win"), GlobalRenderBuffer);
+
+        draw.drawTexture(300, 300, fileLoaderTest.getTextureBMP("face_win"), GlobalRenderBuffer);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
         int destHeight = rectWindow.bottom - rectWindow.top;
         StretchDIBits(deviceContext,
-                        0, 0, destHeight, destHeight, // Window size
+                        0, 0, destWidth, destHeight, // Window size
                         0, 0, GlobalRenderBuffer.width, GlobalRenderBuffer.height, // size of buffer
                         GlobalRenderBuffer.pixels, &GlobalRenderBuffer.bitmap_info,
                         DIB_RGB_COLORS, SRCCOPY);
@@ -104,6 +128,9 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    // MOUSE 
+    POINT mousePt;
+
     switch (uMsg)
     {
         case WM_DESTROY: {
@@ -132,6 +159,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             break;
         }
+        case WM_LBUTTONDOWN: {
+            mousePt.x = GET_X_LPARAM(lParam);
+            mousePt.y = GET_Y_LPARAM(lParam);
+            break;
+        }
+        case WM_LBUTTONUP: {
+            break;
+        }
+        case WM_RBUTTONDOWN: {
+            break;
+        }
+        case WM_RBUTTONUP: {
+            break;
+        }
+        case WM_KEYDOWN: {
+            break;
+        }
         case WM_SIZE: {
                 int width = LOWORD(lParam);  // Macro to get the low-order word.
                 int height = HIWORD(lParam); // Macro to get the high-order word.
@@ -139,7 +183,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 RECT rectWindow;
                 GetClientRect(hwnd, &rectWindow);
                 int renderBufferWidth = rectWindow.right - rectWindow.left;
-                int renderBufferHeight = rectWindow.right - rectWindow.left;
+                int renderBufferHeight = rectWindow.bottom - rectWindow.top;
                 if (GlobalRenderBuffer.pixels != nullptr) {
                     if (VirtualFree(GlobalRenderBuffer.pixels, 0, MEM_RELEASE)) {
                         // Success
@@ -177,6 +221,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 // **********************************************************************************
 //                               HELPER FUNCTIONS
 // **********************************************************************************
+
+void leftMouse(POINT mouse) {
+
+}
 
 void OnSize(HWND hwnd, UINT flag, int width, int height) {
     // Handle resizing

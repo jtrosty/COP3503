@@ -8,3 +8,10 @@ struct {
 
     BITMAPINFO bitmap_info;
 } typedef RenderBuffer;
+
+struct {
+    int x0;
+    int y0;
+    int width;
+    int heigth;
+} typedef Rect;
