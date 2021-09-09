@@ -119,19 +119,73 @@ void printNodes(Node* head) {
     }
 }
 
+float interQuartile(Node* head) {
+    Node* first;
+    Node* median;
+    Node* third;
+    Node* fastNode;
+    int size = 4; // ASSUME THE LINKED LIST SUPPLIED HAS MIN SIZE OF 4
+    int shiftNode = 0;
+    float divideby2 = 2.0f;
+
+    // Problem statements says a head will have at least 4 values, the following
+    // code will set up the initial conditiosn of 
+    // 1   2   3   4
+    //   ^   ^   ^
+    //   Q1  Q2  Q3
+    first    = head;
+    median   = head->next;
+    third    = head->next->next;
+    fastNode = head->next->next->next;
+
+    // with initial conditions set, the logic to handle and remaining size of list
+    while (fastNode != NULL) {
+        shiftNode = (size % 4);
+        // First shifts 1 out of every 4 node changes of the final node 
+        if (shiftNode == 2) first = first->next;
+        // Median, shifts every other node change for the final node
+        if (shiftNode == 1 || shiftNode == 3) median = median->next;
+        // thrid, shifts 3 out of 4 node shifts of the final node
+        if (shiftNode != 0) third = third->next;
+        fastNode = fastNode->next;
+        size++;
+    }
+
+/*
+    Code used for testing and trouble shooting
+    cout << endl;
+    cout << "first " << first->value << endl;
+    cout << "median " << median->value << endl;
+    cout << "thrid " << third->value << endl;
+    cout << "size " << size << endl;
+    cout << "Shift " << shiftNode << endl;
+    */
+
+    if (shiftNode == 2 || shiftNode == 3) {
+        return float(third->value - first->value);
+    }
+    else {
+        float result;
+        result = ((float)first->value + (float)first->next->value) / divideby2;
+        result = (((float)third->value + (float)third->next->value) / divideby2) - result;
+        return result;
+    }
+    return -1.0;
+}
+
 int main (void) {
     cout << "hello world" << endl;
     Node* node0 = new Node;
-    Node* node1 = new Node;
-    Node* node2 = new Node;
-    Node* node3 = new Node;
-    Node* node4 = new Node;
-    node0->value = 5;
+    node0->value = 1;
     node0->next = NULL;
-    node0 = add(node0, 0, 4);
-    node0 = add(node0, 0, 3);
-    node0 = add(node0, 0, 2);
-    node0 = add(node0, 0, 1);
+    node0 = add(node0, 1, 2);
+    node0 = add(node0, 2, 3);
+    node0 = add(node0, 3, 4);
+    //node0 = add(node0, 4, 5);
+    //node0 = add(node0, 5, 6);
+    //node0 = add(node0, 6, 7);
+    //node0 = add(node0, 7, 8);
+    //node0 = add(node0, 8, 9);
     cout << "Test 1,2,3,4: " << find(node0, 6) << endl;
 
     //printNodes(add(node0, 5, 9));
@@ -139,7 +193,7 @@ int main (void) {
     cout << "Test Post add" << find(node0, 9) << endl;
     printNodes(node0);
     cout << endl;
-    cout << "Test Median " << median(node0) << endl;
+    cout << "IQR " << interQuartile(node0) << endl;
     cout << "print nodes: ";
     printNodes(node0);
 
