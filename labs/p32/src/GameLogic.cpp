@@ -45,8 +45,7 @@ void GameLogic::resetGame(TileInfo tileInfo[]) {
     setUpAdjacentTiles(tileInfo);
 }
 
-void GameLogic::zeroBoard(TileInfo tileInfo[])
-{
+void GameLogic::zeroBoard(TileInfo tileInfo[]) {
     int x = 0;
     int y = 0;
     for (int i = 0; i < gameData.numOfTiles; i++) {
@@ -62,8 +61,7 @@ void GameLogic::zeroBoard(TileInfo tileInfo[])
     }
 }
 
-void GameLogic::leftClick(int x, int y)
-{
+void GameLogic::leftClick(int x, int y) {
 	int columnClicked = x / gameData.lengthOfTile;
 	int rowClicked = y / gameData.lengthOfTile;
 	int cellClicked = (rowClicked * gameData.columns) + columnClicked;
