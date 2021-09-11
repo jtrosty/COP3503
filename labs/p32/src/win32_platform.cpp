@@ -12,6 +12,7 @@ char run = 1;
 #include "Render.h"
 #include "FileLoader.h"
 #include "Draw.h"
+#include "synchapi.h"
 
 #include <windows.h>
 #include <windowsx.h>
@@ -127,6 +128,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
                         DIB_RGB_COLORS, SRCCOPY);
 
         // GAME LOOP AREA END
+        Sleep(15);
     }
     return 0;
 }
