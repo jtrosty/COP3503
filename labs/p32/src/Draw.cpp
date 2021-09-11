@@ -35,10 +35,17 @@ void Draw::drawTexture(int x0, int y0, FileLoader::TextureData& texture, RenderB
             // TODO (Jon): this is done because the file loader because it loads 
             // textures with the pixels a little out of order, see FileLoader for
             // more. 
+            //  If transparent, skip
+            if ((*srcPixel >> 24) == 0x00000000) {
+                *srcPixel++;
+                *destPixel++;
+                continue;
+            }
             *destPixel = ((*destPixel) | ((*srcPixel >> 24) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel >> 8) & 0x000000ff));
             *destPixel = ((*destPixel << 8) | ((*srcPixel >> 16) & 0x000000ff));
+            *destPixel = *destPixel & (*srcPixel | 0x00ffffff);
             *srcPixel++;
             *destPixel++;
         }

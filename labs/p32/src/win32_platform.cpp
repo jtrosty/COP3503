@@ -110,7 +110,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         subTextureNum.heigth = 64; // Width in Y
     	draw.drawTextureSubRectangle(400, 400, subTextureNum, fileLoaderTest.getTextureBMP("face_win"), GlobalRenderBuffer);
 
-        draw.drawTexture(300, 300, fileLoaderTest.getTextureBMP("face_win"), GlobalRenderBuffer);
+        draw.drawTexture(300, 300, fileLoaderTest.getTextureBMP("mine"), GlobalRenderBuffer);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
