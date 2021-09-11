@@ -7,6 +7,7 @@ char run = 1;
 
 #include "utils.h"
 
+#include "GameControl.h"
 #include "GameLogic.h"
 #include "Render.h"
 #include "FileLoader.h"
@@ -17,6 +18,8 @@ char run = 1;
 #include <WinUser.h>
 
 RenderBuffer GlobalRenderBuffer = {0};
+
+UserInput userInput;  
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void OnSize(HWND hwnd, UINT flag, int width, int height);
@@ -39,13 +42,14 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
     GlobalRenderBuffer.pixels = nullptr;
 
     // FILE LOADING//////////////////////////////////////////////////
-    FileLoader fileLoaderTest;
-    fileLoaderTest.loadAllTextures();
-    fileLoaderTest.loadFileHelper("config", FileLoader::config);
 
+    GameControl gameControl;
+    FileLoader fileLoader;
     Draw draw;
     GameLogic gameLogic;
-    gameLogic.loadGameData();
+
+    gameControl.startUpGame(gameLogic, fileLoader);
+
     int windowsExtra = 30;
     int heightUI = 88;
     int windowWidth = (gameLogic.gameData.columns * gameLogic.gameData.lengthOfTile) + windowsExtra;
@@ -96,21 +100,22 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
             }
         }
         // Draw test ********************************************** 
-        draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
+        //draw.drawRectangle(10, 40, 72, 400, 0xff00ff, GlobalRenderBuffer);
         draw.drawTexture(100, 100, testPNG, GlobalRenderBuffer);
-        draw.drawTexture(170, 100, fileLoaderTest.textures.at("face_win"), GlobalRenderBuffer);
-        draw.drawTexture(200, 100, fileLoaderTest.getTextureBMP("test_3"), GlobalRenderBuffer);
+        draw.drawTexture(170, 100, fileLoader.textures.at("face_win"), GlobalRenderBuffer);
+        draw.drawTexture(200, 100, fileLoader.getTextureBMP("test_3"), GlobalRenderBuffer);
 
-        render.updateAndDisplayBoard(gameLogic, draw, fileLoaderTest, GlobalRenderBuffer);
+        //render.updateAndDisplayBoard(gameLogic, draw, fileLoaderTest, GlobalRenderBuffer);
+        gameControl.updateWindowAndUserInput(gameLogic, draw, fileLoader, render, GlobalRenderBuffer, userInput);
 
         Rect subTextureNum;
         subTextureNum.x0 = 0;
         subTextureNum.width = 50; // Width in X
         subTextureNum.y0 = 0;
         subTextureNum.heigth = 64; // Width in Y
-    	draw.drawTextureSubRectangle(400, 400, subTextureNum, fileLoaderTest.getTextureBMP("face_win"), GlobalRenderBuffer);
+    	draw.drawTextureSubRectangle(400, 400, subTextureNum, fileLoader.getTextureBMP("face_win"), GlobalRenderBuffer);
 
-        draw.drawTexture(300, 300, fileLoaderTest.getTextureBMP("mine"), GlobalRenderBuffer);
+        draw.drawTexture(300, 300, fileLoader.getTextureBMP("mine"), GlobalRenderBuffer);
 
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
@@ -130,6 +135,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     // MOUSE 
     POINT mousePt;
+    HDC hdc;
+    RECT rcCLient;
+    POINT ptClientUL;
+    POINT ptClientLR;
+
 
     switch (uMsg)
     {
@@ -160,14 +170,46 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
         }
         case WM_LBUTTONDOWN: {
-            mousePt.x = GET_X_LPARAM(lParam);
-            mousePt.y = GET_Y_LPARAM(lParam);
+            // Capture mouse input
+            SetCapture(hwnd);
+
+            // Retrieve screen coordinates of the lcient area.
+            // Add 1 to right and bottom sides.
+            GetClientRect(hwnd, &rcCLient);
+            ptClientUL.x = rcCLient.left;
+            ptClientUL.y = rcCLient.top;
+            ptClientLR.x = rcCLient.right + 1;
+            ptClientLR.y = rcCLient.bottom + 1;
+            ClientToScreen(hwnd, &ptClientUL);
+            ClientToScreen(hwnd, &ptClientLR);
+
+            // Confine the cursor
+            /*
+            SetRect(&rcCLient, ptClientUL.x, ptClientUL.y, ptClientLR.x, ptClientLR.y);
+            ClipCursor(&rcCLient);
+            */
+
+            userInput.point.x = GET_X_LPARAM(lParam);
+            userInput.point.y = GET_Y_LPARAM(lParam);
+            userInput.leftMouseClick = 1;
+            userInput.isNewInput = 1;
+
+            /*
+            userInput.point.x = GET_X_LPARAM(lParam);
+            userInput.point.y = GET_Y_LPARAM(lParam);
+            userInput.leftMouseClick = 1;
+            userInput.isNewInput = 1;
+            */
             break;
         }
         case WM_LBUTTONUP: {
             break;
         }
         case WM_RBUTTONDOWN: {
+            userInput.point.x = GET_X_LPARAM(lParam);
+            userInput.point.y = GET_Y_LPARAM(lParam);
+            userInput.rightMouseClick = 1;
+            userInput.isNewInput = 1;
             break;
         }
         case WM_RBUTTONUP: {
