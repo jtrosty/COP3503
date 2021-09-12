@@ -8,7 +8,8 @@ void GameControl::updateWindowAndUserInput(GameLogic& gameLogic, Draw& draw, Fil
             gameLogic.leftClick(userInput.point.x, userInput.point.y);
             userInput.isNewInput = 0;
             userInput.leftMouseClick = 0;
-            draw.drawTexture(userInput.point.x, userInput.point.y, fileLoader.getTextureBMP("number_1"), GlobalRenderBuffer);
+            // DEBUG CODE
+            //draw.drawTexture(userInput.point.x, userInput.point.y, fileLoader.getTextureBMP("number_1"), GlobalRenderBuffer);
         }
         else if(userInput.rightMouseClick) {
             gameLogic.rightClick(userInput.point.x, userInput.point.y);
@@ -17,7 +18,7 @@ void GameControl::updateWindowAndUserInput(GameLogic& gameLogic, Draw& draw, Fil
         }
     }
     // Render the game board
-    //render.updateAndDisplayBoard(gameLogic, draw, fileLoader, GlobalRenderBuffer);
+    render.updateAndDisplayBoard(gameLogic, draw, fileLoader, GlobalRenderBuffer);
 }
 
 void GameControl::startUpGame(GameLogic& gameLogic, FileLoader& fileLoader) {
