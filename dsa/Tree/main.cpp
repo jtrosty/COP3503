@@ -180,7 +180,7 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* n1, TreeNode* n2) {
 }
 
 /////////////////////////////////////////////////////////////
-// Quize 4 binary tree
+// Quiz 4 binary tree
 void levelOrder(TreeNode* root, int level, vector<int>& result) {
     if (root == nullptr) return;
     if (result.size() <= level) {
