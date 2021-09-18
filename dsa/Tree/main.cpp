@@ -94,6 +94,38 @@ std::string traverse(TreeNode* root) {
     return result;
 }
 
+/////////////////////////////////////////////////////////////
+// FLIP
+
+void Flip(TreeNode* root) {
+    // flip
+    if (root == nullptr) return;
+    TreeNode* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+    Flip(root->left);
+    Flip(root->right);
+}
+
+/////////////////////////////////////////////////////////////
+// Sum all the right leaves! leafs don't have nodes on them.
+void sumOfRightLeaves(TreeNode* node, int& result) {
+    if ((node->right != nullptr) && (node->right->left == nullptr) && (node->right->right == nullptr)) {
+        result = result + node->right->val;
+    }
+    else if (node->right != nullptr) sumOfRightLeaves(node->right, result);
+    if (node->left != nullptr) sumOfRightLeaves(node->left, result);
+    return;
+}
+
+void sumOfRightLeaves(TreeNode* root) {
+    if (!root) return;
+    int temp = 0;
+    int& result = temp;
+    sumOfRightLeaves(root, result);
+    cout << result;
+}
+
 
 int main (void) {
     // Setup
@@ -111,17 +143,31 @@ int main (void) {
     root2->children.push_back(root5);
     root3->children.push_back(root6);
 
+//       2
+//    1     3 
+//      9     4
     TreeNode* leftNode = new TreeNode(1);
     TreeNode* rightNode = new TreeNode(3);
+    TreeNode* aNode = new TreeNode(4);
+    TreeNode* bNode = new TreeNode(8);
+    TreeNode* cNode = new TreeNode(9);
     TreeNode* start = new TreeNode(2, leftNode, rightNode);
+    start->right->right = aNode;
+    leftNode->right = cNode;
     
     preorder(root);
     cout << endl;
     levelOrder(root);
     cout << endl;
+    cout << " traverse" << endl;
     cout << traverse(start);
-
-
+    cout << "flip" << endl;
+    //Flip(start);
+    cout << traverse(start);
+    cout << "sum of right leaves" << endl;
+    sumOfRightLeaves(start);
+    cout << endl;
+    cout << " THis is " << start->left->right->left << endl;
 
     return 0;
 }

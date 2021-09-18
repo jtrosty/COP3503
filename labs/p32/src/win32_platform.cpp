@@ -97,7 +97,7 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLi
         // Game Loop!!! 
         gameControl.updateWindowAndUserInput(gameLogic, draw, fileLoader, render, GlobalRenderBuffer, userInput);
 
-        // The followign code actually puts tot eh screen the Global Render buffer
+        // The followign code actually puts to the screen the Global Render buffer
         HDC deviceContext = GetDC(hwnd);
         int destWidth = rectWindow.right - rectWindow.left;
         int destHeight = rectWindow.bottom - rectWindow.top;

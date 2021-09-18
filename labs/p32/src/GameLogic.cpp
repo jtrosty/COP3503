@@ -194,8 +194,6 @@ void GameLogic::rightClick(int x, int y)
 
 void GameLogic::loadGameData()
 {
-    //FileLoading fileLoader;
-    
     fileLoader.loadFileHelper("config", fileLoader.config);
     gameData.rows = fileLoader.configData.rows;
     gameData.columns = fileLoader.configData.column;
