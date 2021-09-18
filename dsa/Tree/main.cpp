@@ -83,7 +83,6 @@ void levelOrder(Node* root) {
 
 /////////////////////////////////////////////////////////////
 // Binary Tree Inorder Traversal
-
 std::string traverse(TreeNode* root) {
     //your code here
     std::string result;
@@ -96,7 +95,6 @@ std::string traverse(TreeNode* root) {
 
 /////////////////////////////////////////////////////////////
 // FLIP
-
 void Flip(TreeNode* root) {
     // flip
     if (root == nullptr) return;
@@ -126,6 +124,82 @@ void sumOfRightLeaves(TreeNode* root) {
     cout << result;
 }
 
+/////////////////////////////////////////////////////////////
+// Binary Search Tree Insertion
+TreeNode* insert(TreeNode* root, int key) {
+    if (root == nullptr) {
+        TreeNode* newNode = new TreeNode(key);
+        root = newNode;
+    }
+    else if (key < root->val) {
+        if (root->left == nullptr) {
+            TreeNode* newNode = new TreeNode(key);
+            root->left = newNode;
+        }
+        else insert(root->left, key);
+    }
+    else {
+        if (root->right == nullptr) {
+            TreeNode* newNode = new TreeNode(key);
+            root->right = newNode;
+        }
+        else insert(root->right, key);
+    }
+    return root;
+}
+
+/////////////////////////////////////////////////////////////
+// Print all the leaves
+void printLeaves(TreeNode* root) {
+    if (root->left == nullptr && root->right == nullptr) {
+        cout << root->val << " ";
+    }
+    if (root->right != nullptr) printLeaves(root->right);
+    if (root->left != nullptr)  printLeaves(root->left);
+}
+
+/////////////////////////////////////////////////////////////
+// Lowest Common Ancestor
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* n1, TreeNode* n2) {
+    TreeNode* temp1 = root;
+    TreeNode* temp2 = root;
+    TreeNode* prev;
+    while (temp1 == temp2) {
+        prev = temp1;
+        // Walk temp1 down the tree
+        if (n1->val > temp1->val) temp1 = temp1->right;
+        else if ( n1->val == temp1->val) ;
+        else temp1 = temp1->left;
+
+        // Walk temp2 down the tree
+        if (n2->val > temp2->val) temp2 = temp2->right;
+        else if ( n2->val == temp2->val) ;
+        else temp2 = temp2->left;
+    }
+    return prev;
+}
+
+/////////////////////////////////////////////////////////////
+// Quize 4 binary tree
+void levelOrder(TreeNode* root, int level, vector<int>& result) {
+    if (root == nullptr) return;
+    if (result.size() <= level) {
+        result.push_back(0);
+    }
+    result.at(level) += root->val;
+    level++;
+    levelOrder(root->left, level, result);
+    levelOrder(root->right, level, result);
+}
+
+vector<int> levelOrder(TreeNode* root) {
+    vector<int> result;
+    result.push_back(root->val);
+    int level = 1;
+    levelOrder(root->left, level, result);
+    levelOrder(root->right, level, result);
+    return result;
+}
 
 int main (void) {
     // Setup
@@ -143,15 +217,14 @@ int main (void) {
     root2->children.push_back(root5);
     root3->children.push_back(root6);
 
-//       2
-//    1     3 
-//      9     4
-    TreeNode* leftNode = new TreeNode(1);
-    TreeNode* rightNode = new TreeNode(3);
+//       5
+//    3     8 
+//      4     9
+    TreeNode* leftNode = new TreeNode(3);
+    TreeNode* rightNode = new TreeNode(8);
     TreeNode* aNode = new TreeNode(4);
-    TreeNode* bNode = new TreeNode(8);
     TreeNode* cNode = new TreeNode(9);
-    TreeNode* start = new TreeNode(2, leftNode, rightNode);
+    TreeNode* start = new TreeNode(5, leftNode, rightNode);
     start->right->right = aNode;
     leftNode->right = cNode;
     
@@ -167,8 +240,19 @@ int main (void) {
     cout << "sum of right leaves" << endl;
     sumOfRightLeaves(start);
     cout << endl;
-    cout << " THis is " << start->left->right->left << endl;
-
+    TreeNode* test = new TreeNode(50);
+    insert(test, 30);
+    insert(test, 20);
+    insert(test, 40);
+    insert(test, 70);
+    insert(test, 60);
+    insert(test, 80);
+    cout << traverse(test) << endl;
+    cout << "#$##############################################" << endl; 
+    vector<int> result = levelOrder(test);
+    for (int i = 0; i < result.size(); i++) {
+        cout <<result.at(i) << endl;
+    }
     return 0;
 }
 
