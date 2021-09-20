@@ -53,7 +53,7 @@ void GameLogic::zeroBoard(TileInfo tileInfo[]) {
         y = i / gameData.columns;
         tileInfo[i].xPos = (x * gameData.lengthOfTile);
         tileInfo[i].yPos = (y * gameData.lengthOfTile);
-        tileInfo[i].revealed = 1;
+        tileInfo[i].revealed = 0;
         tileInfo[i].numOfMines = 0;
         tileInfo[i].flag = 0;
         tileInfo[i].mine = 0;
@@ -194,8 +194,6 @@ void GameLogic::rightClick(int x, int y)
 
 void GameLogic::loadGameData()
 {
-    //FileLoading fileLoader;
-    
     fileLoader.loadFileHelper("config", fileLoader.config);
     gameData.rows = fileLoader.configData.rows;
     gameData.columns = fileLoader.configData.column;

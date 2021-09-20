@@ -1,0 +1,282 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using std::cout;
+using std::endl;
+using std::vector;
+
+
+class TreeNode {
+ public:
+   int val;
+   TreeNode *left;
+   TreeNode *right;
+   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+class Node {
+    public: 
+        std::string name; // The name serves as the node's value
+        Node* left = NULL;
+        Node* right = NULL;
+};
+
+//char insertHelper(TreeNode** root, int value);
+/////////////////////////////////////////////////////////////////////////////
+// Rotation of trees
+
+// We have provided for you a diagram to aid with visualization/debugging :)
+/*
+
+             C                    B                    A
+            / \                 /   \                 / \
+           B   Z               A     C               W   B
+          / \       right     / \   / \      left       / \
+         A   Y     ------>   W   X Y   Z   <------     X   C
+        / \                                               / \
+        W   X                                             Y   Z
+
+*/
+
+Node* rotateLeft(Node *node) {
+    Node* grandChildNode = node->right->left;
+    Node* newRoot = node->right;
+    newRoot->left = node;
+    node->right = grandChildNode;
+    return newRoot;
+}
+
+Node* rotateRight(Node *node) {
+    Node* grandChildNode = node->left->right;
+    Node* newRoot = node->left;
+    newRoot->right = node;
+    node->left = grandChildNode;
+    return newRoot;
+}
+
+Node* rotateLeftRight(Node *node) {
+    node->left = rotateLeft(node->left);
+    return rotateRight(node);
+}
+
+void levelOrder(TreeNode* root, int level, vector<int>& result) {
+    if (root == nullptr) return;
+    if (result.size() <= level) {
+        result.push_back(0);
+    }
+    result.at(level) += root->val;
+    level++;
+    levelOrder(root->left, level, result);
+    levelOrder(root->right, level, result);
+}
+
+vector<int> levelOrder(TreeNode* root) {
+    vector<int> result;
+    result.push_back(root->val);
+    int level = 1;
+    levelOrder(root->left, level, result);
+    levelOrder(root->right, level, result);
+    return result;
+}
+///////////////////////////////////////////////////////////////////////////////
+// Make a new balanced tree with TreeNode
+
+TreeNode* rotateLeft(TreeNode *node) {
+    TreeNode* grandChildNode = node->right->left;
+    TreeNode* newRoot = node->right;
+    newRoot->left = node;
+    node->right = grandChildNode;
+    return newRoot;
+}
+
+TreeNode* rotateRight(TreeNode *node) {
+    TreeNode* grandChildNode = node->left->right;
+    TreeNode* newRoot = node->left;
+    newRoot->right = node;
+    node->left = grandChildNode;
+    return newRoot;
+}
+
+TreeNode* rotateLeftRight(TreeNode *node) {
+    node->left = rotateLeft(node->left);
+    return rotateRight(node);
+}
+
+TreeNode* rotateRightLeft(TreeNode *node) {
+    node->right = rotateRight(node->right);
+    return rotateLeft(node);
+}
+
+int heightOfNode(TreeNode* node) {
+    int heightLeft = 0;
+    int heightRight = 0;
+    if (node == nullptr) return 0;
+    if(node->left != nullptr) 
+        heightLeft += heightOfNode(node->left);
+    else if(node->right != nullptr) 
+        heightRight += heightOfNode(node->right);
+
+    if(heightRight > heightLeft) 
+        return heightRight + 1;
+    else 
+        return heightLeft + 1;
+}
+
+char insertHelper(TreeNode** root, int value) {
+    int balance = 0;
+    int childBalance = 0;
+    if (*root == nullptr) {
+        *root = new TreeNode(value);
+        return 0;
+    }
+    if (value <= (*root)->val) {
+        childBalance = insertHelper(&(*root)->left, value);
+    }
+    else if (value > (*root)->val) {
+        childBalance = insertHelper(&(*root)->right, value);
+    }
+
+    // Find height of node
+    int left = heightOfNode((*root)->left);
+    int right = heightOfNode((*root)->right);
+    balance = heightOfNode((*root)->left) - heightOfNode((*root)->right);
+
+    // Balance if needed
+    if (balance > 1 && childBalance == -1) {
+        *root = rotateLeftRight(*root);
+    }
+    else if (balance < -1 && childBalance == 1) {
+        *root = rotateRightLeft(*root);
+    }
+    else if (balance > 1) {
+        *root = rotateRight(*root);
+    }
+    else if (balance < -1) {
+        *root = rotateLeft(*root);
+    }
+
+    return balance;
+}
+
+TreeNode* insert(TreeNode** root, int value) {
+    int balance = insertHelper(root, value);
+    if (balance >= 2) return rotateRight((*root));
+    if (balance <= -2) return rotateLeft((*root));
+    return *root;
+}
+
+void convertToBBSTHelper(TreeNode* root, TreeNode** newRoot) {
+    if (root == nullptr) return;
+    convertToBBSTHelper(root->left, newRoot);
+    *newRoot = insert(newRoot, root->val);
+    convertToBBSTHelper(root->right, newRoot);
+}
+
+TreeNode* convertToBBST(TreeNode* root) {
+    TreeNode* newRoot = nullptr;
+    if (root != nullptr) {
+        convertToBBSTHelper(root, &newRoot);
+    }
+    return newRoot;
+}
+
+
+void traverse(TreeNode* root) {
+    if (root != nullptr) {
+        traverse(root->left);
+        cout << root->val << " ";
+        traverse(root->right);
+    }
+}
+
+void preOrder(TreeNode* root) {
+    if (root != nullptr) {
+        cout << root->val << " ";
+        preOrder(root->left);
+        preOrder(root->right);
+    }
+}
+
+int main (void) {
+    TreeNode* node1 = new TreeNode(1);
+    TreeNode* node4 = new TreeNode(4);
+    TreeNode* node7 = new TreeNode(7);
+    TreeNode* node9 = new TreeNode(9);
+    TreeNode* node10 = new TreeNode(10);
+    TreeNode* node12 = new TreeNode(12);
+    node9->left = node7;
+    node9->right = node12;
+    // Right Side
+    node12->left = node10;
+    // Left side
+    node7->left = node1;
+    node1->right = node4;
+
+    TreeNode* testEasy9 = new TreeNode(9);
+    TreeNode* testEasy7 = new TreeNode(7);
+    TreeNode* testEasy1 = new TreeNode(1);
+    testEasy9->left = testEasy7;
+    testEasy7->left = testEasy1;
+
+
+    traverse(node9);
+    cout << endl;
+    preOrder(node9);
+    cout << endl;
+
+    cout << "########################################################################" << endl;
+
+    TreeNode* newTree = nullptr;
+    newTree = insert(&newTree, 25);
+    preOrder(newTree);
+    cout << endl;
+    newTree = insert(&newTree, 22);
+    preOrder(newTree);
+    cout << endl;
+    newTree = insert(&newTree, 4);
+    preOrder(newTree);
+    cout << endl;
+    newTree = insert(&newTree, 1);
+    preOrder(newTree);
+    cout << endl;
+    newTree = insert(&newTree, 2);
+    preOrder(newTree);
+    cout << endl;
+    newTree = insert(&newTree, 28);
+    preOrder(newTree);
+    cout << endl;
+    newTree = insert(&newTree, 30);
+    preOrder(newTree);
+    cout << endl;
+    newTree = insert(&newTree, 3);
+    preOrder(newTree);
+    cout << endl;
+    cout << endl;
+    cout << "height " <<  heightOfNode(newTree) << endl;
+    cout << endl;
+    vector<int> result2 = levelOrder(newTree);
+    for (int i = 0; i < result2.size(); i++) {
+        cout <<result2.at(i) << endl;
+    }
+
+    cout << "########################################################################" << endl;
+    TreeNode* test = nullptr;
+    test = convertToBBST(node9);
+    preOrder(test);
+    cout << endl;
+    vector<int> result = levelOrder(test);
+    for (int i = 0; i < result.size(); i++) {
+        cout <<result.at(i) << endl;
+    }
+    cout << "root: " << test->val << endl;
+    cout << "left: " << test->left->val << endl;
+    cout << "right: " << test->right->val << endl;
+
+    cout << "########################################################################" << endl;
+
+    
+    return 0;
+}

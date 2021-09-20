@@ -55,6 +55,7 @@ public:
 	//void restartGame();
     void leftClick(int x, int y);
     void rightClick(int x, int y);
+    void checkUserInput();
 
     // Contructor
     GameLogic();

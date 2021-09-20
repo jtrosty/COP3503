@@ -1,5 +1,5 @@
 @echo off
 
-g++ main.cpp -o main
+g++ mainAVL.cpp -o mainAVL
 
-main.exe
+mainAVL.exe

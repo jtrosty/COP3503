@@ -20,5 +20,4 @@ class Render {
                                FileLoader& fileLoader,
                                RenderBuffer& buffer);
     //void drawSize(int columns, int rows, Draw& draw);
-
 };

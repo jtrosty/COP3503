@@ -15,3 +15,10 @@ struct {
     int width;
     int heigth;
 } typedef Rect;
+
+struct UserInput {
+    POINT point;
+    char leftMouseClick = 0;
+    char rightMouseClick = 0;
+    char isNewInput = 0;
+};

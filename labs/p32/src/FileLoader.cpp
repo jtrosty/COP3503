@@ -168,7 +168,7 @@ void FileLoader::loadFileHelper(std::string fileName, fileTypeToLoad type) {
 		break;
 	case FileLoader::board:
 		path += fileName + ".brd";
-		//loadBoard(path);
+		loadBoard(path);
 		break;
 	default:
 		break;
@@ -212,7 +212,7 @@ void FileLoader::loadBoard(std::string path) {
 	std::string buffer;
     char* data = (char*)testBoardData.data;
     for (int i = 0; i < testBoardData.size; i++) {
-        testBoardString += data[i];
+        if (data[i] == '0' || data[i] == '1') testBoardString += data[i];
     }
 }
 
