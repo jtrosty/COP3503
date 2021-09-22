@@ -4,24 +4,59 @@
 using std::cout;
 using std::endl;
 
-class TreeNode {
-    private:
-        std::string gatorID;
+class Node {
+    public:
+        int gatorID;
         std::string name;
-        TreeNode* left;
-        TreeNode* right;
+        Node* left;
+        Node* right;
         int height;
 
+        Node(int _gatorID, std::string _name);
+        Node(int _gatorID, std::string _name, int height);
+};
+
+Node::Node(int _gatorID, std::string _name) {
+    gatorID = _gatorID;
+    name = _name;
+    left = nullptr;
+    right = nullptr;
+    height = 0;
+}
+
+Node::Node(int _gatorID, std::string _name, int _height) {
+    gatorID = _gatorID;
+    name = _name;
+    left = nullptr;
+    right = nullptr;
+    height = _height;
+}
+
+class TreeNode {
+    private:
+
+        // Balance funcitons
+        void rotateLeft(Node* root);
+        void rotateRight(Node* root);
+        void rotateLeftRight(Node* root);
+        void rotateLeftRight(Node* root);
+
     public:
-    // constructor
-    TreeNode(std::string _gatorID, std::string _name);
+        Node* root = nullptr;
 
-    
-    // Operations
-    void insert(std::string name, std::string gatorID);
-    void remove(std::string gatorID);
+        // constructor
+        TreeNode(std::string _gatorID, std::string _name);
 
+        // Operations
+        void insert(std::string name, std::string gatorID);
+        void remove(std::string gatorID);
 
+        // Funciton to Print out tree
+        void printFormat(Node* node);
+        void printInorder(Node* root);
+        void printPreorder(Node* root);
+        void printPostorder(Node* root);
+        void printLevelCount();
 };
 
 void TreeNode(std::string _gatorID, std::string _name) {
@@ -96,4 +131,33 @@ int main(int argc, char* argv[]) {
         }
     }
     return 0;
+}
+
+//////////////////////////////////////////////////////////////////
+//              Print Tree Functions
+//////////////////////////////////////////////////////////////////
+
+void TreeNode::printFormat(Node* node) {
+    cout << node->name << ", "; 
+}
+
+void TreeNode::printInorder(Node* root) {
+    if (root == nullptr) return;
+    printInorder(root->left);
+    printFormat(root);
+    printInorder(root->right);
+}
+
+void TreeNode::printPreorder(Node* root) {
+    if (root == nullptr) return;
+    printFormat(root);
+    printPreorder(root->left);
+    printPreorder(root->right);
+}
+
+void TreeNode::printPostorder(Node* root) {
+    if (root == nullptr) return;
+    printFormat(root);
+    printPostorder(root->left);
+    printPostorder(root->right);
 }
