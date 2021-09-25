@@ -160,7 +160,6 @@ Node* TreeNode::search(std::string _name) {
 }
 
 void TreeNode::search(std::string& _name, Node* node, Node& result) {
-    Node* result;
     if (node == nullptr) return;
     if (node->name == _name) cout << node->gatorID << endl;
     search(_name, node->left, result);
