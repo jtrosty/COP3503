@@ -200,6 +200,52 @@ void preOrder(TreeNode* root) {
     }
 }
 
+void printvector(vector<int>& vect) {
+    for (int i = 0; i < vect.size(); i++) {
+        cout << i << ": " << vect.at(i) << endl;
+    }
+}
+
+void checkPerfect(TreeNode* root, vector<int>& counterVect, int height) {
+    int rightHeight = height;
+    if (root->left == nullptr && root->right == nullptr) return;
+    if (counterVect.size() == height) {
+        counterVect.push_back(0);
+    }
+    if (root->left != nullptr) {
+        counterVect.at(height)++;
+        checkPerfect(root->left, counterVect, ++height);
+    }
+    if (root->right != nullptr) {
+        counterVect.at(height)++;
+        checkPerfect(root->right, counterVect, ++rightHeight);
+    } 
+}
+
+bool checkPerfect(TreeNode* root) 
+{
+    //Returns if a tree is a perfect BST or not
+    int height = 1;
+    vector<int> counterVect;
+    counterVect.push_back(0);
+    if (root != nullptr) counterVect.at(0)++;
+
+    checkPerfect(root, counterVect, height);
+
+    int size = counterVect.size();
+    if (size == 1) {
+        return true;
+    }
+    else {
+        for (int i = 1; i < size; i++) {
+            if ((i * 2) != counterVect.at(i)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 int main (void) {
     TreeNode* node1 = new TreeNode(1);
     TreeNode* node4 = new TreeNode(4);
@@ -276,6 +322,13 @@ int main (void) {
     cout << "right: " << test->right->val << endl;
 
     cout << "########################################################################" << endl;
+    TreeNode* perfectL = new TreeNode(1);
+    TreeNode* perfectR = new TreeNode(3);
+    TreeNode* wrong = new TreeNode(4);
+    TreeNode* testPerfect = new TreeNode(2, perfectL, perfectR);
+    //perfectR->right = wrong;
+    cout << " Testing if perfect tree" << endl;
+    cout << "The result is: " << checkPerfect(testPerfect) << endl;
 
     
     return 0;
