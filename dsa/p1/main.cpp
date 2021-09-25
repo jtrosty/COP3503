@@ -61,6 +61,9 @@ class TreeNode {
         // Operations
         char insert(std::string name, int gatorID);
         void remove(std::string gatorID);
+        Node* search(int gatorID);
+        Node* search(std::string name);
+        void search(std::string& name, Node* node, Node& result);
 
         // Funciton to Print out tree
         void printFormat(Node* node);
@@ -72,7 +75,9 @@ class TreeNode {
         // Tests
         char testTreeBalance();
 };
-
+///////////////////////////////////////////////////////////////////////////////
+//                     Constructors
+///////////////////////////////////////////////////////////////////////////////
 TreeNode::TreeNode() { }
 
 TreeNode::TreeNode(std::string _name, int _gatorID) {
@@ -80,39 +85,12 @@ TreeNode::TreeNode(std::string _name, int _gatorID) {
     root = newRoot;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//                     Insert Functions
+///////////////////////////////////////////////////////////////////////////////
 char TreeNode::insert(std::string _name, int _gatorID) {
     return insertHelper(&root, _name, _gatorID);
 }
-
-int TreeNode::checkBalance(Node* node) {
-    if (node == nullptr) return 0;
-    int left = 0;
-    int right = 0;
-    left = (node->left != nullptr) ? node->left->height : 0;
-    right = (node->right != nullptr) ? node->right->height : 0;
-    return left - right;
-}
-
-char TreeNode::testTreeBalance() {
-    int balance = checkBalance(root);
-    char isNodeBalanced = 0;
-    isNodeBalanced = balance < 2 && balance > -2;
-    return isNodeBalanced && testTreeBalance(root);
-}
-
-char TreeNode::testTreeBalance(Node* node) {
-    if (node == nullptr) return 1;
-    char isNodeBalanced = 0;
-    char areChildrenBalanced = 0;
-    int left = 0;
-    int right = 0;
-    left = checkBalance(node->left);
-    right = checkBalance(node->right);
-    isNodeBalanced = left < 2 && left > -2 && right < 2 && right > -2;
-    areChildrenBalanced = testTreeBalance(node->left) && testTreeBalance(node->right);
-    return isNodeBalanced && areChildrenBalanced;
-}
-
 char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {
     // All GatorIDs must be unique, the if handles the case if we find the same gatorID
     int balance = 0;
@@ -158,6 +136,161 @@ char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {
         return success;
     }
     return success;
+}
+///////////////////////////////////////////////////////////////////////////////
+//                     Search Functions
+///////////////////////////////////////////////////////////////////////////////
+
+Node* TreeNode::search(int _gatorID) {
+    Node* nodeTosearch = root;
+    do {
+        if (nodeTosearch->gatorID == _gatorID) return nodeTosearch;
+        if (_gatorID < nodeTosearch->gatorID) nodeTosearch = nodeTosearch->left;
+        else nodeTosearch = nodeTosearch->right;
+    } 
+    while (nodeTosearch != nullptr);
+    return nodeTosearch;
+}
+
+Node* TreeNode::search(std::string _name) {
+    Node* result = nullptr;
+    search(_name, root, *result);
+    if (result->name == _name) return result;
+    else return nullptr;
+}
+
+void TreeNode::search(std::string& _name, Node* node, Node& result) {
+    Node* result;
+    if (node == nullptr) return;
+    if (node->name == _name) cout << node->gatorID << endl;
+    search(_name, node->left, result);
+    search(_name, node->right, result);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      Main Function
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifdef DISABLE_TESTS
+
+int main(int argc, char* argv[]) {
+    //We have received command line input
+    char run = 1;
+    size_t delimiter1 = -1;
+    size_t delimiter2 = -1;
+    std::string userInput;
+    std::string command;
+    std::string name;
+    std::string gatorID;
+
+    TreeNode* studentData = new TreeNode();
+
+    while (run) {
+        // COLLECT USER INPUT
+        std::getline(std::cin, userInput);
+
+        // Work thorugh user input determine if it contains a command, name, and ID, max will be all 3.
+        // If the user input has a space, that implies there are 2 commands being input EX: remove
+        // If the user input has 2 spaces that implies that there are 3 user input wors EX: insert
+        if ((delimiter1 = userInput.find(' ')) != std::string::npos) {
+            command = userInput.substr(0, delimiter1);
+            // Check if second space, if so, record name and gator ID
+            if ((delimiter2 = userInput.find("\"", delimiter1)) != std::string::npos) {
+                cout << "SUCCESS" << endl;
+                if ((delimiter2 = userInput.find("\"", delimiter1 + 2, 1)) != std::string::npos) {
+                    cout << "SUCCESS 1: " << delimiter1 << ", " << delimiter2 << endl;
+                    name = userInput.substr(delimiter1 + 2, (delimiter2 - delimiter1 - 2));
+                    gatorID = userInput.substr(delimiter2 + 2, std::string::npos);
+                }
+                else {
+                    // FAIL
+                }
+            }
+            // Not a name, just a user id.
+            else {
+                gatorID = userInput.substr(delimiter1 + 1, std::string::npos);
+            }
+        }
+        // This is if there is only 1 user input
+        else {
+            command = userInput;
+        }
+
+        // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
+        if (command == "insert"){
+            cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
+            if (studentData->insert(name, std::stoi(gatorID))) cout << "successful" << endl;
+            else                                               cout << "unsuccessful" << endl;
+        }
+        else if (command == "remove") {
+
+        }
+        else if (command == "search") {
+            if (name.empty) {
+                Node* result = studentData->search(gatorID);
+                if (result != nullptr) cout << "successful" << endl;
+                else cout << "unsuccessful" << endl;
+            }
+            else {
+                studentData->search(name);
+            }
+        }
+        else if (command == "printInorder") {
+            studentData->printInorder(studentData->root);
+        }
+        else if (command == "printPreorder") {
+            studentData->printPreorder(studentData->root);
+        }
+        else if (command == "printPostorder") {
+            studentData->printPostorder(studentData->root);
+        }
+        else if (command == "printLevelCount") {
+            studentData->printLevelCount();
+        }
+        else if (command == "removeInonrder") {
+
+        }
+        else if (command == "test") {
+            if (studentData->testTreeBalance()) cout << "Tree is balanced" << endl;
+        }
+        else if (command == "q") {
+            run = 0;
+        }
+    }
+    return 0;
+}
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
+//                     Check and Test Functions
+///////////////////////////////////////////////////////////////////////////////
+
+int TreeNode::checkBalance(Node* node) {
+    if (node == nullptr) return 0;
+    int left = 0;
+    int right = 0;
+    left = (node->left != nullptr) ? node->left->height : 0;
+    right = (node->right != nullptr) ? node->right->height : 0;
+    return left - right;
+}
+
+char TreeNode::testTreeBalance() {
+    int balance = checkBalance(root);
+    char isNodeBalanced = 0;
+    isNodeBalanced = balance < 2 && balance > -2;
+    return isNodeBalanced && testTreeBalance(root);
+}
+
+char TreeNode::testTreeBalance(Node* node) {
+    if (node == nullptr) return 1;
+    char isNodeBalanced = 0;
+    char areChildrenBalanced = 0;
+    int left = 0;
+    int right = 0;
+    left = checkBalance(node->left);
+    right = checkBalance(node->right);
+    isNodeBalanced = left < 2 && left > -2 && right < 2 && right > -2;
+    areChildrenBalanced = testTreeBalance(node->left) && testTreeBalance(node->right);
+    return isNodeBalanced && areChildrenBalanced;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -228,93 +361,6 @@ void TreeNode::setHeight(Node* node) {
     if (left + 1 > right) node->height = left + 1;
     else node->height = right;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                      Main Function
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef DISABLE_TESTS
-
-int main(int argc, char* argv[]) {
-    //We have received command line input
-    char run = 1;
-    size_t delimiter1 = -1;
-    size_t delimiter2 = -1;
-    std::string userInput;
-    std::string command;
-    std::string name;
-    std::string gatorID;
-
-    TreeNode* studentData = new TreeNode();
-
-    while (run) {
-        // COLLECT USER INPUT
-        std::getline(std::cin, userInput);
-
-        // Work thorugh user input determine if it contains a command, name, and ID, max will be all 3.
-        // If the user input has a space, that implies there are 2 commands being input EX: remove
-        // If the user input has 2 spaces that implies that there are 3 user input wors EX: insert
-        if ((delimiter1 = userInput.find(' ')) != std::string::npos) {
-            command = userInput.substr(0, delimiter1);
-            // Check if second space, if so, record name and gator ID
-            if ((delimiter2 = userInput.find("\"", delimiter1)) != std::string::npos) {
-                cout << "SUCCESS" << endl;
-                if ((delimiter2 = userInput.find("\"", delimiter1 + 2, 1)) != std::string::npos) {
-                    cout << "SUCCESS 1: " << delimiter1 << ", " << delimiter2 << endl;
-                    name = userInput.substr(delimiter1 + 2, (delimiter2 - delimiter1 - 2));
-                    gatorID = userInput.substr(delimiter2 + 2, std::string::npos);
-                }
-                else {
-                    // FAIL
-                }
-            }
-            // Not a name, just a user id.
-            else {
-                gatorID = userInput.substr(delimiter1 + 1, std::string::npos);
-            }
-        }
-        // This is if there is only 1 user input
-        else {
-            command = userInput;
-        }
-
-        // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
-        if (command == "insert"){
-            cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
-            if (studentData->insert(name, std::stoi(gatorID))) cout << "successful" << endl;
-            else                                               cout << "unsuccessful" << endl;
-        }
-        else if (command == "remove") {
-
-        }
-        else if (command == "search") {
-
-        }
-        else if (command == "printInorder") {
-            studentData->printInorder(studentData->root);
-        }
-        else if (command == "printPreorder") {
-            studentData->printPreorder(studentData->root);
-        }
-        else if (command == "printPostorder") {
-            studentData->printPostorder(studentData->root);
-        }
-        else if (command == "printLevelCount") {
-
-        }
-        else if (command == "removeInonrder") {
-
-        }
-        else if (command == "test") {
-            if (studentData->testTreeBalance()) cout << "Tree is balanced" << endl;
-        }
-        else if (command == "q") {
-            run = 0;
-        }
-    }
-    return 0;
-}
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 //            TreeNode Class Print Tree Functions
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -342,4 +388,8 @@ void TreeNode::printPostorder(Node* root) {
     printFormat(root);
     printPostorder(root->left);
     printPostorder(root->right);
+}
+
+void TreeNode::printLevelCount() {
+    cout << root->height << endl;
 }
