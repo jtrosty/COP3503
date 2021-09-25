@@ -24,7 +24,7 @@ Node::Node(std::string _name, int _gatorID) {
     name = _name;
     left = nullptr;
     right = nullptr;
-    height = 0;
+    height = 1;
 }
 
 Node::Node(std::string _name, int _gatorID, int _height) {
@@ -47,6 +47,9 @@ class TreeNode {
         Node* rotateLeftRight(Node* root);
         Node* rotateRightLeft(Node* root);
         char insertHelper(Node** root, std::string name, int gatorID);
+        void setHeight(Node* node);
+        int checkBalance(Node* node);
+        char testTreeBalance(Node*node);
 
     public:
         Node* root = nullptr;
@@ -65,6 +68,9 @@ class TreeNode {
         void printPreorder(Node* root);
         void printPostorder(Node* root);
         void printLevelCount();
+
+        // Tests
+        char testTreeBalance();
 };
 
 TreeNode::TreeNode() { }
@@ -75,35 +81,70 @@ TreeNode::TreeNode(std::string _name, int _gatorID) {
 }
 
 char TreeNode::insert(std::string _name, int _gatorID) {
-    insertHelper(&root, _name, _gatorID);
+    return insertHelper(&root, _name, _gatorID);
+}
+
+int TreeNode::checkBalance(Node* node) {
+    if (node == nullptr) return 0;
+    int left = 0;
+    int right = 0;
+    left = (node->left != nullptr) ? node->left->height : 0;
+    right = (node->right != nullptr) ? node->right->height : 0;
+    return left - right;
+}
+
+char TreeNode::testTreeBalance() {
+    int balance = checkBalance(root);
+    char isNodeBalanced = 0;
+    isNodeBalanced = balance < 2 && balance > -2;
+    return isNodeBalanced && testTreeBalance(root);
+}
+
+char TreeNode::testTreeBalance(Node* node) {
+    if (node == nullptr) return 1;
+    char isNodeBalanced = 0;
+    char areChildrenBalanced = 0;
+    int left = 0;
+    int right = 0;
+    left = checkBalance(node->left);
+    right = checkBalance(node->right);
+    isNodeBalanced = left < 2 && left > -2 && right < 2 && right > -2;
+    areChildrenBalanced = testTreeBalance(node->left) && testTreeBalance(node->right);
+    return isNodeBalanced && areChildrenBalanced;
 }
 
 char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {
     // All GatorIDs must be unique, the if handles the case if we find the same gatorID
     int balance = 0;
+    int childBalance = 0;
     char success = 0;
-    if ((*_root)->gatorID == _gatorID) {
-        return 0;
-        cout << "UNSUCCESSFUL" << endl; 
-    }
-    else if (root == nullptr) {
-        Node* newNode = new Node(_name, _gatorID, (*_root)->height + 1);
+    if (*_root == nullptr) {
+        Node* newNode = new Node(_name, _gatorID);
         (*_root) = newNode;
         return 1;
-        cout << "SUCCESS" << endl; 
     }
-    else if (_gatorID < (*_root)->gatorID) success = insertHelper(&(*_root)->left, _name, _gatorID);
-    else if (_gatorID > (*_root)->gatorID) success = insertHelper(&(*_root)->right, _name, _gatorID);
+    else if ((*_root)->gatorID == _gatorID) {
+        return 0;
+    }
+    else if (_gatorID < (*_root)->gatorID) {
+        success = insertHelper(&(*_root)->left, _name, _gatorID);
+        if ((*_root)->left->height + 1 > (*_root)->height) (*_root)->height = (*_root)->left->height + 1;
+        childBalance = checkBalance((*_root)->left);
+    }
+    else if (_gatorID > (*_root)->gatorID){
+        success = insertHelper(&(*_root)->right, _name, _gatorID);
+        if ((*_root)->right->height + 1 > (*_root)->height) (*_root)->height = (*_root)->right->height + 1;
+        childBalance = checkBalance((*_root)->right);
+    }
 
     // Only want to balance if a node was succesfully inserted
     if (success) {
-        // collect balance
-        balance = (*_root)->left->height - (*_root)->right->height;
+        balance = checkBalance(*_root);
 
-        if (balance > 1 && (*_root)->left->height == -1) {
+        if (balance > 1 && childBalance == -1) {
             *_root = rotateLeftRight(*_root);
         }
-        else if (balance > 1 && (*_root)->right->height == -1) {
+        else if (balance < -1 && childBalance == 1) {
             *_root = rotateRightLeft(*_root);
         }
         else if (balance > 1) {
@@ -114,8 +155,9 @@ char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {
         }
     }
     else {
-
+        return success;
     }
+    return success;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -138,18 +180,28 @@ char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {
 */
 
 Node* TreeNode::rotateLeft(Node *node) {
+    // Perform Node rotation
     Node* grandChildNode = node->right->left;
     Node* newRoot = node->right;
     newRoot->left = node;
     node->right = grandChildNode;
+
+    // Adjust Heights 
+    setHeight(node->left);
+    setHeight(node);
+
     return newRoot;
 }
 
 Node* TreeNode::rotateRight(Node *node) {
+    // Perform Node rotation
     Node* grandChildNode = node->left->right;
     Node* newRoot = node->left;
     newRoot->right = node;
     node->left = grandChildNode;
+    // Adjust heights
+    setHeight(node->right);
+    setHeight(node);
     return newRoot;
 }
 
@@ -163,9 +215,24 @@ Node* TreeNode::rotateRightLeft(Node *node) {
     return rotateLeft(node);
 }
 
+void TreeNode::setHeight(Node* node) {
+    if (node == nullptr) return;
+    int left = 0;
+    int right = 0;
+    if (node->left != nullptr) {
+        left = node->left->height;
+    }
+    if (node->right != nullptr) {
+        right = node->right->height;
+    }
+    if (left + 1 > right) node->height = left + 1;
+    else node->height = right;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Main Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifdef DISABLE_TESTS
 
 int main(int argc, char* argv[]) {
     //We have received command line input
@@ -213,7 +280,8 @@ int main(int argc, char* argv[]) {
         // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
         if (command == "insert"){
             cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
-            studentData->insert(name, std::stoi(gatorID));
+            if (studentData->insert(name, std::stoi(gatorID))) cout << "successful" << endl;
+            else                                               cout << "unsuccessful" << endl;
         }
         else if (command == "remove") {
 
@@ -236,12 +304,16 @@ int main(int argc, char* argv[]) {
         else if (command == "removeInonrder") {
 
         }
+        else if (command == "test") {
+            if (studentData->testTreeBalance()) cout << "Tree is balanced" << endl;
+        }
         else if (command == "q") {
             run = 0;
         }
     }
     return 0;
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //            TreeNode Class Print Tree Functions

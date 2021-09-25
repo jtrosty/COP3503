@@ -4,7 +4,21 @@
         {
             "label": "Run build.bat",
             "type": "shell",
-            "command": "./build.bat",
+            "command": "build.bat",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "Run buildcl.bat",
+            "type": "shell",
+            "command": "buildcl.bat",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "Run buildTest.bat",
+            "type": "shell",
+            "command": "buildTest.bat",
             "problemMatcher": [],
             "group": "build"
         },
