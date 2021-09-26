@@ -68,6 +68,18 @@ TEST_CASE("6 Test of search id and name", "[insert]") {
     REQUIRE(treeForTest.testTreeBalance());
 }
 
+TEST_CASE("7 Test large amount of insertion if tere is perfect. 131071", "[insert]") {
+    TreeNode treeForTest;
+    Node* result1;
+    Node* result2;
+    for (int i = 10000000; i < 10131071; i++) {
+        treeForTest.insert("test", i);
+    }
+    REQUIRE(treeForTest.checkPerfect());
+}
+
+
+
 /*
 TEST_CASE("Vector sum modulo n is computed correctly", "[vector][modulo]") {
 }

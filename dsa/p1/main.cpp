@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 using std::cout;
 using std::endl;
+using std::vector;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                        Node Class that has the data a generic Node
@@ -61,6 +63,10 @@ class TreeNode {
         // Test funcitons
         int checkBalance(Node* node);
         char testTreeBalance(Node*node);
+        char testTreeBalance(Node* node); 
+
+        char checkPerfect(); 
+        void checkPerfect(Node* root, vector<int>& counterVect, int height); 
 
     public:
         Node* root = nullptr;
@@ -379,6 +385,41 @@ char TreeNode::testTreeBalance(Node* node) {
     isNodeBalanced = left < 2 && left > -2 && right < 2 && right > -2;
     areChildrenBalanced = testTreeBalance(node->left) && testTreeBalance(node->right);
     return isNodeBalanced && areChildrenBalanced;
+}
+void TreeNode::checkPerfect(Node* root, vector<int>& counterVect, int height) {
+    if (root->left == nullptr && root->right == nullptr) return;
+    if (counterVect.size() == height) {
+        counterVect.push_back(0);
+    }
+    if (root->left != nullptr) counterVect.at(height)++;
+    if (root->right != nullptr) counterVect.at(height)++;
+    height++;
+    if (root->left != nullptr) checkPerfect(root->left, counterVect, height);
+    if (root->right != nullptr) checkPerfect(root->right, counterVect, height);
+}
+
+char TreeNode::checkPerfect() 
+{
+    //Returns if a tree is a perfect BST or not
+    int height = 1;
+    vector<int> counterVect;
+    counterVect.push_back(0);
+    if (root != nullptr) counterVect.at(0)++;
+
+    checkPerfect(root, counterVect, height);
+
+    int size = counterVect.size();
+    if (size == 1) {
+        return true;
+    }
+    else {
+        for (int i = 1; i < size; i++) {
+            if ((i * 2) != counterVect.at(i)) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
