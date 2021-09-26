@@ -264,7 +264,7 @@ void TreeNode::search(std::string& _name, Node* node, Node& result) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Main Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef DISABLE_TESTS
+//#ifdef DISABLE_TESTS
 
 int main(int argc, char* argv[]) {
     //We have received command line input
@@ -319,7 +319,7 @@ int main(int argc, char* argv[]) {
 
         }
         else if (command == "search") {
-            if (name.empty) {
+            if (name.empty()) {
                 Node* result = studentData->search(gatorID);
                 if (result != nullptr) cout << "successful" << endl;
                 else cout << "unsuccessful" << endl;
@@ -352,7 +352,7 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
-#endif
+//#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //                     Check and Test Functions
