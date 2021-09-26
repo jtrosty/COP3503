@@ -57,15 +57,14 @@ class TreeNode {
         // Helper functions
         char insertHelper(Node** root, std::string name, int gatorID);
         NodeRemoveAndParent* searchRemove(int _gatorID);
+        void removeInorder(int n, Node* node, int& counter, int& _gatorID); 
 
         void setHeight(Node* node);
 
         // Test funcitons
         int checkBalance(Node* node);
-        char testTreeBalance(Node*node);
         char testTreeBalance(Node* node); 
 
-        char checkPerfect(); 
         void checkPerfect(Node* root, vector<int>& counterVect, int height); 
 
     public:
@@ -79,17 +78,20 @@ class TreeNode {
         char insert(std::string _name, int _gatorID);
         char remove(int gatorID);
         Node* search(int gatorID);
-        Node* search(std::string name);
-        void search(std::string& name, Node* node, Node& result);
+        void search(std::string name);
+        void search(std::string& name, Node* node, char& found);
+        char removeInorder(int n);
 
         // Funciton to Print out tree
-        void printFormat(Node* node);
-        void printInorder(Node* root);
-        void printPreorder(Node* root);
-        void printPostorder(Node* root);
+        void printFormat(Node* node, char& needComma);
+        void printInorder(Node* root, char& needComma);
+        void printPreorder(Node* root, char& needComma);
+        void printPostorder(Node* root, char& needComma);
         void printLevelCount();
 // Tests
+        char checkPerfect(); 
         char testTreeBalance();
+        void printRootName();
 };
 ///////////////////////////////////////////////////////////////////////////////
 //                     Constructors
@@ -107,54 +109,95 @@ TreeNode::TreeNode(std::string _name, int _gatorID) {
 char TreeNode::remove(int gatorID) {
     NodeRemoveAndParent* nodes = searchRemove(gatorID);
     // Case of if the node was not found
+    if (nodes->nodeToRemove == nullptr) return 0;
 
     // The case of the node being delete has no children.
     if (nodes->nodeToRemove->left == nullptr && nodes->nodeToRemove->right == nullptr) {
         delete nodes->nodeToRemove;
+        // Check if parent is nullptr, if it is, then node to be removed is root
         if (nodes->parent != nullptr) {
-            if (nodes->direction = 0) nodes->parent->left = nullptr;
+            if (nodes->direction == 0) nodes->parent->left = nullptr;
             else nodes->parent->right = nullptr;
         } 
+        else // handles case of deleting root
+            root = nullptr;
+        return 1;
     }
     // Case of the node having 2 children
-    if(nodes->nodeToRemove->left != nullptr && nodes->nodeToRemove->right != nullptr) {
+    else if(nodes->nodeToRemove->left != nullptr && nodes->nodeToRemove->right != nullptr) {
         // Find next immediate successor in sorted order (not successor in the tree)
         Node* successor = nodes->nodeToRemove->right;
-        Node* successorParent = nodes->nodeToRemove;
+        Node* successorParent = nullptr;
         while (successor->left != nullptr) {
             successorParent = successor;
             successor = successor->left;
         }
-        if (successor->right != nullptr) successorParent->left = successor->right;
-        if (nodes->parent != nullptr) {
-            if (nodes->direction = 0) nodes->parent->left = successor;
+        // Case of the successor being the next largest node
+        if (successorParent == nullptr) {
+            successor->left = nodes->nodeToRemove->left;
+            if (nodes->parent == nullptr) root = successor;
+            else {
+                if (nodes->direction == 0) nodes->parent->left = successor;
+                else nodes->parent->right = successor;
+            }
+        }
+        // Case of successor having right node, attach to parents left
+        else if (successor->right != nullptr && successorParent != nullptr) { 
+            successorParent->left = successor->right;
+            if (nodes->parent == nullptr) root = successor;
+            else if (nodes->direction == 0) nodes->parent->left = successor;
             else nodes->parent->right = successor;
-        } 
-        successor->left = nodes->nodeToRemove->left;
-        successor->right = nodes->nodeToRemove->right;
+            successor->right = nodes->nodeToRemove->right;
+            successor->left = nodes->nodeToRemove->left;
+        }
+        // Case of Successor not having any children
+        else {
+            successorParent->left = nullptr;
+            if (nodes->parent == nullptr) root = successor;
+            else if (nodes->direction == 0) nodes->parent->left = successor;
+            else nodes->parent->right = successor;
+            successor->right = nodes->nodeToRemove->right;
+            successor->left = nodes->nodeToRemove->left;
+        }
         delete nodes->nodeToRemove;
     }
     // Case of only left child on node to be deleted
-    if (nodes->nodeToRemove->left != nullptr) {
+    else if (nodes->nodeToRemove->left != nullptr) {
         if (nodes->parent != nullptr) {
-            if (nodes->direction = 0) nodes->parent->left = nodes->nodeToRemove->left;
+            if (nodes->direction == 0) nodes->parent->left = nodes->nodeToRemove->left;
             else nodes->parent->right = nodes->nodeToRemove->left;
         } 
         else root = nodes->nodeToRemove->left;
         delete nodes->nodeToRemove;
     }
     // Case of only right child on node to be deleted
-    if (nodes->nodeToRemove->right != nullptr) {
+    else if (nodes->nodeToRemove->right != nullptr) {
         if (nodes->parent != nullptr) {
-            if (nodes->direction = 0) nodes->parent->left = nodes->nodeToRemove->right;
+            if (nodes->direction == 0) nodes->parent->left = nodes->nodeToRemove->right;
             else nodes->parent->right = nodes->nodeToRemove->right;
         } 
-        else root = nodes->nodeToRemove->left;
+        else root = nodes->nodeToRemove->right;
         delete nodes->nodeToRemove;
+        return 1;
     }
-    // Case of the node having 2 children
 
+    delete nodes;
+    return 1;
+}
+void TreeNode::removeInorder(int n, Node* node, int& counter, int& _gatorID) {
+    if (node == nullptr) return;
+    if (counter > n) return;
+    removeInorder(n, node->left, counter, _gatorID);
+    if (counter == n && _gatorID == 0) _gatorID = node->gatorID;
+    else counter++;
+    removeInorder(n, node->right, counter, _gatorID);
+}
 
+char TreeNode::removeInorder(int n) {
+    int counter = 0;
+    int _gatorID = 0;
+    removeInorder(n, root, counter, _gatorID);
+    return remove(_gatorID);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -214,6 +257,7 @@ char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {
 ///////////////////////////////////////////////////////////////////////////////
 
 Node* TreeNode::search(int _gatorID) {
+    if (root == nullptr) return nullptr;
     Node* nodeTosearch = root;
     do {
         if (nodeTosearch->gatorID == _gatorID) return nodeTosearch;
@@ -227,7 +271,7 @@ Node* TreeNode::search(int _gatorID) {
 // To support deletion of notes, it is useful to have the parent.
 // NodeRemoveAndParaent is a struct that has both
 NodeRemoveAndParent* TreeNode::searchRemove(int _gatorID) {
-    NodeRemoveAndParent* result;
+    NodeRemoveAndParent* result = new NodeRemoveAndParent();
     result->parent = nullptr;
     result->nodeToRemove = root;
     do {
@@ -247,18 +291,20 @@ NodeRemoveAndParent* TreeNode::searchRemove(int _gatorID) {
     return result;
 }
 
-Node* TreeNode::search(std::string _name) {
-    Node* result = nullptr;
-    search(_name, root, *result);
-    if (result->name == _name) return result;
-    else return nullptr;
+void TreeNode::search(std::string _name) {
+    char found = 0;
+    search(_name, root, found);
+    if (found == 0) cout << "unsuccessful" << endl;
 }
 
-void TreeNode::search(std::string& _name, Node* node, Node& result) {
+void TreeNode::search(std::string& _name, Node* node, char& found) {
     if (node == nullptr) return;
-    if (node->name == _name) cout << node->gatorID << endl;
-    search(_name, node->left, result);
-    search(_name, node->right, result);
+    if (node->name == _name) {
+        cout << node->gatorID << endl;
+        found++;
+    }
+    search(_name, node->left, found);
+    search(_name, node->right, found);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,29 +317,39 @@ int main(int argc, char* argv[]) {
     char run = 1;
     size_t delimiter1 = -1;
     size_t delimiter2 = -1;
-    std::string userInput;
-    std::string command;
-    std::string name;
-    std::string gatorID;
+    std::string userInput = {};
+    std::string command = {};
+    std::string name = {};
+    std::string gatorID = {};
 
     TreeNode* studentData = new TreeNode();
+    int numberOfCommands = 0;
+    std::cin >> numberOfCommands;
 
-    while (run) {
+    for (int i = 0; i <= numberOfCommands; i++) {
         // COLLECT USER INPUT
+        userInput.clear();
+        command.clear();
+        name.clear();
+        gatorID.clear();
+
         std::getline(std::cin, userInput);
 
         // Work thorugh user input determine if it contains a command, name, and ID, max will be all 3.
         // If the user input has a space, that implies there are 2 commands being input EX: remove
         // If the user input has 2 spaces that implies that there are 3 user input wors EX: insert
+
         if ((delimiter1 = userInput.find(' ')) != std::string::npos) {
             command = userInput.substr(0, delimiter1);
             // Check if second space, if so, record name and gator ID
             if ((delimiter2 = userInput.find("\"", delimiter1)) != std::string::npos) {
-                cout << "SUCCESS" << endl;
+                //cout << "SUCCESS" << endl;
                 if ((delimiter2 = userInput.find("\"", delimiter1 + 2, 1)) != std::string::npos) {
-                    cout << "SUCCESS 1: " << delimiter1 << ", " << delimiter2 << endl;
+                    //cout << "SUCCESS 1: " << delimiter1 << ", " << delimiter2 << endl;
                     name = userInput.substr(delimiter1 + 2, (delimiter2 - delimiter1 - 2));
-                    gatorID = userInput.substr(delimiter2 + 2, std::string::npos);
+                    if (delimiter2 != userInput.size() - 1) {
+                        gatorID = userInput.substr(delimiter2 + 2, std::string::npos);
+                    }
                 }
                 else {
                     // FAIL
@@ -311,17 +367,20 @@ int main(int argc, char* argv[]) {
 
         // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
         if (command == "insert"){
-            cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
+            //cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
             if (studentData->insert(name, std::stoi(gatorID))) cout << "successful" << endl;
             else                                               cout << "unsuccessful" << endl;
         }
         else if (command == "remove") {
-
+            if (studentData->remove(std::stoi(gatorID))) 
+                cout << "successful" << endl;
+            else cout << "unsuccessful" << endl;
         }
         else if (command == "search") {
+            Node* result;
             if (name.empty()) {
-                Node* result = studentData->search(gatorID);
-                if (result != nullptr) cout << "successful" << endl;
+                result = studentData->search(std::stoi(gatorID));
+                if (result != nullptr) cout << result->name << endl;
                 else cout << "unsuccessful" << endl;
             }
             else {
@@ -329,19 +388,30 @@ int main(int argc, char* argv[]) {
             }
         }
         else if (command == "printInorder") {
-            studentData->printInorder(studentData->root);
+            char needComma = 0;
+            studentData->printInorder(studentData->root, needComma);
+            cout << endl;
         }
         else if (command == "printPreorder") {
-            studentData->printPreorder(studentData->root);
+            char needComma = 0;
+            studentData->printPreorder(studentData->root, needComma);
+            cout << endl;
         }
         else if (command == "printPostorder") {
-            studentData->printPostorder(studentData->root);
+            char needComma = 0;
+            studentData->printPostorder(studentData->root, needComma);
+            cout << endl;
         }
         else if (command == "printLevelCount") {
             studentData->printLevelCount();
         }
-        else if (command == "removeInonrder") {
-
+        else if (command == "removeInorder") {
+            if (studentData->removeInorder(std::stoi(gatorID))) 
+                cout << "successful" << endl;
+            else cout << "unsuccessful" << endl;
+        }
+        else if (command == "printRootName") {
+            studentData->printRootName();
         }
         else if (command == "test") {
             if (studentData->testTreeBalance()) cout << "Tree is balanced" << endl;
@@ -415,11 +485,15 @@ char TreeNode::checkPerfect()
     else {
         for (int i = 1; i < size; i++) {
             if ((i * 2) != counterVect.at(i)) {
-                return false;
+                return 0;
             }
         }
     }
-    return true;
+    return 1;
+}
+
+void TreeNode::printRootName() {
+    cout << "root: " << root->name << endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -494,29 +568,35 @@ void TreeNode::setHeight(Node* node) {
 //            TreeNode Class Print Tree Functions
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void TreeNode::printFormat(Node* node) {
-    cout << node->name << ", "; 
+void TreeNode::printFormat(Node* node, char& needComma) {
+    if (needComma == 0) 
+        cout << node->name;
+    else
+        cout << ", " << node->name; 
 }
 
-void TreeNode::printInorder(Node* root) {
+void TreeNode::printInorder(Node* root, char& needComma) {
     if (root == nullptr) return;
-    printInorder(root->left);
-    printFormat(root);
-    printInorder(root->right);
+    printInorder(root->left, needComma);
+    printFormat(root, needComma);
+    needComma = 1;
+    printInorder(root->right, needComma);
 }
 
-void TreeNode::printPreorder(Node* root) {
+void TreeNode::printPreorder(Node* root, char& needComma) {
     if (root == nullptr) return;
-    printFormat(root);
-    printPreorder(root->left);
-    printPreorder(root->right);
+    printFormat(root, needComma);
+    needComma = 1;
+    printPreorder(root->left, needComma);
+    printPreorder(root->right, needComma);
 }
 
-void TreeNode::printPostorder(Node* root) {
+void TreeNode::printPostorder(Node* root, char& needComma) {
     if (root == nullptr) return;
-    printFormat(root);
-    printPostorder(root->left);
-    printPostorder(root->right);
+    printPostorder(root->left, needComma);
+    printPostorder(root->right, needComma);
+    printFormat(root, needComma);
+    needComma = 1;
 }
 
 void TreeNode::printLevelCount() {

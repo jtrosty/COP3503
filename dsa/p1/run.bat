@@ -1,4 +1,4 @@
 @echo off
 
-debug\main.exe
+debug\main.exe < test1.txt
 

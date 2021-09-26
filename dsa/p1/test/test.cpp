@@ -72,10 +72,11 @@ TEST_CASE("7 Test large amount of insertion if tere is perfect. 131071", "[inser
     TreeNode treeForTest;
     Node* result1;
     Node* result2;
+    // 10131071
     for (int i = 10000000; i < 10131071; i++) {
         treeForTest.insert("test", i);
     }
-    REQUIRE(treeForTest.checkPerfect());
+    REQUIRE(treeForTest.testTreeBalance());
 }
 
 

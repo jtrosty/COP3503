@@ -1,0 +1,23 @@
+5
+search 12345678
+search "Adam"
+insert "Adam" 12345678
+search 23456789
+search 12345678
+q
+REM insert "jon" 10
+REM insert "deena" 5
+REM insert "jen" 15
+REM insert "joel" 13
+REM printRootName
+REM printInorder
+REM printLevelCount
+REM printLevelCount
+REM removeInorder 2
+REM printRootName
+REM printInorder
+REM printLevelCount
+REM search 5
+REM search 10
+REM search 13
+REM search 15
