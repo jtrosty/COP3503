@@ -19,6 +19,12 @@ class Node {
         Node(std::string _name, int _gatorID, int _height);
 };
 
+struct NodeRemoveAndParent {
+    Node* parent;
+    Node* nodeToRemove;
+    char direction;
+};
+
 Node::Node(std::string _name, int _gatorID) {
     gatorID = _gatorID;
     name = _name;
@@ -34,7 +40,6 @@ Node::Node(std::string _name, int _gatorID, int _height) {
     right = nullptr;
     height = _height;
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////
 //                         Custom AVL Tree Class for Student Data 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -46,8 +51,14 @@ class TreeNode {
         Node* rotateRight(Node* root);
         Node* rotateLeftRight(Node* root);
         Node* rotateRightLeft(Node* root);
+
+        // Helper functions
         char insertHelper(Node** root, std::string name, int gatorID);
+        NodeRemoveAndParent* searchRemove(int _gatorID);
+
         void setHeight(Node* node);
+
+        // Test funcitons
         int checkBalance(Node* node);
         char testTreeBalance(Node*node);
 
@@ -56,11 +67,11 @@ class TreeNode {
 
         // constructor
         TreeNode();
-        TreeNode(std::string _name, int gatorID);
+        TreeNode(std::string _name, int _gatorID);
 
         // Operations
-        char insert(std::string name, int gatorID);
-        void remove(std::string gatorID);
+        char insert(std::string _name, int _gatorID);
+        char remove(int gatorID);
         Node* search(int gatorID);
         Node* search(std::string name);
         void search(std::string& name, Node* node, Node& result);
@@ -71,8 +82,7 @@ class TreeNode {
         void printPreorder(Node* root);
         void printPostorder(Node* root);
         void printLevelCount();
-
-        // Tests
+// Tests
         char testTreeBalance();
 };
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,6 +93,62 @@ TreeNode::TreeNode() { }
 TreeNode::TreeNode(std::string _name, int _gatorID) {
     Node* newRoot = new Node(_name, _gatorID);
     root = newRoot;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//                     Remove Functions
+///////////////////////////////////////////////////////////////////////////////
+char TreeNode::remove(int gatorID) {
+    NodeRemoveAndParent* nodes = searchRemove(gatorID);
+    // Case of if the node was not found
+
+    // The case of the node being delete has no children.
+    if (nodes->nodeToRemove->left == nullptr && nodes->nodeToRemove->right == nullptr) {
+        delete nodes->nodeToRemove;
+        if (nodes->parent != nullptr) {
+            if (nodes->direction = 0) nodes->parent->left = nullptr;
+            else nodes->parent->right = nullptr;
+        } 
+    }
+    // Case of the node having 2 children
+    if(nodes->nodeToRemove->left != nullptr && nodes->nodeToRemove->right != nullptr) {
+        // Find next immediate successor in sorted order (not successor in the tree)
+        Node* successor = nodes->nodeToRemove->right;
+        Node* successorParent = nodes->nodeToRemove;
+        while (successor->left != nullptr) {
+            successorParent = successor;
+            successor = successor->left;
+        }
+        if (successor->right != nullptr) successorParent->left = successor->right;
+        if (nodes->parent != nullptr) {
+            if (nodes->direction = 0) nodes->parent->left = successor;
+            else nodes->parent->right = successor;
+        } 
+        successor->left = nodes->nodeToRemove->left;
+        successor->right = nodes->nodeToRemove->right;
+        delete nodes->nodeToRemove;
+    }
+    // Case of only left child on node to be deleted
+    if (nodes->nodeToRemove->left != nullptr) {
+        if (nodes->parent != nullptr) {
+            if (nodes->direction = 0) nodes->parent->left = nodes->nodeToRemove->left;
+            else nodes->parent->right = nodes->nodeToRemove->left;
+        } 
+        else root = nodes->nodeToRemove->left;
+        delete nodes->nodeToRemove;
+    }
+    // Case of only right child on node to be deleted
+    if (nodes->nodeToRemove->right != nullptr) {
+        if (nodes->parent != nullptr) {
+            if (nodes->direction = 0) nodes->parent->left = nodes->nodeToRemove->right;
+            else nodes->parent->right = nodes->nodeToRemove->right;
+        } 
+        else root = nodes->nodeToRemove->left;
+        delete nodes->nodeToRemove;
+    }
+    // Case of the node having 2 children
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -150,6 +216,29 @@ Node* TreeNode::search(int _gatorID) {
     } 
     while (nodeTosearch != nullptr);
     return nodeTosearch;
+}
+
+// To support deletion of notes, it is useful to have the parent.
+// NodeRemoveAndParaent is a struct that has both
+NodeRemoveAndParent* TreeNode::searchRemove(int _gatorID) {
+    NodeRemoveAndParent* result;
+    result->parent = nullptr;
+    result->nodeToRemove = root;
+    do {
+        if (result->nodeToRemove->gatorID == _gatorID) return result;
+        if (_gatorID < result->nodeToRemove->gatorID) {
+            result->parent = result->nodeToRemove;
+            result->nodeToRemove = result->nodeToRemove->left;
+            result->direction = 0;
+        }
+        else {
+            result->parent = result->nodeToRemove;
+            result->nodeToRemove = result->nodeToRemove->right;
+            result->direction = 1;
+        }
+    } 
+    while (result->nodeToRemove != nullptr);
+    return result;
 }
 
 Node* TreeNode::search(std::string _name) {
