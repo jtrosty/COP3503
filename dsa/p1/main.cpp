@@ -21,7 +21,7 @@ class Node {
         Node(std::string _name, int _gatorID, int _height);
 };
 
-struct NodeRemoveAndParent {
+struct NodeToRemoveAndParent {
     Node* parent;
     Node* nodeToRemove;
     char direction;
@@ -42,6 +42,7 @@ Node::Node(std::string _name, int _gatorID, int _height) {
     right = nullptr;
     height = _height;
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //                         Custom AVL Tree Class for Student Data 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -56,13 +57,13 @@ class TreeNode {
 
         // Helper functions
         char insertHelper(Node** root, std::string name, int gatorID);
-        NodeRemoveAndParent* searchRemove(int _gatorID);
+        NodeToRemoveAndParent* searchRemove(int _gatorID);
         void removeInorder(int n, Node* node, int& counter, int& _gatorID); 
         void setHeight(Node* node);
         void destructorHelper(Node* node);
 
         // Test funcitons
-        int checkBalance(Node* node);
+        int getBalance(Node* node);
         char testTreeBalance(Node* node); 
 
         void checkPerfect(Node* root, vector<int>& counterVect, int height); 
@@ -80,7 +81,7 @@ class TreeNode {
         char remove(int gatorID);
         Node* search(int gatorID);
         void search(std::string name);
-        void search(std::string& name, Node* node, char& found);
+        void search(std::string& name, Node* node, int& found);
         char removeInorder(int n);
 
         // Funciton to Print out tree
@@ -89,6 +90,7 @@ class TreeNode {
         void printPreorder(Node* root, char& needComma);
         void printPostorder(Node* root, char& needComma);
         void printLevelCount();
+        int getHeight();
 // Tests
         char checkPerfect(); 
         char testTreeBalance();
@@ -239,10 +241,11 @@ void TreeNode::destructorHelper(Node* node) {
 //                     Remove Functions
 ///////////////////////////////////////////////////////////////////////////////
 char TreeNode::remove(int gatorID) {
-    NodeRemoveAndParent* nodes = searchRemove(gatorID);
+    NodeToRemoveAndParent* nodes = searchRemove(gatorID);
     // Case of if the node was not found
     if (nodes->nodeToRemove == nullptr) return 0;
 
+    ///////////////////////////////////////////////////////////
     // The case of the node being delete has no children.
     if (nodes->nodeToRemove->left == nullptr && nodes->nodeToRemove->right == nullptr) {
         delete nodes->nodeToRemove;
@@ -255,6 +258,7 @@ char TreeNode::remove(int gatorID) {
             root = nullptr;
         return 1;
     }
+    ///////////////////////////////////////////////////////////
     // Case of the node having 2 children
     else if(nodes->nodeToRemove->left != nullptr && nodes->nodeToRemove->right != nullptr) {
         // Find next immediate successor in sorted order (not successor in the tree)
@@ -293,6 +297,7 @@ char TreeNode::remove(int gatorID) {
         }
         delete nodes->nodeToRemove;
     }
+    ///////////////////////////////////////////////////////////
     // Case of only left child on node to be deleted
     else if (nodes->nodeToRemove->left != nullptr) {
         if (nodes->parent != nullptr) {
@@ -302,6 +307,7 @@ char TreeNode::remove(int gatorID) {
         else root = nodes->nodeToRemove->left;
         delete nodes->nodeToRemove;
     }
+    ///////////////////////////////////////////////////////////
     // Case of only right child on node to be deleted
     else if (nodes->nodeToRemove->right != nullptr) {
         if (nodes->parent != nullptr) {
@@ -316,6 +322,8 @@ char TreeNode::remove(int gatorID) {
     delete nodes;
     return 1;
 }
+
+// Priavte helper funciton uses recurion. 
 void TreeNode::removeInorder(int n, Node* node, int& counter, int& _gatorID) {
     if (node == nullptr) return;
     if (counter > n) return;
@@ -325,10 +333,12 @@ void TreeNode::removeInorder(int n, Node* node, int& counter, int& _gatorID) {
     removeInorder(n, node->right, counter, _gatorID);
 }
 
+// The public function
 char TreeNode::removeInorder(int n) {
     int counter = 0;
     int _gatorID = 0;
     removeInorder(n, root, counter, _gatorID);
+    if (_gatorID == 0) return 0;
     return remove(_gatorID);
 }
 
@@ -354,17 +364,17 @@ char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {
     else if (_gatorID < (*_root)->gatorID) {
         success = insertHelper(&(*_root)->left, _name, _gatorID);
         if ((*_root)->left->height + 1 > (*_root)->height) (*_root)->height = (*_root)->left->height + 1;
-        childBalance = checkBalance((*_root)->left);
+        childBalance = getBalance((*_root)->left);
     }
     else if (_gatorID > (*_root)->gatorID){
         success = insertHelper(&(*_root)->right, _name, _gatorID);
         if ((*_root)->right->height + 1 > (*_root)->height) (*_root)->height = (*_root)->right->height + 1;
-        childBalance = checkBalance((*_root)->right);
+        childBalance = getBalance((*_root)->right);
     }
 
     // Only want to balance if a node was succesfully inserted
     if (success) {
-        balance = checkBalance(*_root);
+        balance = getBalance(*_root);
 
         if (balance > 1 && childBalance == -1) {
             *_root = rotateLeftRight(*_root);
@@ -402,8 +412,8 @@ Node* TreeNode::search(int _gatorID) {
 
 // To support deletion of notes, it is useful to have the parent.
 // NodeRemoveAndParaent is a struct that has both
-NodeRemoveAndParent* TreeNode::searchRemove(int _gatorID) {
-    NodeRemoveAndParent* result = new NodeRemoveAndParent();
+NodeToRemoveAndParent* TreeNode::searchRemove(int _gatorID) {
+    NodeToRemoveAndParent* result = new NodeToRemoveAndParent();
     result->parent = nullptr;
     result->nodeToRemove = root;
     do {
@@ -424,12 +434,12 @@ NodeRemoveAndParent* TreeNode::searchRemove(int _gatorID) {
 }
 
 void TreeNode::search(std::string _name) {
-    char found = 0;
+    int found = 0;
     search(_name, root, found);
     if (found == 0) cout << "unsuccessful" << endl;
 }
 
-void TreeNode::search(std::string& _name, Node* node, char& found) {
+void TreeNode::search(std::string& _name, Node* node, int& found) {
     if (node == nullptr) return;
     if (node->name == _name) {
         cout << node->gatorID << endl;
@@ -443,7 +453,7 @@ void TreeNode::search(std::string& _name, Node* node, char& found) {
 //                     Check and Test Functions
 ///////////////////////////////////////////////////////////////////////////////
 
-int TreeNode::checkBalance(Node* node) {
+int TreeNode::getBalance(Node* node) {
     if (node == nullptr) return 0;
     int left = 0;
     int right = 0;
@@ -453,7 +463,7 @@ int TreeNode::checkBalance(Node* node) {
 }
 
 char TreeNode::testTreeBalance() {
-    int balance = checkBalance(root);
+    int balance = getBalance(root);
     char isNodeBalanced = 0;
     isNodeBalanced = balance < 2 && balance > -2;
     return isNodeBalanced && testTreeBalance(root);
@@ -465,8 +475,8 @@ char TreeNode::testTreeBalance(Node* node) {
     char areChildrenBalanced = 0;
     int left = 0;
     int right = 0;
-    left = checkBalance(node->left);
-    right = checkBalance(node->right);
+    left = getBalance(node->left);
+    right = getBalance(node->right);
     isNodeBalanced = left < 2 && left > -2 && right < 2 && right > -2;
     areChildrenBalanced = testTreeBalance(node->left) && testTreeBalance(node->right);
     return isNodeBalanced && areChildrenBalanced;
@@ -615,5 +625,11 @@ void TreeNode::printPostorder(Node* root, char& needComma) {
 }
 
 void TreeNode::printLevelCount() {
-    cout << root->height << endl;
+    if (root == nullptr) cout << "0" << endl;
+    else cout << root->height << endl;
+}
+
+int TreeNode::getHeight() {
+    if (root == nullptr) return 0;
+    else return (root->height);
 }

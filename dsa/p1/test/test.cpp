@@ -68,20 +68,72 @@ TEST_CASE("6 Test of search id and name", "[insert]") {
     REQUIRE(treeForTest.testTreeBalance());
 }
 
-TEST_CASE("7 Test large amount of insertion if tere is perfect. 131071", "[insert]") {
+TEST_CASE("7 Test large amount of insertion print height, min would be 16. Max expected to be 17. Delete all units and verify root is nullptr", "[insert]") {
     TreeNode treeForTest;
-    Node* result1;
-    Node* result2;
+    int height = 0;
     // 10131071
     for (int i = 10000000; i < 10131071; i++) {
         treeForTest.insert("test", i);
     }
+
+    REQUIRE(treeForTest.getHeight() == 17);
     REQUIRE(treeForTest.testTreeBalance());
+    for (int i = 10000000; i < 10131071; i++) {
+        treeForTest.remove(i);
+    }
+    REQUIRE(treeForTest.root == nullptr);
 }
 
 
-
-/*
-TEST_CASE("Vector sum modulo n is computed correctly", "[vector][modulo]") {
+TEST_CASE("8 Tests removeInorder.", "[insert]") {
+    TreeNode treeForTest;
+    treeForTest.insert("big", 3);
+    treeForTest.insert("small", 1);
+    treeForTest.insert("middle", 2);
+    treeForTest.removeInorder(0);
+    REQUIRE_FALSE(treeForTest.search(1));
+    REQUIRE(treeForTest.removeInorder(1));
+    REQUIRE_FALSE(treeForTest.search(3));
+    REQUIRE(treeForTest.search(2));
+    REQUIRE(treeForTest.removeInorder(0));
+    REQUIRE_FALSE(treeForTest.removeInorder(1));
 }
-*/
+
+TEST_CASE("9 Tree heights. Follow the format of fig 1 in Gator AVL", "[insert]") {
+    TreeNode treeForTest;
+    REQUIRE(treeForTest.getHeight() == 0);
+    treeForTest.insert("test", 5);
+    REQUIRE(treeForTest.getHeight() == 1);
+    treeForTest.insert("test", 3);
+    REQUIRE(treeForTest.getHeight() == 2);
+    treeForTest.insert("test", 7);
+    REQUIRE(treeForTest.getHeight() == 2);
+    treeForTest.insert("test", 2);
+    REQUIRE(treeForTest.getHeight() == 3);
+    treeForTest.insert("test", 8);
+    REQUIRE(treeForTest.getHeight() == 3);
+    treeForTest.insert("test", 4);
+    REQUIRE(treeForTest.getHeight() == 3);
+    treeForTest.insert("test", 6);
+    REQUIRE(treeForTest.getHeight() == 3);
+    treeForTest.insert("test", 1);
+    REQUIRE(treeForTest.getHeight() == 4);
+}
+
+TEST_CASE("10 Test sarches with large amounts of insertions and deletions.", "[insert]") {
+    TreeNode treeForTest;
+    int height = 0;
+    // 10131071
+
+    for (int i = 10000000; i < 10131071; i++) {
+        treeForTest.insert("test", i);
+    }
+    REQUIRE(treeForTest.testTreeBalance());
+    for (int i = 10000000; i < 10131071; i += 2) {
+        treeForTest.remove(i);
+    }
+    REQUIRE_FALSE(treeForTest.search(10000010));
+    REQUIRE(treeForTest.search(10000009));
+    REQUIRE_FALSE(treeForTest.search(10100010));
+    REQUIRE(treeForTest.search(10100009));
+}
