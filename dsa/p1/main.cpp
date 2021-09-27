@@ -58,8 +58,8 @@ class TreeNode {
         char insertHelper(Node** root, std::string name, int gatorID);
         NodeRemoveAndParent* searchRemove(int _gatorID);
         void removeInorder(int n, Node* node, int& counter, int& _gatorID); 
-
         void setHeight(Node* node);
+        void destructorHelper(Node* node);
 
         // Test funcitons
         int checkBalance(Node* node);
@@ -70,9 +70,10 @@ class TreeNode {
     public:
         Node* root = nullptr;
 
-        // constructor
+       // constructor and destructors
         TreeNode();
         TreeNode(std::string _name, int _gatorID);
+        ~TreeNode();
 
         // Operations
         char insert(std::string _name, int _gatorID);
@@ -93,15 +94,145 @@ class TreeNode {
         char testTreeBalance();
         void printRootName();
 };
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      Main Function
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifdef DISABLE_TESTS
+
+int main(int argc, char* argv[]) {
+    //We have received command line input
+    char run = 1;
+    size_t delimiter1 = -1;
+    size_t delimiter2 = -1;
+    std::string userInput = {};
+    std::string command = {};
+    std::string name = {};
+    std::string gatorID = {};
+
+    TreeNode* studentData = new TreeNode();
+    int numberOfCommands = 0;
+    std::cin >> numberOfCommands;
+
+    for (int i = 0; i <= numberOfCommands; i++) {
+        // COLLECT USER INPUT
+        userInput.clear();
+        command.clear();
+        name.clear();
+        gatorID.clear();
+
+        std::getline(std::cin, userInput);
+
+        // Work thorugh user input determine if it contains a command, name, and ID, max will be all 3.
+        // If the user input has a space, that implies there are 2 commands being input EX: remove
+        // If the user input has 2 spaces that implies that there are 3 user input wors EX: insert
+
+        if ((delimiter1 = userInput.find(' ')) != std::string::npos) {
+            command = userInput.substr(0, delimiter1);
+            // Check if second space, if so, record name and gator ID
+            if ((delimiter2 = userInput.find("\"", delimiter1)) != std::string::npos) {
+                //cout << "SUCCESS" << endl;
+                if ((delimiter2 = userInput.find("\"", delimiter1 + 2, 1)) != std::string::npos) {
+                    //cout << "SUCCESS 1: " << delimiter1 << ", " << delimiter2 << endl;
+                    name = userInput.substr(delimiter1 + 2, (delimiter2 - delimiter1 - 2));
+                    if (delimiter2 != userInput.size() - 1) {
+                        gatorID = userInput.substr(delimiter2 + 2, std::string::npos);
+                    }
+                }
+                else {
+                    // FAIL
+                }
+            }
+            // Not a name, just a user id.
+            else {
+                gatorID = userInput.substr(delimiter1 + 1, std::string::npos);
+            }
+        }
+        // This is if there is only 1 user input
+        else {
+            command = userInput;
+        }
+
+        // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
+        if (command == "insert"){
+            //cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
+            if (studentData->insert(name, std::stoi(gatorID))) cout << "successful" << endl;
+            else                                               cout << "unsuccessful" << endl;
+        }
+        else if (command == "remove") {
+            if (studentData->remove(std::stoi(gatorID))) 
+                cout << "successful" << endl;
+            else cout << "unsuccessful" << endl;
+        }
+        else if (command == "search") {
+            Node* result;
+            if (name.empty()) {
+                result = studentData->search(std::stoi(gatorID));
+                if (result != nullptr) cout << result->name << endl;
+                else cout << "unsuccessful" << endl;
+            }
+            else {
+                studentData->search(name);
+            }
+        }
+        else if (command == "printInorder") {
+            char needComma = 0;
+            studentData->printInorder(studentData->root, needComma);
+            cout << endl;
+        }
+        else if (command == "printPreorder") {
+            char needComma = 0;
+            studentData->printPreorder(studentData->root, needComma);
+            cout << endl;
+        }
+        else if (command == "printPostorder") {
+            char needComma = 0;
+            studentData->printPostorder(studentData->root, needComma);
+            cout << endl;
+        }
+        else if (command == "printLevelCount") {
+            studentData->printLevelCount();
+        }
+        else if (command == "removeInorder") {
+            if (studentData->removeInorder(std::stoi(gatorID))) 
+                cout << "successful" << endl;
+            else cout << "unsuccessful" << endl;
+        }
+        else if (command == "printRootName") {
+            studentData->printRootName();
+        }
+        else if (command == "test") {
+            if (studentData->testTreeBalance()) cout << "Tree is balanced" << endl;
+        }
+        else if (command == "q") {
+            run = 0;
+        }
+    }
+    return 0;
+}
+#endif
+
 
 ///////////////////////////////////////////////////////////////////////////////
-//                     Constructors
+//                     Constructors and Destructors
 ///////////////////////////////////////////////////////////////////////////////
 TreeNode::TreeNode() { }
 
 TreeNode::TreeNode(std::string _name, int _gatorID) {
     Node* newRoot = new Node(_name, _gatorID);
     root = newRoot;
+}
+
+TreeNode::~TreeNode() {
+    if (root != nullptr) {
+        destructorHelper(root);
+    }
+}
+
+void TreeNode::destructorHelper(Node* node) {
+    if (node == nullptr) return;
+    destructorHelper(node->left);
+    destructorHelper(node->right);
+    delete(node);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -307,123 +438,6 @@ void TreeNode::search(std::string& _name, Node* node, char& found) {
     search(_name, node->left, found);
     search(_name, node->right, found);
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                      Main Function
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef DISABLE_TESTS
-
-int main(int argc, char* argv[]) {
-    //We have received command line input
-    char run = 1;
-    size_t delimiter1 = -1;
-    size_t delimiter2 = -1;
-    std::string userInput = {};
-    std::string command = {};
-    std::string name = {};
-    std::string gatorID = {};
-
-    TreeNode* studentData = new TreeNode();
-    int numberOfCommands = 0;
-    std::cin >> numberOfCommands;
-
-    for (int i = 0; i <= numberOfCommands; i++) {
-        // COLLECT USER INPUT
-        userInput.clear();
-        command.clear();
-        name.clear();
-        gatorID.clear();
-
-        std::getline(std::cin, userInput);
-
-        // Work thorugh user input determine if it contains a command, name, and ID, max will be all 3.
-        // If the user input has a space, that implies there are 2 commands being input EX: remove
-        // If the user input has 2 spaces that implies that there are 3 user input wors EX: insert
-
-        if ((delimiter1 = userInput.find(' ')) != std::string::npos) {
-            command = userInput.substr(0, delimiter1);
-            // Check if second space, if so, record name and gator ID
-            if ((delimiter2 = userInput.find("\"", delimiter1)) != std::string::npos) {
-                //cout << "SUCCESS" << endl;
-                if ((delimiter2 = userInput.find("\"", delimiter1 + 2, 1)) != std::string::npos) {
-                    //cout << "SUCCESS 1: " << delimiter1 << ", " << delimiter2 << endl;
-                    name = userInput.substr(delimiter1 + 2, (delimiter2 - delimiter1 - 2));
-                    if (delimiter2 != userInput.size() - 1) {
-                        gatorID = userInput.substr(delimiter2 + 2, std::string::npos);
-                    }
-                }
-                else {
-                    // FAIL
-                }
-            }
-            // Not a name, just a user id.
-            else {
-                gatorID = userInput.substr(delimiter1 + 1, std::string::npos);
-            }
-        }
-        // This is if there is only 1 user input
-        else {
-            command = userInput;
-        }
-
-        // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
-        if (command == "insert"){
-            //cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
-            if (studentData->insert(name, std::stoi(gatorID))) cout << "successful" << endl;
-            else                                               cout << "unsuccessful" << endl;
-        }
-        else if (command == "remove") {
-            if (studentData->remove(std::stoi(gatorID))) 
-                cout << "successful" << endl;
-            else cout << "unsuccessful" << endl;
-        }
-        else if (command == "search") {
-            Node* result;
-            if (name.empty()) {
-                result = studentData->search(std::stoi(gatorID));
-                if (result != nullptr) cout << result->name << endl;
-                else cout << "unsuccessful" << endl;
-            }
-            else {
-                studentData->search(name);
-            }
-        }
-        else if (command == "printInorder") {
-            char needComma = 0;
-            studentData->printInorder(studentData->root, needComma);
-            cout << endl;
-        }
-        else if (command == "printPreorder") {
-            char needComma = 0;
-            studentData->printPreorder(studentData->root, needComma);
-            cout << endl;
-        }
-        else if (command == "printPostorder") {
-            char needComma = 0;
-            studentData->printPostorder(studentData->root, needComma);
-            cout << endl;
-        }
-        else if (command == "printLevelCount") {
-            studentData->printLevelCount();
-        }
-        else if (command == "removeInorder") {
-            if (studentData->removeInorder(std::stoi(gatorID))) 
-                cout << "successful" << endl;
-            else cout << "unsuccessful" << endl;
-        }
-        else if (command == "printRootName") {
-            studentData->printRootName();
-        }
-        else if (command == "test") {
-            if (studentData->testTreeBalance()) cout << "Tree is balanced" << endl;
-        }
-        else if (command == "q") {
-            run = 0;
-        }
-    }
-    return 0;
-}
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //                     Check and Test Functions
