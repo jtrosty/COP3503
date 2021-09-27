@@ -21,6 +21,7 @@ class Node {
         Node(std::string _name, int _gatorID, int _height);
 };
 
+// Used as a helper data structure for removal. 
 struct NodeToRemoveAndParent {
     Node* parent;
     Node* nodeToRemove;
@@ -69,6 +70,8 @@ class TreeNode {
         void checkPerfect(Node* root, vector<int>& counterVect, int height); 
 
     public:
+        static const int EIGHT_DIGITS = 10000000;
+        static const int NINE_DIGITS = 100000000;
         Node* root = nullptr;
 
        // constructor and destructors
@@ -99,10 +102,16 @@ class TreeNode {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Main Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef DISABLE_TESTS
+
+// Funciton for main
+char isValidID(std::string inputID); 
+char isNameValid(std::string inputName);
+
+//#ifdef DISABLE_TESTS
 
 int main(int argc, char* argv[]) {
     //We have received command line input
+    const int digitsRequired = 8;
     char run = 1;
     size_t delimiter1 = -1;
     size_t delimiter2 = -1;
@@ -153,12 +162,18 @@ int main(int argc, char* argv[]) {
         else {
             command = userInput;
         }
+        
+        // Verify that the input meets the requirements of the prompt
+        if (!isValidID(gatorID) || !isNameValid(name)) {
+            cout << "unsuccessful" << endl;
+            continue;
+        }
 
         // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
         if (command == "insert"){
             //cout << "command: " << command << " name: " << name << " id " << gatorID << endl;
             if (studentData->insert(name, std::stoi(gatorID))) cout << "successful" << endl;
-            else                                               cout << "unsuccessful" << endl;
+            else                                       cout << "unsuccessful" << endl;
         }
         else if (command == "remove") {
             if (studentData->remove(std::stoi(gatorID))) 
@@ -211,8 +226,32 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
-#endif
+//#endif
 
+char isValidID(std::string inputID) {
+    int size = inputID.size();
+    char digit = 0;
+    for (int i = 0; i < size; i++) {
+        digit = inputID.at(i);
+        if (digit >= 48 && digit <= 57) 
+            continue;
+        else return 0;
+    }
+    return 1;
+}
+
+char isNameValid(std::string inputName) {
+    int size = inputName.size();
+    char letter = 0;
+    for (int i = 0; i < size; i++) {
+        letter = inputName.at(i);
+        //        Space                   A - Z                        a - z
+        if ((letter == 32) || (letter >= 65 && letter <= 90) || (letter >= 97 && letter <= 122))
+            continue;
+        else return 0;
+    }
+    return 1;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //                     Constructors and Destructors
@@ -346,6 +385,7 @@ char TreeNode::removeInorder(int n) {
 //                     Insert Functions
 ///////////////////////////////////////////////////////////////////////////////
 char TreeNode::insert(std::string _name, int _gatorID) {
+
     return insertHelper(&root, _name, _gatorID);
 }
 char TreeNode::insertHelper(Node** _root, std::string _name, int _gatorID) {

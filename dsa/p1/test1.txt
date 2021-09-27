@@ -1,21 +1,9 @@
-17
-insert "Evan" 44985771
-insert "Earl" 31834874
-insert "Erica" 21456789
-printLevelCount
-insert "Enrique" 17891824
-printLevelCount
-insert "Evan" 44925771
-insert "Evan" 54985771
-insert "Evan" 54985871
-insert "Evan" 14985771
-insert "Evan" 44985771
-insert "Evan" 34985771
-insert "Evan" 94985771
-insert "Evan" 84985771
-insert "Evan" 74985771
-insert "Evan" 64985771
-search "Evan"
+5
+insert "jon" 00000004
+search "jon"
+insert “NAME_ANYTHING_IN_QUOTES_$” LONG_NUMBER_5454215418411
+insert “FIRST_NAME LAST_NAME” 12345678
+insert “FIRST_NAME LAST_NAME” XO4444447
 q
 REM insert "jon" 10
 REM insert "deena" 5
