@@ -229,32 +229,6 @@ int main(int argc, char* argv[]) {
 }
 #endif
 
-char TreeNode::isValidID(std::string inputID) {
-    int size = inputID.size();
-    char digit = 0;
-    if (size != 8) return 0;
-    for (int i = 0; i < size; i++) {
-        digit = inputID.at(i);
-        if (digit >= 48 && digit <= 57) 
-            continue;
-        else return 0;
-    }
-    return 1;
-}
-
-char TreeNode::isNameValid(std::string inputName) {
-    int size = inputName.size();
-    char letter = 0;
-    for (int i = 0; i < size; i++) {
-        letter = inputName.at(i);
-        //        Space                   A - Z                        a - z
-        if ((letter == 32) || (letter >= 65 && letter <= 90) || (letter >= 97 && letter <= 122))
-            continue;
-        else return 0;
-    }
-    return 1;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //                     Constructors and Destructors
 ///////////////////////////////////////////////////////////////////////////////
@@ -674,4 +648,33 @@ void TreeNode::printLevelCount() {
 int TreeNode::getHeight() {
     if (root == nullptr) return 0;
     else return (root->height);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//                      User Input Test Functions 
+///////////////////////////////////////////////////////////////////////////////
+char TreeNode::isValidID(std::string inputID) {
+    int size = inputID.size();
+    char digit = 0;
+    if (size != 8) return 0;
+    for (int i = 0; i < size; i++) {
+        digit = inputID.at(i);
+        if (digit >= 48 && digit <= 57) 
+            continue;
+        else return 0;
+    }
+    return 1;
+}
+
+char TreeNode::isNameValid(std::string inputName) {
+    int size = inputName.size();
+    char letter = 0;
+    for (int i = 0; i < size; i++) {
+        letter = inputName.at(i);
+        //        Space                   A - Z                        a - z
+        if ((letter == 32) || (letter >= 65 && letter <= 90) || (letter >= 97 && letter <= 122))
+            continue;
+        else return 0;
+    }
+    return 1;
 }
