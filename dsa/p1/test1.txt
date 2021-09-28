@@ -1,9 +1,10 @@
 5
-insert "jon" 00000004
-search "jon"
 insert “NAME_ANYTHING_IN_QUOTES_$” LONG_NUMBER_5454215418411
 insert “FIRST_NAME LAST_NAME” 12345678
 insert “FIRST_NAME LAST_NAME” XO4444447
+printInorder
+printPostorder
+printPreorder
 q
 REM insert "jon" 10
 REM insert "deena" 5

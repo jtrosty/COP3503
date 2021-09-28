@@ -137,3 +137,22 @@ TEST_CASE("10 Test sarches with large amounts of insertions and deletions.", "[i
     REQUIRE_FALSE(treeForTest.search(10100010));
     REQUIRE(treeForTest.search(10100009));
 }
+
+TEST_CASE("11 Test user input.", "[insert]") {
+    TreeNode treeForTest;
+    /// Test ID input
+    REQUIRE_FALSE(treeForTest.isValidID("9999999"));
+    REQUIRE(treeForTest.isValidID("00000000"));
+    REQUIRE(treeForTest.isValidID("00200000"));
+    REQUIRE(treeForTest.isValidID("58042030"));
+    REQUIRE(treeForTest.isValidID("99999999"));
+    REQUIRE_FALSE(treeForTest.isValidID("100000000"));
+    REQUIRE_FALSE(treeForTest.isValidID("1000000:0"));
+    REQUIRE_FALSE(treeForTest.isValidID("1000000/0"));
+    /// Test Name input
+    REQUIRE_FALSE(treeForTest.isNameValid("'"));
+    REQUIRE_FALSE(treeForTest.isNameValid("{"));
+    REQUIRE_FALSE(treeForTest.isNameValid("@"));
+    REQUIRE_FALSE(treeForTest.isNameValid("["));
+    REQUIRE(treeForTest.isNameValid("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+}

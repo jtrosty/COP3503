@@ -94,6 +94,11 @@ class TreeNode {
         void printPostorder(Node* root, char& needComma);
         void printLevelCount();
         int getHeight();
+
+        // User Input
+        char isValidID(std::string inputID); 
+        char isNameValid(std::string inputName);
+
 // Tests
         char checkPerfect(); 
         char testTreeBalance();
@@ -103,11 +108,7 @@ class TreeNode {
 //                                      Main Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Funciton for main
-char isValidID(std::string inputID); 
-char isNameValid(std::string inputName);
-
-//#ifdef DISABLE_TESTS
+#ifdef DISABLE_TESTS
 
 int main(int argc, char* argv[]) {
     //We have received command line input
@@ -164,7 +165,7 @@ int main(int argc, char* argv[]) {
         }
         
         // Verify that the input meets the requirements of the prompt
-        if (!isValidID(gatorID) || !isNameValid(name)) {
+        if (!studentData->isValidID(gatorID) || !studentData->isNameValid(name)) {
             cout << "unsuccessful" << endl;
             continue;
         }
@@ -226,11 +227,12 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
-//#endif
+#endif
 
-char isValidID(std::string inputID) {
+char TreeNode::isValidID(std::string inputID) {
     int size = inputID.size();
     char digit = 0;
+    if (size != 8) return 0;
     for (int i = 0; i < size; i++) {
         digit = inputID.at(i);
         if (digit >= 48 && digit <= 57) 
@@ -240,7 +242,7 @@ char isValidID(std::string inputID) {
     return 1;
 }
 
-char isNameValid(std::string inputName) {
+char TreeNode::isNameValid(std::string inputName) {
     int size = inputName.size();
     char letter = 0;
     for (int i = 0; i < size; i++) {
