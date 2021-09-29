@@ -108,7 +108,7 @@ class TreeNode {
 //                                      Main Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef DISABLE_TESTS
+//#ifdef DISABLE_TESTS
 
 int main(int argc, char* argv[]) {
     //We have received command line input
@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
-#endif
+//#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //                     Constructors and Destructors
