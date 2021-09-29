@@ -1,10 +1,15 @@
-5
+11
 insert “NAME_ANYTHING_IN_QUOTES_$” LONG_NUMBER_5454215418411
 insert “FIRST_NAME LAST_NAME” 12345678
 insert “FIRST_NAME LAST_NAME” XO4444447
 printInorder
 printPostorder
 printPreorder
+insert "jon" 10
+insert "deena" 5
+insert "jen" 15
+insert "joel" 13
+insert "joel" 13
 q
 REM insert "jon" 10
 REM insert "deena" 5
