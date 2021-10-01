@@ -19,7 +19,7 @@ class TreeNode {
 
 class Node {
     public: 
-        std::string name; // The name serves as the node's value
+        int name; // The name serves as the node's value
         Node* left = NULL;
         Node* right = NULL;
 };
@@ -244,92 +244,135 @@ bool checkPerfect(TreeNode* root)
         }
     }
     return true;
+
+}
+
+/////////////////////////////////////////////////////////////////////////
+// BALANCED TREE 2, 
+// 5.2.1
+int isAVLHelper(Node* node, char& isAVL) {
+    if (node == nullptr) return 1;
+    int left = isAVLHelper(node->left, isAVL);
+    int right = isAVLHelper(node->right, isAVL);
+    int result = left - right;
+    cout << "result " << result << endl;
+    if (result > 1 || result < -1) isAVL = 0;
+    if (left > right) return 1 + left;
+    else return 1 + right;
+}
+
+bool isAVL(Node* root) {
+    char isAVL = 1;
+    isAVLHelper(root, isAVL);
+    if (isAVL == 1) return true;
+    else return false;
 }
 
 int main (void) {
-    TreeNode* node1 = new TreeNode(1);
-    TreeNode* node4 = new TreeNode(4);
-    TreeNode* node7 = new TreeNode(7);
-    TreeNode* node9 = new TreeNode(9);
-    TreeNode* node10 = new TreeNode(10);
-    TreeNode* node12 = new TreeNode(12);
-    node9->left = node7;
-    node9->right = node12;
-    // Right Side
-    node12->left = node10;
-    // Left side
-    node7->left = node1;
-    node1->right = node4;
+    cout << "########################################################################" << endl;
+    Node* center = new Node;
+    Node* left = new Node;
+    Node* leftLeft = new Node;
+    Node* right = new Node;
+    Node* rightRight = new Node;
+    Node* rightLeft = new Node;
+    Node* rightLeftRight = new Node;
+    Node* rightLeftRightRight = new Node;
 
-    TreeNode* testEasy9 = new TreeNode(9);
-    TreeNode* testEasy7 = new TreeNode(7);
-    TreeNode* testEasy1 = new TreeNode(1);
-    testEasy9->left = testEasy7;
-    testEasy7->left = testEasy1;
+                                            center->left = left; 
+                        left->left = leftLeft;                              center->right = right;
+                                                right->left = rightLeft;                        // right->right = rightRight;
+                                                        rightLeft->right = rightLeftRight; 
+    
+     
+    //rightLeftRight->right = rightLeftRightRight;
+    cout << isAVL(center);
 
-
-    traverse(node9);
     cout << endl;
-    preOrder(node9);
-    cout << endl;
-
     cout << "########################################################################" << endl;
 
-    TreeNode* newTree = nullptr;
-    newTree = insert(&newTree, 25);
-    preOrder(newTree);
-    cout << endl;
-    newTree = insert(&newTree, 22);
-    preOrder(newTree);
-    cout << endl;
-    newTree = insert(&newTree, 4);
-    preOrder(newTree);
-    cout << endl;
-    newTree = insert(&newTree, 1);
-    preOrder(newTree);
-    cout << endl;
-    newTree = insert(&newTree, 2);
-    preOrder(newTree);
-    cout << endl;
-    newTree = insert(&newTree, 28);
-    preOrder(newTree);
-    cout << endl;
-    newTree = insert(&newTree, 30);
-    preOrder(newTree);
-    cout << endl;
-    newTree = insert(&newTree, 3);
-    preOrder(newTree);
-    cout << endl;
-    cout << endl;
-    cout << "height " <<  heightOfNode(newTree) << endl;
-    cout << endl;
-    vector<int> result2 = levelOrder(newTree);
-    for (int i = 0; i < result2.size(); i++) {
-        cout <<result2.at(i) << endl;
-    }
+    //TreeNode* node1 = new TreeNode(1);
+    //TreeNode* node4 = new TreeNode(4);
+    //TreeNode* node7 = new TreeNode(7);
+    //TreeNode* node9 = new TreeNode(9);
+    //TreeNode* node10 = new TreeNode(10);
+    //TreeNode* node12 = new TreeNode(12);
+    //node9->left = node7;
+    //node9->right = node12;
+    //// Right Side
+    //node12->left = node10;
+    //// Left side
+    //node7->left = node1;
+    //node1->right = node4;
 
-    cout << "########################################################################" << endl;
-    TreeNode* test = nullptr;
-    test = convertToBBST(node9);
-    preOrder(test);
-    cout << endl;
-    vector<int> result = levelOrder(test);
-    for (int i = 0; i < result.size(); i++) {
-        cout <<result.at(i) << endl;
-    }
-    cout << "root: " << test->val << endl;
-    cout << "left: " << test->left->val << endl;
-    cout << "right: " << test->right->val << endl;
+    //TreeNode* testEasy9 = new TreeNode(9);
+    //TreeNode* testEasy7 = new TreeNode(7);
+    //TreeNode* testEasy1 = new TreeNode(1);
+    //testEasy9->left = testEasy7;
+    //testEasy7->left = testEasy1;
 
-    cout << "########################################################################" << endl;
-    TreeNode* perfectL = new TreeNode(1);
-    TreeNode* perfectR = new TreeNode(3);
-    TreeNode* wrong = new TreeNode(4);
-    TreeNode* testPerfect = new TreeNode(2, perfectL, perfectR);
+
+    //traverse(node9);
+    //cout << endl;
+    //preOrder(node9);
+    //cout << endl;
+
+    //cout << "########################################################################" << endl;
+
+    //TreeNode* newTree = nullptr;
+    //newTree = insert(&newTree, 25);
+    //preOrder(newTree);
+    //cout << endl;
+    //newTree = insert(&newTree, 22);
+    //preOrder(newTree);
+    //cout << endl;
+    //newTree = insert(&newTree, 4);
+    //preOrder(newTree);
+    //cout << endl;
+    //newTree = insert(&newTree, 1);
+    //preOrder(newTree);
+    //cout << endl;
+    //newTree = insert(&newTree, 2);
+    //preOrder(newTree);
+    //cout << endl;
+    //newTree = insert(&newTree, 28);
+    //preOrder(newTree);
+    //cout << endl;
+    //newTree = insert(&newTree, 30);
+    //preOrder(newTree);
+    //cout << endl;
+    //newTree = insert(&newTree, 3);
+    //preOrder(newTree);
+    //cout << endl;
+    //cout << endl;
+    //cout << "height " <<  heightOfNode(newTree) << endl;
+    //cout << endl;
+    //vector<int> result2 = levelOrder(newTree);
+    //for (int i = 0; i < result2.size(); i++) {
+    //    cout <<result2.at(i) << endl;
+    //}
+
+    //cout << "########################################################################" << endl;
+    //TreeNode* test = nullptr;
+    //test = convertToBBST(node9);
+    //preOrder(test);
+    //cout << endl;
+    //vector<int> result = levelOrder(test);
+    //for (int i = 0; i < result.size(); i++) {
+    //    cout <<result.at(i) << endl;
+    //}
+    //cout << "root: " << test->val << endl;
+    //cout << "left: " << test->left->val << endl;
+    //cout << "right: " << test->right->val << endl;
+
+    //cout << "########################################################################" << endl;
+    //TreeNode* perfectL = new TreeNode(1);
+    //TreeNode* perfectR = new TreeNode(3);
+    //TreeNode* wrong = new TreeNode(4);
+    //TreeNode* testPerfect = new TreeNode(2, perfectL, perfectR);
     //perfectR->right = wrong;
-    cout << " Testing if perfect tree" << endl;
-    cout << "The result is: " << checkPerfect(testPerfect) << endl;
-
+    //cout << " Testing if perfect tree" << endl;
+    //cout << "The result is: " << checkPerfect(testPerfect) << endl;
     
     return 0;
 }
