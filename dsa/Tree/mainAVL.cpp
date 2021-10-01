@@ -267,6 +267,14 @@ bool isAVL(Node* root) {
     if (isAVL == 1) return true;
     else return false;
 }
+/////////////////////////////////////////////////////////////////////////
+// BALANCED TREE 2, 
+// 5.2.2
+TreeNode* insert(TreeNode* root, int key)
+{
+     //Code this function and ensure height of a node and all other nodes are adjusted as new elements are inserted
+
+}
 
 int main (void) {
     cout << "########################################################################" << endl;
