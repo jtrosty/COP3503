@@ -1,5 +1,5 @@
 @echo off
 
-g++ mainAVL.cpp -o mainAVL
+g++ leet.cpp -o mainLeet
 
-mainAVL.exe
+mainLeet.exe
