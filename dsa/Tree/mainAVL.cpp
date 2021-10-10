@@ -9,7 +9,7 @@ using std::vector;
 
 class TreeNode {
  public:
-   int val;
+   int val, height;
    TreeNode *left;
    TreeNode *right;
    TreeNode() : val(0), left(nullptr), right(nullptr) {}
@@ -272,32 +272,66 @@ bool isAVL(Node* root) {
 // 5.2.2
 TreeNode* insert(TreeNode* root, int key)
 {
-     //Code this function and ensure height of a node and all other nodes are adjusted as new elements are inserted
+    // Base case of recursion we get to a nullptr
+    if (root == nullptr) {
+        TreeNode* newNode = new TreeNode(key);
+        root = newNode;
+        return root;
+    }
+    // Searching for apporpriate position. Recursion
+    // Does not handle case of equal keys
+    if (key < root->val) root->left = insert(root->left, key);
+    else                 root->right = insert(root->right, key);
+    
+    // Set Height after completing the insertion. Leaf nodes have heigh of 0. 
+    // Root has max height.
+    if (root->right == nullptr) 
+        root->height =  1 + root->left->height;
+    else if (root->left == nullptr) 
+        root->height =  1 + root->right->height;
+    else if (root->left->height > root->right->height) 
+    root->height =  1 + root->left->height;
+    else 
+    root->height =  1 + root->right->height;
 
+    return root;
 }
 
 int main (void) {
     cout << "########################################################################" << endl;
-    Node* center = new Node;
-    Node* left = new Node;
-    Node* leftLeft = new Node;
-    Node* right = new Node;
-    Node* rightRight = new Node;
-    Node* rightLeft = new Node;
-    Node* rightLeftRight = new Node;
-    Node* rightLeftRightRight = new Node;
-
-                                            center->left = left; 
-                        left->left = leftLeft;                              center->right = right;
-                                                right->left = rightLeft;                        // right->right = rightRight;
-                                                        rightLeft->right = rightLeftRight; 
-    
-     
-    //rightLeftRight->right = rightLeftRightRight;
-    cout << isAVL(center);
+    TreeNode* root = new TreeNode(5);
+    insert(root, 3);
+    insert(root, 7);
+    insert(root, 1);
+    insert(root, 4);
+    insert(root, 6);
 
     cout << endl;
     cout << "########################################################################" << endl;
+
+
+
+
+    //Node* center = new Node;
+    //Node* left = new Node;
+    //Node* leftLeft = new Node;
+    //Node* right = new Node;
+    //Node* rightRight = new Node;
+    //Node* rightLeft = new Node;
+    //Node* rightLeftRight = new Node;
+    //Node* rightLeftRightRight = new Node;
+
+    //                                        center->left = left; 
+    //                    left->left = leftLeft;                              center->right = right;
+    //                                            right->left = rightLeft;                        // right->right = rightRight;
+    //                                                    rightLeft->right = rightLeftRight; 
+    
+    // 
+    ////rightLeftRight->right = rightLeftRightRight;
+    //cout << isAVL(center);
+
+    //cout << endl;
+    //cout << "########################################################################" << endl;
 
     //TreeNode* node1 = new TreeNode(1);
     //TreeNode* node4 = new TreeNode(4);
