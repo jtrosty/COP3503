@@ -137,6 +137,7 @@ int main(int argc, char* argv[]) {
         // Work thorugh user input determine if it contains a command, name, and ID, max will be all 3.
         // If the user input has a space, that implies there are 2 commands being input EX: remove
         // If the user input has 2 spaces that implies that there are 3 user input wors EX: insert
+        if (userInput.size() == 0) continue;
 
         if ((delimiter1 = userInput.find(' ')) != std::string::npos) {
             command = userInput.substr(0, delimiter1);
@@ -165,9 +166,26 @@ int main(int argc, char* argv[]) {
         }
         
         // Verify that the input meets the requirements of the prompt
-        if (!studentData->isValidID(gatorID) || !studentData->isNameValid(name)) {
-            cout << "unsuccessful" << endl;
-            continue;
+        if (command == "search" || command == "insert") {
+            if (gatorID.empty()) {
+                if (!studentData->isNameValid(name)) {
+                    cout << "unsuccessful" << endl;
+                    continue;
+                }
+            }
+            else if (name.empty()) {
+                if (!studentData->isValidID(gatorID)) {
+                    cout << "unsuccessful" << endl;
+                    continue;
+                }
+            }
+            else {
+                if (!studentData->isValidID(gatorID) || !studentData->isNameValid(name)) {
+                    cout << "unsuccessful" << endl;
+                    continue;
+                }
+
+            }
         }
 
         // USER INPUT HAS BEE RECIEVED AND SAVED, NOW TO PARSE IT FOR THE FUNCTIONS
@@ -223,6 +241,9 @@ int main(int argc, char* argv[]) {
         }
         else if (command == "q") {
             run = 0;
+        }
+        else if (command == "") {
+            // do nothing 
         }
     }
     return 0;

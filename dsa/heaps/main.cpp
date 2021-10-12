@@ -62,15 +62,84 @@ void heapPrint(int* theheap, int size)
     }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//                   Heap 6.1.3 isHeap
+// size 1 2  3  4  5  6  7  8  9  10 11
+//      0 1  2  3  4  5  6  7  8  9  10
+//      0 0  1  1  2  2  3  3  4  4
+
+bool isMinHeap(int arr[],int size)
+{
+    //code here
+    int middle = (size - 1) / 2;
+    // handles all nodes up to the last node in the 2nd to last level
+    if (size == 1) return true;
+    // Most common case
+    for (int i = 0; i < middle; i++) {
+        if (arr[i] > arr[(2 * i) + 1] || arr[i] > arr[(2 * i) + 2]) 
+            return false;
+    }
+    // Handles the case of the last 2 nodes
+    if (size - 1 == (2 * middle) + 1) {
+        if (arr[middle] > arr[(2 * middle) + 1]) 
+            return false;
+    }
+    else if (size - 1 == (2 * middle) + 2) {
+        if (arr[middle] > arr[(2 * middle) + 1] || arr[middle] > arr[(2 * middle) + 2]) 
+            return false;
+    }
+    return true;
+}
+
+bool isMaxHeap(int arr[],int size)
+{
+    //code here
+    //code here
+    int middle = (size - 1) / 2;
+    // handles all nodes up to the last node in the 2nd to last level
+    if (size == 1) return true;
+    // Most common case
+    for (int i = 0; i < middle; i++) {
+        if (arr[i] < arr[(2 * i) + 1] || arr[i] < arr[(2 * i) + 2]) 
+            return false;
+    }
+    // Handles the case of the last 2 nodes
+    if (size - 1 == (2 * middle) + 1) {
+        if (arr[middle] < arr[(2 * middle) + 1]) 
+            return false;
+    }
+    else if (size - 1 == (2 * middle) + 2) {
+        if (arr[middle] < arr[(2 * middle) + 1] || arr[middle] < arr[(2 * middle) + 2]) 
+            return false;
+    }
+    return true;
+}
+
+int heapPlay(int arr[],int size)
+{
+    //code here
+    bool maxHeap = false;
+    bool minHeap = false;
+    if (isMaxHeap(arr, size)) maxHeap = true; 
+    if (isMinHeap(arr, size)) minHeap = true;
+    std::cout << "maxHeap " << maxHeap << " minHeap " << minHeap << std::endl;
+
+    if (maxHeap && minHeap) return 0;
+    else if (maxHeap || minHeap) return arr[0];
+    else return -1;
+}
 
 //Don't change main
 int main() {
     int* theHeadp = new int[6];
     int size = 6;
-    readHeap(theHeadp);
-    heapRemove(theHeadp, size);
-    heapRemove(theHeadp, size);
-    heapPrint(theHeadp, size);
+    int arr[3] = {2, 1, 3};
+    std::cout << heapPlay(arr, 3) << std::endl;;
+
+    //readHeap(theHeadp);
+    //heapRemove(theHeadp, size);
+    //heapRemove(theHeadp, size);
+    //heapPrint(theHeadp, size);
 
 ////////////////////////////////////////////
 // HEAP Quiz

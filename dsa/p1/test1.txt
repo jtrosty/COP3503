@@ -1,17 +1,12 @@
-11
-insert “NAME_ANYTHING_IN_QUOTES_$” LONG_NUMBER_5454215418411
-insert “FIRST_NAME LAST_NAME” 12345678
-insert “FIRST_NAME LAST_NAME” XO4444447
-printInorder
-printPostorder
-printPreorder
-insert "jon" 10
-insert "deena" 5
-insert "jen" 15
-insert "joel" 13
-insert "joel" 13
-q
+6
+insert "Evan" 44985771
+insert "Earl" 318348&4
+insert "Erica" 44985771
+printLevelCount
+insert "Enrique" 17891824
+printLevelCount
 REM insert "jon" 10
+
 REM insert "deena" 5
 REM insert "jen" 15
 REM insert "joel" 13
@@ -26,4 +21,15 @@ REM printLevelCount
 REM search 5
 REM search 10
 REM search 13
-REM search 15
+REM search 18
+
+REM Correct output:
+REM successful
+REM successful
+REM successful
+REM 27782901
+REM 11133245
+REM 31239830
+REM David
+REM Danielle
+REM David5
