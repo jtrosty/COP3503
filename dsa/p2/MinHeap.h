@@ -1,80 +1,105 @@
 
 class MinHeap {
     private:
+
+    // Resize functions
+    char resizeSmaller();
+    char resizeLarger();
+
+    // Heapify
+    char heapifyUp(int index);
+    char heapifyDown(int index);
+
+    public:
     int* heap;
     int size;
     int capacity;
     int resizeFactor = 2;
 
-    char resizeSmaller();
-    char resizeLarger();
-
-    char heapifyUp(int index);
-    char heapifyDown(int index);
-
-    public:
-
 
     MinHeap();
+    ~MinHeap();
 
     char insert(int value);
 
-    char extractMin();
+    int extractMin();
 
     char deleteValue();
 
     void traversal();
 
+    void printHeap();
+
 };
 
 
 ////////////////////////////////////////////////////////////////////////
-//                  Constructors
+//                  Constructors and Destructor
 
 MinHeap::MinHeap() {
     size = 0;
-    heap = nullptr;
+    int initialCapacity = 10;
+    capacity = initialCapacity;
+    heap = new int[initialCapacity];
+}
+
+MinHeap::~MinHeap() {
+    if (heap == nullptr) {}
+    else delete[] heap;
 }
 
 ////////////////////////////////////////////////////////////////////////
 //                  Insert
 
 char MinHeap::insert(int value) {
-    int initialSize = 10;
-    if (heap == nullptr) {
-        heap = new int(initialSize);
-        capacity = initialSize;
-        heap[0] = value;
+    if (size == 0) {
+        heap[size] = value;
         size++;
     }
     else {
-        heap[size - 1] = value;
-        heapifyUp(size);
         size++;
+        heap[size - 1] = value;
+        heapifyUp(size - 1);
     }
 
     // Check if a resize is requried
-    if (size == capacity)       resizeLarger();
-    if (size == (capacity / 4)) resizeSmaller();
+    if (size == capacity - 1)   resizeLarger();
 
     return 1;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Extract Min
+
+int MinHeap::extractMin() {
+    if (size > 0) {
+        int result = heap[0];
+        heap[0] = heap[size - 1];
+        size--;
+        heapifyDown(0);
+        return result;
+    }
+    if (size == (capacity / 4)) resizeSmaller();
+    else return -1;
 }
 
 ////////////////////////////////////////////////////////////////////////
 //                  Resize Functions
 
 char MinHeap::resizeLarger() {
-    int* newHeap = new int(capacity * 2);
+    capacity = capacity * 2;
+    int* newHeap = new int[capacity];
     for (int i = 0; i < size; i++) {
         newHeap[i] = heap[i];
     }
     delete[] heap;
     heap = newHeap;
+    printHeap();
     return 1;
 }
 
 char MinHeap::resizeSmaller() {
-    int* newHeap = new int(capacity / 2);
+    int* newHeap = new int[capacity / 2];
     for (int i = 0; i < size; i++) {
         newHeap[i] = heap[i];
     }
@@ -141,4 +166,14 @@ char MinHeap::heapifyDown(int index) {
     return 1;
 }
 
+////////////////////////////////////////////////////////////////////////
+//                  Print Functions
 
+void MinHeap::printHeap() {
+    if (size > 0) {
+        for (int i = 0; i < size; i++) {
+            if (i == size-1) std::cout << heap[i] << std::endl;
+            else std::cout << heap[i] << ", ";
+        }
+    }
+}
