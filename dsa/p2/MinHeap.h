@@ -30,6 +30,7 @@ class MinHeap {
 
     void printHeap();
 
+    char isEmpty();
 };
 
 
@@ -72,15 +73,16 @@ char MinHeap::insert(int value) {
 //                  Extract Min
 
 int MinHeap::extractMin() {
-    if (size > 0) {
-        int result = heap[0];
+    int result;
+    if (size >= 0) {
+        result = heap[0];
         heap[0] = heap[size - 1];
         size--;
         heapifyDown(0);
+        if (size <= (capacity / 4)) resizeSmaller();
         return result;
     }
-    if (size == (capacity / 4)) resizeSmaller();
-    else return -1;
+    else return result;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -94,12 +96,12 @@ char MinHeap::resizeLarger() {
     }
     delete[] heap;
     heap = newHeap;
-    printHeap();
     return 1;
 }
 
 char MinHeap::resizeSmaller() {
-    int* newHeap = new int[capacity / 2];
+    capacity = capacity / 2;
+    int* newHeap = new int[capacity];
     for (int i = 0; i < size; i++) {
         newHeap[i] = heap[i];
     }
@@ -136,7 +138,7 @@ char MinHeap::heapifyDown(int index) {
     int child2 = (2 * index) + 2;
     int temp = -1;
 
-    while (child1 < size) {
+    while ((child1 < size) && (heap[index] > heap[child1] || heap[index] > heap[child2])) {
         // Case of the last item being a leaf with no sibling
         if (size - 1 == child1) {
             if (heap[index] > heap[child1]) {
@@ -176,4 +178,11 @@ void MinHeap::printHeap() {
             else std::cout << heap[i] << ", ";
         }
     }
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Empty Functions
+char MinHeap::isEmpty() {
+    if (size <= 0) return 1;
+    else return 0;
 }

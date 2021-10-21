@@ -1,3 +1,6 @@
 {
-    "testMate.cpp.test.executables": "a.exe"
+    "testMate.cpp.test.executables": "a.exe",
+    "files.associations": {
+        "chrono": "cpp"
+    }
 }
