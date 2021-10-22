@@ -5,6 +5,7 @@
 #include <chrono>
 #include <fstream>
 #include <string>
+#include "Random.h"
 using std::ofstream;
 
 #include "MinHeap.h"
@@ -13,9 +14,12 @@ using std::endl;
 using std::cin;
 using std::freopen;
 
-void createInputFiles();
+void createInputFiles(int size);
 double runtTestHeap(char testToRun, MinHeap& heap);
-double emptyHeap(MinHeap& heap);
+double emptyHeap(char testToRubn, MinHeap& heap);
+double traverseHeap(MinHeap& heap);
+int* generateRandomArray(int size);
+void printResults(double* inResults, double* traversalTimes, double* outResults, char structureUsed);
 
 int main (void) {
     char run = 1;
@@ -23,8 +27,11 @@ int main (void) {
 
     char input = 0;
     std::string value;
-    std::ifstream infile;
     std::string streamInput;
+
+    double* inTimes = new double[9];
+    double* traversalTimes = new double[9];
+    double* outTimes = new double[9];
 
     while (run != 0) {
         
@@ -42,10 +49,19 @@ int main (void) {
         // Logic
         switch(input) {
             case '1': {
-                createInputFiles();
+                createInputFiles(10);
                 break;
             }
             case '2': {
+                createInputFiles(10);
+                for(int i = 1; i <= 9; i++) {
+                    if(testHeap.isEmpty()) {
+                        inTimes[i] = runtTestHeap(i, testHeap);
+                        traversalTimes[i] = traverseHeap(testHeap);
+                        outTimes[i] = emptyHeap(i, testHeap);
+                    }
+                }
+                printResults(inTimes, traversalTimes, outTimes, 1);
 
                 break;
             }
@@ -60,23 +76,16 @@ int main (void) {
                 break;
             }
             case '5': {
-                auto start = std::chrono::high_resolution_clock::now();
-                infile.open("data/sm_as.txt", std::ifstream::in);
-                while(!infile.eof()) {
-                    std::getline(infile, streamInput, ',');
-                    testHeap.insert(std::stoi(streamInput));
-                }
-                auto end = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> time = end - start;
-                cout << "Time: " << time.count() << endl;
+                generateRandomArray(10);
                 break;
             }
             case '6': {
-                std::cout << "Time to fill: " << runtTestHeap(1, testHeap);
+                cout << "Time to fill: " << runtTestHeap(1, testHeap);
+                cout << endl;
                 break;
             }
             case '7': {
-                double result = emptyHeap(testHeap);
+                double result = emptyHeap(1, testHeap);
                 
                 break;
             }
@@ -88,123 +97,202 @@ int main (void) {
     }
     return 0;
 }
+/////////////////////////////////////////////////////////////////////////////////
+//                  Print results of all data
 
-/*
-    auto start = chrono::high_resolution_clock::now();
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double> time = end - start;
-    freopen("data/me_as.txt", "w", stdout);
-    for (int i = 0; i < bigSize; i++) {
-        if (i == bigSize -1) cout << i; 
-        else cout << i << ", ";
-    }
-    fclose(stdout);
-*/
-double emptyHeap(MinHeap& heap) {
+void printResults(double* inResults, double* traversalTimes, double* outResults, char structureUsed) {
+    cout << " Resut for ";
+    if (structureUsed == 1) cout << "Minimum Heap" << endl;
+    else cout << "hash Table" << endl;
+    cout << "Small  Ascending In:  " << inResults[1] << " | traversal: " << traversalTimes[1] << " | Small  Ascending out:  " << outResults[1] << endl;
+    cout << "Small  Descending In: " << inResults[4] << " | traversal: " << traversalTimes[4] << " | Small  descending out: " << outResults[4] << endl;
+    cout << "Small  Random In:     " << inResults[7] << " | traversal: " << traversalTimes[7] << " | Small  Random out:     " << outResults[7] << endl;
+    cout << "Medium Ascending In:  " << inResults[2] << " | traversal: " << traversalTimes[2] << " | Medium Ascending out:  " << outResults[2] << endl;
+    cout << "Medium Descending In: " << inResults[5] << " | traversal: " << traversalTimes[5] << " | Medium descending out: " << outResults[5] << endl;
+    cout << "Medium Random In:     " << inResults[8] << " | traversal: " << traversalTimes[8] << " | Medium Random out:     " << outResults[8] << endl;
+    cout << "Large  Ascending In:  " << inResults[3] << " | traversal: " << traversalTimes[3] << " | Large  Ascending out:  " << outResults[3] << endl;
+    cout << "Large  Descending In: " << inResults[6] << " | traversal: " << traversalTimes[6] << " | Large  descending out: " << outResults[6] << endl;
+    cout << "Large  Random In:     " << inResults[9] << " | traversal: " << traversalTimes[9] << " | Large  Random out:     " << outResults[9] << endl;
+}
+
+
+double traverseHeap(MinHeap& heap) {
     auto start = std::chrono::high_resolution_clock::now();
-    freopen("data/out.txt", "w", stdout);
-    while(heap.isEmpty() == 0) {
-        std::cout << heap.extractMin() << ", ";
-    }
-    fclose(stdout);
-    freopen(nullptr, "w", stdout);
+    heap.search(-1);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time = end - start;
+    //cout << "Time to empty: " << time.count() << endl;
     return time.count();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//   Generates a Random Array, first a array of 1 to size is created. Then
+//   the array is loop through once and a random index remaining in the 
+//   array is used to swap with the current index in the loop.
+int* generateRandomArray(int size) {
+    Random rand;
+    int* resultArray = new int[size];
+    for (int i = 0; i < size; i++) {
+        resultArray[i] = i;
+    }
+    for (int i = 0; i < size; i++) {
+        int swapIndex = rand.Int(i, size - 1);
+        int temp = resultArray[swapIndex];
+        resultArray[swapIndex] = resultArray[i];
+        resultArray[i] = temp;
+    }
+    //for (int i = 0; i < size; i++) {
+    //    cout << resultArray[i] << ", ";
+    //}
+    return resultArray;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//               Empty heap test
+double emptyHeap(char testToRun, MinHeap& heap) {
+    std::string outName;
+    switch(testToRun) {
+        case 1: { outName = "data/out_sm_as.txt"; break; }
+        case 2: { outName = "data/out_me_as.txt"; break; }
+        case 3: { outName = "data/out_la_as.txt"; break; }
+        case 4: { outName = "data/out_sm_ds.txt"; break; }
+        case 5: { outName = "data/out_me_ds.txt"; break; }
+        case 6: { outName = "data/out_la_ds.txt"; break; }
+        case 7: { outName = "data/out_sm_ra.txt"; break; }
+        case 8: { outName = "data/out_me_ra.txt"; break; }
+        case 9: { outName = "data/out_la_ra.txt"; break; }
+    }
+
+    std::ofstream outPutFile;
+    auto start = std::chrono::high_resolution_clock::now();
+    outPutFile.open(outName);
+    while(!heap.isEmpty()) {
+        outPutFile << heap.extractMin() << ", ";
+    }
+    outPutFile.close();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time = end - start;
+    //cout << "Time to empty: " << time.count() << endl;
+    return time.count();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//               Empty heap test
 double runtTestHeap(char testToRun, MinHeap& heap) {
     std::ifstream infile;
-    std::string inputData;
+    std::string inputData = "";
     std::string streamInput;
     switch(testToRun) {
-        case 1: {
-            inputData = "data/sm_as.txt";
-            break;
-        }
-        case 2: {
-            inputData = "data/me_as.txt";
-            break;
-        }
-        case 3: {
-            inputData = "data/la_as.txt";
-            break;
-        }
-        case 4: {
-            inputData = "data/sm_ds.txt";
-            break;
-        }
-        case 5: {
-            inputData = "data/me_ds.txt";
-            break;
-        }
-        case 6: {
-            inputData = "data/la_ds.txt";
-            break;
-        }
+        case 1: { inputData = "data/sm_as_in.txt"; break; }
+        case 2: { inputData = "data/me_as_in.txt"; break; }
+        case 3: { inputData = "data/la_as_in.txt"; break; }
+        case 4: { inputData = "data/sm_ds_in.txt"; break; }
+        case 5: { inputData = "data/me_ds_in.txt"; break; }
+        case 6: { inputData = "data/la_ds_in.txt"; break; }
+        case 7: { inputData = "data/sm_ra_in.txt"; break; }
+        case 8: { inputData = "data/me_ra_in.txt"; break; }
+        case 9: { inputData = "data/la_ra_in.txt"; break; }
     }
 
     auto start = std::chrono::high_resolution_clock::now();
     infile.open(inputData, std::ifstream::in);
 
-    while(!infile.eof()) {
-        std::getline(infile, streamInput, ',');
-        if (!streamInput.empty()) heap.insert(std::stoi(streamInput));
+    if (infile.is_open()) {
+        while(!infile.eof()) {
+            std::getline(infile, streamInput, ',');
+            if (!streamInput.empty()) heap.insert(std::stoi(streamInput));
+        }
+        bool good = infile.good();
+        bool eofbit = infile.eof();
+        bool fail = infile.fail();
+        bool bad = infile.bad();
+        infile.close();
     }
+    else cout << "DIDDN'T OPEN TEST: " << testToRun << endl;
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to fill: " << time.count() << endl;
+
     return time.count();
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//               Create 9 test files to input small, medium, and large files in
+//               3 formats, ascending, descending, and random.
 
-void createInputFiles() {
-    int size = 100;
+void createInputFiles(int size) {
     int bigSize = size * 10;
     int reallyBigSize = size * 100;
+    int* randomArray;
+    std::ofstream outPutFile;
 
     // Ascending files
-    freopen("data/sm_as.txt", "w", stdout);
+    outPutFile.open("data/sm_as_in.txt");
     for (int i = 0; i < size; i++) {
-        if (i == size -1) cout << i; 
-        else cout << i << ", ";
+        if (i == size - 1) outPutFile << i; 
+        else outPutFile << i << ", ";
     }
-    fclose(stdout);
+    outPutFile.close();
 
-    freopen("data/me_as.txt", "w", stdout);
+    outPutFile.open("data/me_as_in.txt");
     for (int i = 0; i < bigSize; i++) {
-        if (i == bigSize -1) cout << i; 
-        else cout << i << ", ";
+        if (i == bigSize - 1) outPutFile << i; 
+        else outPutFile << i << ", ";
     }
-    fclose(stdout);
+    outPutFile.close();
 
-    freopen("data/la_as.txt", "w", stdout);
+    outPutFile.open("data/la_as_in.txt");
     for (int i = 0; i < reallyBigSize; i++) {
-        if (i == reallyBigSize -1) cout << i; 
-        else cout << i << ", ";
+        if (i == reallyBigSize - 1) outPutFile << i; 
+        else outPutFile << i << ", ";
     }
-    fclose(stdout);
+    outPutFile.close();
 
-    // Descending Files
-    freopen("data/sm_ds.txt", "w", stdout);
+    outPutFile.open("data/sm_ds_in.txt");
     for (int i = size; i > 0; i--) {
-        if (i == 1) cout << i; 
-        else cout << i << ", ";
+        if (i == 1) outPutFile << i; 
+        else outPutFile << i << ", ";
     }
-    fclose(stdout);
-
-    freopen("data/me_ds.txt", "w", stdout);
+    outPutFile.close();
+   
+    outPutFile.open("data/me_ds_in.txt");
     for (int i = bigSize; i > 0; i--) {
-        if (i == 1) cout << i; 
-        else cout << i << ", ";
+        if (i == 1) outPutFile << i; 
+        else outPutFile << i << ", ";
     }
-    fclose(stdout);
+    outPutFile.close();
 
-    freopen("data/la_ds.txt", "w", stdout);
+    outPutFile.open("data/la_ds_in.txt");
     for (int i = reallyBigSize; i > 0; i--) {
-        if (i == 1) cout << i; 
-        else cout << i << ", ";
+        if (i == 1) outPutFile << i; 
+        else outPutFile << i << ", ";
     }
-    fclose(stdout);
+    outPutFile.close();
 
+    outPutFile.open("data/sm_ra_in.txt");
+    randomArray = generateRandomArray(size);
+    for (int i = 0; i < size; i++) {
+        if (i == size - 1) outPutFile << randomArray[i]; 
+        else outPutFile << randomArray[i] << ", ";
+    }
+    outPutFile.close();
+    delete[] randomArray;
+
+    outPutFile.open("data/me_ra_in.txt");
+    randomArray = generateRandomArray(bigSize);
+    for (int i = 0; i < bigSize; i++) {
+        if (i == bigSize - 1) outPutFile << randomArray[i]; 
+        else outPutFile << randomArray[i] << ", ";
+    }
+    outPutFile.close();
+    delete[] randomArray;
+
+    outPutFile.open("data/la_ra_in.txt");
+    randomArray = generateRandomArray(reallyBigSize);
+    for (int i = 0; i < reallyBigSize; i++) {
+        if (i == reallyBigSize - 1) outPutFile << randomArray[i]; 
+        else outPutFile << randomArray[i] << ", ";
+    }
+    outPutFile.close();
+    delete[] randomArray;
 }

@@ -1,6 +1,8 @@
 {
     "testMate.cpp.test.executables": "a.exe",
     "files.associations": {
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "fstream": "cpp",
+        "xlocmes": "cpp"
     }
 }

@@ -29,6 +29,8 @@ class MinHeap {
     void traversal();
 
     void printHeap();
+    void traversalOfMinHeap(); 
+    char search(int itemToFind);
 
     char isEmpty();
 };
@@ -36,7 +38,6 @@ class MinHeap {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Constructors and Destructor
-
 MinHeap::MinHeap() {
     size = 0;
     int initialCapacity = 10;
@@ -51,7 +52,6 @@ MinHeap::~MinHeap() {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Insert
-
 char MinHeap::insert(int value) {
     if (size == 0) {
         heap[size] = value;
@@ -71,7 +71,6 @@ char MinHeap::insert(int value) {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Extract Min
-
 int MinHeap::extractMin() {
     int result;
     if (size >= 0) {
@@ -79,7 +78,7 @@ int MinHeap::extractMin() {
         heap[0] = heap[size - 1];
         size--;
         heapifyDown(0);
-        if (size <= (capacity / 4)) resizeSmaller();
+        if ((size <= (capacity / 4)) && (size != 0)) resizeSmaller();
         return result;
     }
     else return result;
@@ -87,7 +86,6 @@ int MinHeap::extractMin() {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Resize Functions
-
 char MinHeap::resizeLarger() {
     capacity = capacity * 2;
     int* newHeap = new int[capacity];
@@ -112,7 +110,6 @@ char MinHeap::resizeSmaller() {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Heapify Functions
-
 char MinHeap::heapifyUp(int index) {
     int parent = (index - 1) / 2;
     int temp = -1;
@@ -170,7 +167,6 @@ char MinHeap::heapifyDown(int index) {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Print Functions
-
 void MinHeap::printHeap() {
     if (size > 0) {
         for (int i = 0; i < size; i++) {
@@ -178,6 +174,28 @@ void MinHeap::printHeap() {
             else std::cout << heap[i] << ", ";
         }
     }
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Traverse Heaps
+void MinHeap::traversalOfMinHeap() {
+    if (size > 0) {
+        for (int i = 0; i < size; i++) {
+            if (i == size-1) std::cout << heap[i] << std::endl;
+            else std::cout << heap[i] << ", ";
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Traverse Heaps
+char MinHeap::search(int itemToFind) {
+    if (size > 0) {
+        for (int i = 0; i < size; i++) {
+            if (heap[i] == itemToFind)  return 1;
+        }
+    }
+    return false;
 }
 
 ////////////////////////////////////////////////////////////////////////
