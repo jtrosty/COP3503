@@ -8,6 +8,7 @@
 #include "Random.h"
 using std::ofstream;
 
+#include "HashTable.h"
 #include "MinHeap.h"
 using std::cout;
 using std::endl;
@@ -49,7 +50,12 @@ int main (void) {
         // Logic
         switch(input) {
             case '1': {
-                createInputFiles(10);
+                HashTable testHash;
+                testHash.insert(1);
+                testHash.print();
+                testHash.insert(9);
+                testHash.insert(12);
+                testHash.print();
                 break;
             }
             case '2': {
