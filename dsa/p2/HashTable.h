@@ -16,19 +16,25 @@ class HashTable {
 
         HashTable();
         ~HashTable();
+        void deleteHashTable(Node** oldTable);
         HashTable& operator=(HashTable& hash);
 
         void insert(int data); 
+        void insert(Node* node); 
         char remove(int data); 
+        char removeAll(); 
         void print();
+        char isEmpty();
 
         char traverse(int keyToSearch);
 
     private:
+        int capacity;
         int size;
         Node** table;
+        enum Resize { bigger, smaller};
 
-        void rehash();
+        void rehash(Resize choice, int factor);
         int getHashIndex(int key);
 
 };
@@ -37,25 +43,33 @@ class HashTable {
 //             Constructors and Destructors
 
 HashTable::HashTable() {
-    size = 10;
-    table = new Node*[size];
-    for (int i = 0; i < size; i++) {
+    capacity = 10;
+    size = 0;
+    table = new Node*[capacity];
+    for (int i = 0; i < capacity; i++) {
         table[i] = nullptr;
     }
 }
 
 HashTable::~HashTable() {
-    for (int i = 0; i < size; i++) {
+    deleteHashTable(table);
+}
+
+void HashTable::deleteHashTable(Node** oldTable) {
+    for (int i = 0; i < capacity; i++) {
         Node* prev;
-        prev = table[i];
-        if (table[i] != nullptr) {
+        prev = oldTable[i];
+        if (oldTable[i] != nullptr) {
             Node* next = prev->next;
             delete prev;
-            prev = next;
-            next = next->next;
+            while (next != nullptr) {
+                prev = next;
+                next = next->next;
+                delete prev;
+            }
         }
     }
-    delete[] table;
+    delete[] oldTable;
 }
 
 ///////////////////////////////////////////////////////
@@ -68,57 +82,71 @@ HashTable& HashTable::operator=(HashTable& hashTable) {
 //             Insert
 
 int HashTable::getHashIndex(int key) {
-    return key % size;
+    return key % capacity;
 }
 
 void HashTable::insert(int data) {
     int key = getHashIndex(data);
     if (table[key] == nullptr) {
-        table[key]->data = data;
+        Node* newNode = new Node(data);
+        table[key] = newNode;
     }
     else {
         int counter = 0;
         Node* temp = table[key];
         Node* newNode = new Node(data);
-        while (temp != nullptr) {
+        while (temp->next != nullptr) {
             temp = temp->next;
             counter++;
         }
-        temp = newNode;
-        if (counter > 10) rehash();
+        temp->next = newNode;
+        if (counter > 4) rehash(bigger, 4);
+    }
+    size++;
+}
+
+/***** NOT USED ***********/
+void HashTable::insert(Node* node) {
+    int key = getHashIndex(node->data);
+    if (table[key] == nullptr) {
+        table[key] = node;
+    }
+    else {
+        int counter = 0;
+        Node* temp = table[key];
+        while (temp->next != nullptr) {
+            temp = temp->next;
+            counter++;
+        }
+        temp->next = node;
     }
 }
-void HashTable::rehash() {
-    int newSize = size * 4;
-    Node** newTable = new Node*[newSize];
-    for (int i = 0; i < newSize; i++) {
+
+///////////////////////////////////////////////////////
+//             Rehash
+
+void HashTable::rehash(Resize choice, int factor) {
+    int newCapacity;
+    if (choice == bigger) newCapacity = capacity * factor; 
+    else newCapacity = capacity / factor;
+
+    Node** newTable = new Node*[newCapacity];
+    for (int i = 0; i < newCapacity; i++) {
         newTable[i] = nullptr;
+        size = 0;
     }
-    int oldSize = size;
+    int oldCapacity = capacity;
 
     Node** oldTable = table;
     table = newTable;
-    size = newSize;
+    capacity = newCapacity;
 
-    for (int i = 0; i < oldSize; i++) {
-        if (oldTable[i] == nullptr) {}
-        else {
-            Node* temp = oldTable[i];
-            Node* newTableTemp;
-            // Traverse through old hash table
-            while (temp != nullptr) {
-                int key = getHashIndex(temp->data);
-                if (table[key] == nullptr) table[key] = temp;
-                else {
-                    newTableTemp = table[key];
-                    while (newTableTemp != nullptr) 
-                        { newTableTemp = newTableTemp->next; }
-                    newTableTemp = temp;
-                }
-                table[getHashIndex(temp->data)] = temp;
-                temp->next;
-            } 
-        } 
+    for(int i = 0; i < oldCapacity; i++) {
+        Node* temp = oldTable[i];
+        while (temp != nullptr) {
+            insert(temp->data);
+            temp = temp->next;
+        }
     }
     delete[] oldTable;
 }
@@ -134,16 +162,25 @@ char HashTable::remove(int data) {
             if (prev == nullptr) table[key] = temp->next;
             else                 prev->next = temp->next;
             delete temp;
+            size--;
+            if ((size < (capacity / 4)) && size > 5) rehash(smaller, 2);
+            return 1;
         }
         prev = temp;
         temp = temp->next;
     }
+    return 0;
 } 
+
+char HashTable::removeAll() {
+    int initialSize = size;
+    for (int i = 0; i < initialSize; i++) remove(i);
+}
 
 ///////////////////////////////////////////////////////
 //             Traverse
 char HashTable::traverse(int keyToSearch) {
-    for(int i = 0; i < size; i++) {
+    for(int i = 0; i < capacity; i++) {
         Node* temp = table[i];
         while (temp != nullptr) {
             if (temp->data == keyToSearch) return 1;
@@ -156,11 +193,21 @@ char HashTable::traverse(int keyToSearch) {
 ///////////////////////////////////////////////////////
 //             Print
 void HashTable::print() {
-    for(int i = 0; i < size; i++) {
+    int counter = 0;
+    for(int i = 0; i < capacity; i++) {
         Node* temp = table[i];
         while (temp != nullptr) {
             std::cout << temp->data << ", ";
+            counter++;
+            temp = temp->next;
         }
-        std::cout << std::endl;
     }
+    std::cout << std::endl << "total size " << size << " counter " << counter << std::endl;
+}
+
+///////////////////////////////////////////////////////
+//           is  Empty
+char HashTable::isEmpty() {
+    if (size <= 0) return 1;
+    else return 0;
 }
