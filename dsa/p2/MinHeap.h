@@ -24,13 +24,14 @@ class MinHeap {
 
     int extractMin();
 
-    char deleteValue();
+    char deleteValue(int value);
+    char deleteIndex(int index); 
 
     void traversal();
 
     void printHeap();
     void traversalOfMinHeap(); 
-    char search(int itemToFind);
+    int search(int itemToFind);
 
     char isEmpty();
 };
@@ -67,6 +68,26 @@ char MinHeap::insert(int value) {
     if (size == capacity - 1)   resizeLarger();
 
     return 1;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Delete Value
+char MinHeap::deleteIndex(int index) {
+    if (size >= 0 && index < size) {
+        heap[index] = heap[size - 1];
+        size--;
+        heapifyDown(index);
+        if ((size <= (capacity / 4)) && (size != 0)) resizeSmaller();
+        return 1;
+    }
+    else return 0;
+}
+
+char MinHeap::deleteValue(int value) {
+    int index = search(value);
+    if (index >= 0 && index < size) 
+        return deleteIndex(index);
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -189,13 +210,13 @@ void MinHeap::traversalOfMinHeap() {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Traverse Heaps
-char MinHeap::search(int itemToFind) {
+int MinHeap::search(int itemToFind) {
     if (size > 0) {
         for (int i = 0; i < size; i++) {
-            if (heap[i] == itemToFind)  return 1;
+            if (heap[i] == itemToFind)  return i;
         }
     }
-    return false;
+    return -1;
 }
 
 ////////////////////////////////////////////////////////////////////////

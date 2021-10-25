@@ -4,6 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include <fstream>
+#include <set>
 #include <string>
 #include "Random.h"
 using std::ofstream;
@@ -24,13 +25,16 @@ double traverseHeap(MinHeap& heap);
 double traverseHash(HashTable& table); 
 int* generateRandomArray(int size);
 void printResults(double* inResults, double* traversalTimes, double* outResults, char structureUsed);
+std::string getFileName(char testToRun); 
+std::string getFileOutputName(char testToRun); 
 
 int main (void) {
     char run = 1;
     HashTable testHash;
     MinHeap testHeap;
+    std::set <int> s;
 
-    int size = 10000;
+    int size = 100;
     int bigSize = 10 * size;
     int reallyBigSize = 10 * bigSize;
 
@@ -38,92 +42,73 @@ int main (void) {
     std::string value;
     std::string streamInput;
 
-    double* inTimes = new double[9];
-    double* traversalTimes = new double[9];
-    double* outTimes = new double[9];
+    double* inTimesHeap        = new double[10];
+    double* traversalTimesHeap = new double[10];
+    double* outTimesHeap       = new double[10];
+
+    double* inTimesHash        = new double[10];
+    double* traversalTimesHash = new double[10];
+    double* outTimesHash       = new double[10];
+    double startValue = -1.0f;
+
+    for (int i = 0; i < 10; i++) {
+        inTimesHeap[i]        = startValue;
+        traversalTimesHeap[i] = startValue;
+        outTimesHeap[i]       = startValue;
+        inTimesHash[i]        = startValue;
+        traversalTimesHash[i] = startValue;
+        outTimesHash[i]       = startValue;
+    }
 
     while (run != 0) {
         
         // Menu
         cout << "Menu: " << endl;
-        cout << "1: Generate input files for test" << endl;
-        cout << "2. Run Ascending test" << endl;
-        cout << "3. input value and print heap" << endl;
-        cout << "4. Extract min" << endl;
-        cout << "5. Ascending into heap" << endl;
+        cout << "1. Create input and run all tests" << endl;
+        cout << "q  - Quit the program." << endl;
 
         // User input
-        //cin >> input;
-        input = '2';
+        cin >> input;
+        int numOfTests = 1;
 
         // Logic
         switch(input) {
             case '1': {
-                testHash.print();
-
-                for (int i = 0; i < 8; i++) {
-                    testHash.insert(i);
-                }
-                testHash.print();
-                cout << " REMOVING " << endl;
-                testHash.removeAll();
-                testHash.print();
-                
-                run = 0; 
-                break;
-            }
-            case '2': {
                 createInputFiles(size, bigSize, reallyBigSize);
 
                 // Min Heap
-                for(int i = 1; i <= 9; i++) {
+                for(int i = 1; i <= numOfTests; i++) {
                     if(testHeap.isEmpty()) {
-                        inTimes[i] = fillHeap(i, testHeap);
-                        traversalTimes[i] = traverseHeap(testHeap);
-                        outTimes[i] = emptyHeap(i, testHeap);
+                        inTimesHeap[i] = fillHeap(i, testHeap)           * 1.0f;
+                        traversalTimesHeap[i] = traverseHeap(testHeap) * 1.0f;
+                        outTimesHeap[i] = emptyHeap(i, testHeap)         * 1.0f;
                     }
-                }
-                printResults(inTimes, traversalTimes, outTimes, 1);
-                for(int i = 1; i <= 9; i++) {
-                    inTimes[i] = 0.0f;
-                    traversalTimes[i] = 0.0f;
-                    outTimes[i] = 0.0f;
                 }
 
                 // Hast Table
-                for(int i = 1; i <= 9; i++) {
+                for(int i = 1; i <= numOfTests; i++) {
                     if(testHash.isEmpty()) {
-                        inTimes[i] = fillHashTable(i, testHash);
-                        traversalTimes[i] = traverseHash(testHash);
-                        outTimes[i] = emptyHashTable(i, testHash);
+                        inTimesHash[i] = fillHashTable(i, testHash)      * 1.0f;
+                        traversalTimesHash[i] = traverseHash(testHash) * 1.0f;
+                        outTimesHash[i] = emptyHashTable(i, testHash)    * 1.0f;
                     }
                 }
-                printResults(inTimes, traversalTimes, outTimes, 2);
 
-                run = 0; 
+                printResults(inTimesHeap, traversalTimesHeap, outTimesHeap, 1);
+                printResults(inTimesHash, traversalTimesHash, outTimesHash, 2);
                 break;
             }
-            case '3': {
+            case '3': { // used for testing
                 cin >> value;
                 testHeap.insert(std::stoi(value));
                 testHeap.printHeap();
                 break;
             }
-            case '4': {
+            case '4': { // used for testing
                 cout << testHeap.extractMin() << endl;
                 break;
             }
-            case '5': {
-                break;
-            }
-            case '6': {
-                break;
-            }
-            case '7': {
-                double result = emptyHeap(1, testHeap);
-                break;
-            }
-            case 'q': {
+            case 'q': { // used to extit while loop
                 run = 0;
                 break;
             }
@@ -149,10 +134,12 @@ void printResults(double* inResults, double* traversalTimes, double* outResults,
     cout << "Large  Random In:     " << inResults[9] << " | traversal: " << traversalTimes[9] << " | Large  Random out:     " << outResults[9] << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+//                 Travese the 2 data structurs 
 
 double traverseHeap(MinHeap& heap) {
     auto start = std::chrono::high_resolution_clock::now();
-    heap.search(-1);
+    heap.traversalOfMinHeap();
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
@@ -161,7 +148,7 @@ double traverseHeap(MinHeap& heap) {
 
 double traverseHash(HashTable& table) {
     auto start = std::chrono::high_resolution_clock::now();
-    table.traverse(-1);
+    table.print();
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
@@ -193,28 +180,19 @@ int* generateRandomArray(int size) {
 ///////////////////////////////////////////////////////////////////////////////
 //               Empty heap test
 double emptyHeap(char testToRun, MinHeap& heap) {
-    std::string outName;
-    switch(testToRun) {
-        case 1: { outName = "data/out_sm_as.txt"; break; }
-        case 2: { outName = "data/out_me_as.txt"; break; }
-        case 3: { outName = "data/out_la_as.txt"; break; }
-        case 4: { outName = "data/out_sm_ds.txt"; break; }
-        case 5: { outName = "data/out_me_ds.txt"; break; }
-        case 6: { outName = "data/out_la_ds.txt"; break; }
-        case 7: { outName = "data/out_sm_ra.txt"; break; }
-        case 8: { outName = "data/out_me_ra.txt"; break; }
-        case 9: { outName = "data/out_la_ra.txt"; break; }
-    }
+    std::string inputFile = getFileName(testToRun);
+    std::ifstream file;
+    std::string streamInput;
 
-    std::ofstream outPutFile;
     auto start = std::chrono::high_resolution_clock::now();
-    outPutFile.open(outName);
-    while(!heap.isEmpty()) {
-        outPutFile << heap.extractMin() << ", ";
+    file.open(inputFile);
+    while(!file.eof()) {
+        std::getline(file, streamInput, ',');
+        heap.deleteValue(std::stoi(streamInput));
     }
-    outPutFile.close();
+    file.close();
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> time = end - start;
+    std::chrono::duration<double, std::nano> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
 }
@@ -222,27 +200,19 @@ double emptyHeap(char testToRun, MinHeap& heap) {
 ///////////////////////////////////////////////////////////////////////////////
 //               Empty HashTable test
 double emptyHashTable(char testToRun, HashTable& table) {
-    std::string outName;
-    int size;
-    switch(testToRun) {
-        case 1: { outName = "data/out_sm_as.txt"; break; }
-        case 2: { outName = "data/out_me_as.txt"; break; }
-        case 3: { outName = "data/out_la_as.txt"; break; }
-        case 4: { outName = "data/out_sm_ds.txt"; break; }
-        case 5: { outName = "data/out_me_ds.txt"; break; }
-        case 6: { outName = "data/out_la_ds.txt"; break; }
-        case 7: { outName = "data/out_sm_ra.txt"; break; }
-        case 8: { outName = "data/out_me_ra.txt"; break; }
-        case 9: { outName = "data/out_la_ra.txt"; break; }
-    }
+    std::string inputFile = getFileName(testToRun);
 
-    std::ofstream outPutFile;
+    std::ifstream file;
+    std::string streamInput;
     auto start = std::chrono::high_resolution_clock::now();
-    outPutFile.open(outName);
-    table.removeAll();
-    outPutFile.close();
+    file.open(inputFile);
+    while(!file.eof()) {
+        std::getline(file, streamInput, ',');
+        table.remove(std::stoi(streamInput));
+    }
+    file.close();
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> time = end - start;
+    std::chrono::duration<double, std::nano> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
 }
@@ -251,20 +221,10 @@ double emptyHashTable(char testToRun, HashTable& table) {
 //               Insert heap test
 double fillHeap(char testToRun, MinHeap& heap) {
     std::ifstream infile;
-    std::string inputData = "";
     std::string streamInput;
-    switch(testToRun) {
-        case 1: { inputData = "data/sm_as_in.txt"; break; }
-        case 2: { inputData = "data/me_as_in.txt"; break; }
-        case 3: { inputData = "data/la_as_in.txt"; break; }
-        case 4: { inputData = "data/sm_ds_in.txt"; break; }
-        case 5: { inputData = "data/me_ds_in.txt"; break; }
-        case 6: { inputData = "data/la_ds_in.txt"; break; }
-        case 7: { inputData = "data/sm_ra_in.txt"; break; }
-        case 8: { inputData = "data/me_ra_in.txt"; break; }
-        case 9: { inputData = "data/la_ra_in.txt"; break; }
-    }
-auto start = std::chrono::high_resolution_clock::now();
+    std::string inputData = getFileName(testToRun);
+
+    auto start = std::chrono::high_resolution_clock::now();
     infile.open(inputData, std::ifstream::in);
 
     if (infile.is_open()) {
@@ -276,7 +236,7 @@ auto start = std::chrono::high_resolution_clock::now();
     }
     else cout << "DIDDN'T OPEN TEST: " << testToRun << endl;
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> time = end - start;
+    std::chrono::duration<double, std::nano> time = end - start;
     //cout << "Time to fill: " << time.count() << endl;
 
     return time.count();
@@ -286,19 +246,8 @@ auto start = std::chrono::high_resolution_clock::now();
 //               Insert HashTable test
 double fillHashTable(char testToRun, HashTable& table) {
     std::ifstream infile;
-    std::string inputData = "";
     std::string streamInput;
-    switch(testToRun) {
-        case 1: { inputData = "data/sm_as_in.txt"; break; }
-        case 2: { inputData = "data/me_as_in.txt"; break; }
-        case 3: { inputData = "data/la_as_in.txt"; break; }
-        case 4: { inputData = "data/sm_ds_in.txt"; break; }
-        case 5: { inputData = "data/me_ds_in.txt"; break; }
-        case 6: { inputData = "data/la_ds_in.txt"; break; }
-        case 7: { inputData = "data/sm_ra_in.txt"; break; }
-        case 8: { inputData = "data/me_ra_in.txt"; break; }
-        case 9: { inputData = "data/la_ra_in.txt"; break; }
-    }
+    std::string inputData = getFileName(testToRun);
 
     auto start = std::chrono::high_resolution_clock::now();
     infile.open(inputData, std::ifstream::in);
@@ -312,11 +261,10 @@ double fillHashTable(char testToRun, HashTable& table) {
     }
     else cout << "DID NOT OPEN TEST: " << testToRun << endl;
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> time = end - start;
+    std::chrono::duration<double, std::nano> time = end - start;
 
     return time.count();
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 //               Create 9 test files to input small, medium, and large files in
 //               3 formats, ascending, descending, and random.
@@ -394,4 +342,37 @@ void createInputFiles(int size, int bigSize, int reallyBigSize) {
     }
     outPutFile.close();
     delete[] randomArray;
+}
+
+//////////////////////////////////////////////////////////////////////
+//                   Helper function, get file name
+std::string getFileName(char testToRun) {
+    switch(testToRun) {
+        case 1: { return "data/sm_as_in.txt"; break; }
+        case 2: { return "data/me_as_in.txt"; break; }
+        case 3: { return "data/la_as_in.txt"; break; }
+        case 4: { return "data/sm_ds_in.txt"; break; }
+        case 5: { return "data/me_ds_in.txt"; break; }
+        case 6: { return "data/la_ds_in.txt"; break; }
+        case 7: { return "data/sm_ra_in.txt"; break; }
+        case 8: { return "data/me_ra_in.txt"; break; }
+        case 9: { return "data/la_ra_in.txt"; break; }
+    }
+    // Failed to return
+    return "";
+}
+
+std::string getFileOutputName(char testToRun) {
+    switch(testToRun) {
+            case 1: { return "data/out_sm_as.txt"; break; }
+            case 2: { return "data/out_me_as.txt"; break; }
+            case 3: { return "data/out_la_as.txt"; break; }
+            case 4: { return "data/out_sm_ds.txt"; break; }
+            case 5: { return "data/out_me_ds.txt"; break; }
+            case 6: { return "data/out_la_ds.txt"; break; }
+            case 7: { return "data/out_sm_ra.txt"; break; }
+            case 8: { return "data/out_me_ra.txt"; break; }
+            case 9: { return "data/out_la_ra.txt"; break; }
+    }
+    return "";
 }

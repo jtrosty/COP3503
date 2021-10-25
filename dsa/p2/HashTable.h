@@ -31,6 +31,7 @@ class HashTable {
     private:
         int capacity;
         int size;
+        float loadFactor;
         Node** table;
         enum Resize { bigger, smaller};
 
@@ -45,6 +46,7 @@ class HashTable {
 HashTable::HashTable() {
     capacity = 10;
     size = 0;
+    loadFactor = 1.0f; 
     table = new Node*[capacity];
     for (int i = 0; i < capacity; i++) {
         table[i] = nullptr;
@@ -73,14 +75,7 @@ void HashTable::deleteHashTable(Node** oldTable) {
 }
 
 ///////////////////////////////////////////////////////
-//             Overloaded Operator
-HashTable& HashTable::operator=(HashTable& hashTable) {
-
-}
-
-///////////////////////////////////////////////////////
-//             Insert
-
+//             Insert Functions and their support
 int HashTable::getHashIndex(int key) {
     return key % capacity;
 }
@@ -100,7 +95,7 @@ void HashTable::insert(int data) {
             counter++;
         }
         temp->next = newNode;
-        if (counter > 4) rehash(bigger, 4);
+        if ((float)size / (float)capacity > loadFactor) rehash(bigger, 2);
     }
     size++;
 }
@@ -175,6 +170,7 @@ char HashTable::remove(int data) {
 char HashTable::removeAll() {
     int initialSize = size;
     for (int i = 0; i < initialSize; i++) remove(i);
+    return 1;
 }
 
 ///////////////////////////////////////////////////////
@@ -202,7 +198,7 @@ void HashTable::print() {
             temp = temp->next;
         }
     }
-    std::cout << std::endl << "total size " << size << " counter " << counter << std::endl;
+    //std::cout << std::endl << "total size " << size << " counter " << counter << std::endl;
 }
 
 ///////////////////////////////////////////////////////
