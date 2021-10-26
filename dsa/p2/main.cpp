@@ -21,8 +21,8 @@ double fillHeap(char testToRun, MinHeap& heap);
 double fillHashTable(char testToRun, HashTable& table);
 double emptyHashTable(char testToRun, HashTable& table); 
 double emptyHeap(char testToRubn, MinHeap& heap);
-double traverseHeap(MinHeap& heap);
-double traverseHash(HashTable& table); 
+double traverseHeap(MinHeap& heap, char testRun);
+double traverseHash(HashTable& table, char testRun); 
 int* generateRandomArray(int size);
 void printResults(double* inResults, double* traversalTimes, double* outResults, char structureUsed);
 std::string getFileName(char testToRun); 
@@ -34,7 +34,7 @@ int main (void) {
     MinHeap testHeap;
     std::set <int> s;
 
-    int size = 100;
+    int size = 1000;
     int bigSize = 10 * size;
     int reallyBigSize = 10 * bigSize;
 
@@ -69,7 +69,7 @@ int main (void) {
 
         // User input
         cin >> input;
-        int numOfTests = 1;
+        int numOfTests = 9;
 
         // Logic
         switch(input) {
@@ -79,18 +79,18 @@ int main (void) {
                 // Min Heap
                 for(int i = 1; i <= numOfTests; i++) {
                     if(testHeap.isEmpty()) {
-                        inTimesHeap[i] = fillHeap(i, testHeap)           * 1.0f;
-                        traversalTimesHeap[i] = traverseHeap(testHeap) * 1.0f;
-                        outTimesHeap[i] = emptyHeap(i, testHeap)         * 1.0f;
+                        inTimesHeap[i] = fillHeap(i, testHeap)           * 1000.0f;
+                        traversalTimesHeap[i] = traverseHeap(testHeap, i)   * 1000.0f;
+                        outTimesHeap[i] = emptyHeap(i, testHeap)         * 1000.0f;
                     }
                 }
 
                 // Hast Table
                 for(int i = 1; i <= numOfTests; i++) {
                     if(testHash.isEmpty()) {
-                        inTimesHash[i] = fillHashTable(i, testHash)      * 1.0f;
-                        traversalTimesHash[i] = traverseHash(testHash) * 1.0f;
-                        outTimesHash[i] = emptyHashTable(i, testHash)    * 1.0f;
+                        inTimesHash[i] = fillHashTable(i, testHash)      * 1000.0f;
+                        traversalTimesHash[i] = traverseHash(testHash, i)   * 1000.0f;
+                        outTimesHash[i] = emptyHashTable(i, testHash)    * 1000.0f;
                     }
                 }
 
@@ -137,18 +137,37 @@ void printResults(double* inResults, double* traversalTimes, double* outResults,
 /////////////////////////////////////////////////////////////////////////////////
 //                 Travese the 2 data structurs 
 
-double traverseHeap(MinHeap& heap) {
+double traverseHeap(MinHeap& heap, char testRun) {
+    std::ofstream outFile;
+    std::string outName = "";
+    testRun += 47;
+    outName = outName + "data/" + testRun  + "_out_heap.txt";
+
     auto start = std::chrono::high_resolution_clock::now();
-    heap.traversalOfMinHeap();
+
+    outFile.open(outName, std::ofstream::out);
+    heap.traversalOfMinHeap(outFile);
+    outFile.close();
+    
     auto end = std::chrono::high_resolution_clock::now();
+
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
 }
 
-double traverseHash(HashTable& table) {
+double traverseHash(HashTable& table, char testRun) {
+    std::ofstream outFile;
+    std::string outName = "";
+    testRun += 47;
+    outName = outName + "data/" + testRun + "_out_hash.txt";
+
     auto start = std::chrono::high_resolution_clock::now();
-    table.print();
+
+    outFile.open(outName, std::ofstream::out);
+    table.print(outFile);
+    outFile.close();
+
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
@@ -192,7 +211,7 @@ double emptyHeap(char testToRun, MinHeap& heap) {
     }
     file.close();
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::nano> time = end - start;
+    std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
 }
@@ -212,7 +231,7 @@ double emptyHashTable(char testToRun, HashTable& table) {
     }
     file.close();
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::nano> time = end - start;
+    std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
 }
@@ -236,7 +255,7 @@ double fillHeap(char testToRun, MinHeap& heap) {
     }
     else cout << "DIDDN'T OPEN TEST: " << testToRun << endl;
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::nano> time = end - start;
+    std::chrono::duration<double> time = end - start;
     //cout << "Time to fill: " << time.count() << endl;
 
     return time.count();
@@ -261,7 +280,7 @@ double fillHashTable(char testToRun, HashTable& table) {
     }
     else cout << "DID NOT OPEN TEST: " << testToRun << endl;
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::nano> time = end - start;
+    std::chrono::duration<double> time = end - start;
 
     return time.count();
 }

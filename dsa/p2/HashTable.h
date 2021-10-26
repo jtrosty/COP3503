@@ -1,4 +1,6 @@
+#pragma once
 #include <iostream>
+#include <fstream>
 
 class HashTable {
     public:
@@ -23,7 +25,8 @@ class HashTable {
         void insert(Node* node); 
         char remove(int data); 
         char removeAll(); 
-        void print();
+        void print(std::ofstream& outFile);
+
         char isEmpty();
 
         char traverse(int keyToSearch);
@@ -188,12 +191,12 @@ char HashTable::traverse(int keyToSearch) {
 
 ///////////////////////////////////////////////////////
 //             Print
-void HashTable::print() {
+void HashTable::print(std::ofstream& outFile) {
     int counter = 0;
     for(int i = 0; i < capacity; i++) {
         Node* temp = table[i];
         while (temp != nullptr) {
-            std::cout << temp->data << ", ";
+            outFile << temp->data << ", ";
             counter++;
             temp = temp->next;
         }

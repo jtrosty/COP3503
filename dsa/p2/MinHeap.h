@@ -30,7 +30,7 @@ class MinHeap {
     void traversal();
 
     void printHeap();
-    void traversalOfMinHeap(); 
+    void traversalOfMinHeap(std::ofstream& outfile); 
     int search(int itemToFind);
 
     char isEmpty();
@@ -199,11 +199,11 @@ void MinHeap::printHeap() {
 
 ////////////////////////////////////////////////////////////////////////
 //                  Traverse Heaps
-void MinHeap::traversalOfMinHeap() {
+void MinHeap::traversalOfMinHeap(std::ofstream& outFile) {
     if (size > 0) {
         for (int i = 0; i < size; i++) {
-            if (i == size-1) std::cout << heap[i] << std::endl;
-            else std::cout << heap[i] << ", ";
+            if (i == size-1) outFile << heap[i] << std::endl;
+            else outFile << heap[i] << ", ";
         }
     }
 }
