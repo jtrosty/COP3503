@@ -34,7 +34,7 @@ int main (void) {
     MinHeap testHeap;
     std::set <int> s;
 
-    int size = 1000;
+    int size = 10000;
     int bigSize = 10 * size;
     int reallyBigSize = 10 * bigSize;
 
@@ -96,6 +96,19 @@ int main (void) {
 
                 printResults(inTimesHeap, traversalTimesHeap, outTimesHeap, 1);
                 printResults(inTimesHash, traversalTimesHash, outTimesHash, 2);
+                std::ofstream outFile;
+                outFile.open("results.csv", std::ofstream::out);
+                for (int i = 0; i < 10; i++) {
+                    outFile << inTimesHeap[i]        << ", ";
+                    outFile << traversalTimesHeap[i] << ", ";
+                    outFile << outTimesHeap[i]       << ", ";
+                    outFile << inTimesHash[i]        << ", ";
+                    outFile << traversalTimesHash[i] << ", ";
+                    outFile << outTimesHash[i]       << ", ";
+                    outFile << endl;
+                }
+                outFile.close();
+
                 break;
             }
             case '3': { // used for testing
