@@ -2,42 +2,53 @@
 #include<string>
 #include<sstream>
 #include<vector>
+#include<algorithm>
+#include<unordered_map>
 using namespace std;
-
 
 class Graph
 {
-   private:
-      // Graph ADJACENCY LIST data structure here 
-      struct Edge {
-          int toVertex;
-          int weight;
-          Edge* next;
-          Edge(int to, int edgeWeight) : toVertex(to), weight(edgeWeight) {};
-      };
+    private:
+        // Graph ADJACENCY LIST data structure here 
 
-      struct Vertex {
-          int value;
-          Edge* edge;
-          Vertex (int newValue) : value(newValue), edge(nullptr) {}
-      };
-      vector<Edge*> agencyList;
+
 
     public:
-      void insertEdge(int from, int to, int weight);  
-      bool isEdge(int from, int to);  
-      int getWeight(int from, int to);  
-      vector<int> getAdjacent(int vertex); 
-      void printGraph(); 
+        struct Edge {
+            int toVertex;
+            int weight;
+            Edge* next;
+            Edge(int to, int edgeWeight) : toVertex(to), weight(edgeWeight) {};
+        };
+        std::unordered_map<int, Graph::Edge>* agencyList;
+        void insertEdge(int from, int to, int weight);  
+        bool isEdge(int from, int to);  
+        int getWeight(int from, int to);  
+        vector<int> getAdjacent(int vertex); 
+        void printGraph(); 
 };
 
 void Graph::insertEdge(int from, int to, int weight) 
 {
    /*
-        TODO: insertEdge() adds a new edge between the from and to vertex.
+        insertEdge() adds a new edge between the from and to vertex.
         You will not know how many vertices there may be.
         insertEdge does not output or print anything
    */
+    if (agencyList->count(from)) {
+        Edge* temp = &(agencyList->at(from));
+        while (temp->next != nullptr) {
+            if (temp->toVertex == to) {
+                return;
+            }
+            temp = temp->next;
+        }
+        Edge* newEdge = new Edge(from, weight);
+        temp->next = newEdge;
+    }
+    Edge* newEdge = new Edge(from, weight);
+    std::pair<int, Graph::Edge> itemToInsert (from, newEdge);
+    agencyList->insert(itemToInsert);
 }
 
 bool Graph::isEdge(int from, int to) 
@@ -46,24 +57,63 @@ bool Graph::isEdge(int from, int to)
         TODO: isEdge() returns a boolean indicating true 
         if there is an edge between the from and to vertex
     */
-    return true;
+    if (agencyList->count(from)) {
+        Edge* temp = &(agencyList->at(from));
+        while (temp->next != nullptr) {
+            if (temp->toVertex == to) return true;
+        }
+        if (temp->toVertex == to) return true;
+    }
+    else {
+        return false;
+    }
+    return false;
 }
 
 int Graph::getWeight(int from, int to) 
 {
-    //TODO: getWeight() returns the weight of the edge between the from and to vertex
+    // getWeight() returns the weight of the edge between the from and to vertex
+    if (agencyList->count(from)) {
+        Edge* temp = &(agencyList->at(from));
+        while (temp != nullptr) {
+            if (temp->toVertex == to) 
+                return temp->weight;
+            temp = temp->next;
+        }
+    }
+
     return 0;
 }
 
 vector<int> Graph::getAdjacent(int vertex) 
 {
     //TODO: getAdjacent() returns a sorted vector of all vertices that are connected to a vertex
-    return vector<int>();
+    vector<int> result;
+    if (agencyList->count(vertex)) {
+        Edge* temp = &(agencyList->at(vertex));
+        while (temp != nullptr) {
+            result.push_back(temp->toVertex);
+        }
+    }
+    if (result.size() > 1) 
+        std::sort (result.begin(), result.end());
+
+    return result;
 }
 
 void Graph::printGraph()
 {
     //TODO: printGraph() prints the graph in a format sorted by ascending vertex matrix of weights
+    int size = agencyList->size();
+    vector<int> temp;
+    for (int i = 0; i < size; i++) {
+        temp = getAdjacent(i);
+        cout << i << " ";
+        for (int j = 0; j < temp.size(); j++) {
+            cout << temp.at(j) << " ";
+        }
+    }
+    cout << endl;
 }
 
 int main()
