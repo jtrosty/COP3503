@@ -28,10 +28,64 @@ class Graph
 		}
 	}
 };
+//////////////////////////////////////////////////////////////
+//                7.3.1 Detect cycle in undirected graph
+bool anyCycle(const Graph& graph) {
+    // your code
+    stack<int> s;
+    set<int> visited; 
+
+    vector< vector<int> >::iterator iter = graph.adjList.begin();
+
+    // I want to skip vertexis if they are in the visited set.
+    while (iter != graph.adjList.end()) {
+        int source = iter.second.src;
+        // perform DFS if item goes to vsisted, but not previous , then cycle
+
+    }
+
+    visited.insert(src);
+    vector<int> temp;
+
+    while(!s.empty()) {
+        int top = s.top();
+        if (top == dest) return true;
+        s.pop();
+        temp = graph.adjList.at(top);
+        
+        for (int i = 0; i < temp.size(); i++) {
+            if (visited.count(temp.at(i)) == 0) {
+                visited.insert(temp.at(i));
+                s.push(temp.at(i));
+            }
+        }
+    }
+    return false;
+}
 
 bool dfs(const Graph& graph, int src, int dest) {
-    std::stack<int> s;
-    std::set<int> visited; 
+    stack<int> s;
+    set<int> visited; 
+
+    s.push(src);
+
+    visited.insert(src);
+    vector<int> temp;
+
+    while(!s.empty()) {
+        int top = s.top();
+        if (top == dest) return true;
+        s.pop();
+        temp = graph.adjList.at(top);
+        
+        for (int i = 0; i < temp.size(); i++) {
+            if (visited.count(temp.at(i)) == 0) {
+                visited.insert(temp.at(i));
+                s.push(temp.at(i));
+            }
+        }
+    }
+    return false;
 }
 
 

@@ -6,5 +6,5 @@ run:
 	./main
 
 graph:
-	gcc -std=c++11 -o graph graphs2.cpp
+	gcc -std=c++11 -o graphs2 graphs2.cpp
 	./graph
