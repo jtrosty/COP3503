@@ -6,15 +6,119 @@
 #include <fstream>
 #include <set>
 #include <string>
-#include "Random.h"
+#include <random>
+#include <ctime>
 using std::ofstream;
 
-#include "HashTable.h"
-#include "MinHeap.h"
 using std::cout;
 using std::endl;
 using std::cin;
 using std::freopen;
+
+//////////////////////////////////////////////////////////////////////
+//                                MIN HEAP CLASS
+/////////////////////////////////////////////////////////////////////
+
+
+class MinHeap {
+    private:
+
+    // Resize functions
+    char resizeSmaller();
+    char resizeLarger();
+
+    // Heapify
+    char heapifyUp(int index);
+    char heapifyDown(int index);
+
+    public:
+    int* heap;
+    int size;
+    int capacity;
+    int resizeFactor = 2;
+
+
+    MinHeap();
+    ~MinHeap();
+
+    char insert(int value);
+
+    int extractMin();
+
+    char deleteValue(int value);
+    char deleteIndex(int index); 
+
+    void traversal();
+
+    void printHeap();
+    void traversalOfMinHeap(std::ofstream& outfile); 
+    int search(int itemToFind);
+
+    char isEmpty();
+};
+
+
+
+//////////////////////////////////////////////////////////////////////
+//                                HASH TABLE CLASS
+/////////////////////////////////////////////////////////////////////
+
+
+class HashTable {
+    public:
+        struct Node {
+            int data;
+            Node* next;
+            Node() : data(0xf0000000), next(nullptr) {}
+            Node(int value) : data(value), next(nullptr) {}
+            Node& operator=(Node& node) {
+                this->data = node.data;
+                this->next = node.next;
+                return *this;
+            }
+        };
+
+        HashTable();
+        ~HashTable();
+        void deleteHashTable(Node** oldTable);
+        HashTable& operator=(HashTable& hash);
+
+        void insert(int data); 
+        void insert(Node* node); 
+        char remove(int data); 
+        char removeAll(); 
+        void print(std::ofstream& outFile);
+
+        char isEmpty();
+
+        char traverse(int keyToSearch);
+
+    private:
+        int capacity;
+        int size;
+        float loadFactor;
+        Node** table;
+        enum Resize { bigger, smaller};
+
+        void rehash(Resize choice, int factor);
+        int getHashIndex(int key);
+
+};
+//////////////////////////////////////////////////////////////////////
+//                                RANDOM CLASS
+/////////////////////////////////////////////////////////////////////
+class Random
+{
+	static std::mt19937 random;
+public:
+	// One instance of x, all instances share this variable
+	static int x;
+	static int Int(int min, int max);
+};
+
+// Static variables must be redeclared in global space
+std::mt19937 Random::random(time(0));
+int Random::x = 100;
 
 void createInputFiles(int size, int bigSize, int reallyBigSize);
 double fillHeap(char testToRun, MinHeap& heap);
@@ -34,7 +138,7 @@ int main (void) {
     MinHeap testHeap;
     std::set <int> s;
 
-    int size = 10000;
+    int size = 1000;
     int bigSize = 10 * size;
     int reallyBigSize = 10 * bigSize;
 
@@ -63,12 +167,14 @@ int main (void) {
     while (run != 0) {
         
         // Menu
-        cout << "Menu: " << endl;
-        cout << "1. Create input and run all tests" << endl;
-        cout << "q  - Quit the program." << endl;
+        //cout << "Menu: " << endl;
+        //cout << "1. Create input and run all tests" << endl;
+        //cout << "q  - Quit the program." << endl;
+        cout << "Program is automatically running" << endl;
 
         // User input
-        cin >> input;
+        //cin >> input;
+        input = '1';
         int numOfTests = 9;
 
         // Logic
@@ -79,18 +185,18 @@ int main (void) {
                 // Min Heap
                 for(int i = 1; i <= numOfTests; i++) {
                     if(testHeap.isEmpty()) {
-                        inTimesHeap[i] = fillHeap(i, testHeap)           * 1000.0f;
-                        traversalTimesHeap[i] = traverseHeap(testHeap, i)   * 1000.0f;
-                        outTimesHeap[i] = emptyHeap(i, testHeap)         * 1000.0f;
+                        inTimesHeap[i] = fillHeap(i, testHeap)            * 1000.0f;
+                        traversalTimesHeap[i] = traverseHeap(testHeap, i) * 1000.0f;
+                        outTimesHeap[i] = emptyHeap(i, testHeap)          * 1000.0f;
                     }
                 }
 
                 // Hast Table
                 for(int i = 1; i <= numOfTests; i++) {
                     if(testHash.isEmpty()) {
-                        inTimesHash[i] = fillHashTable(i, testHash)      * 1000.0f;
-                        traversalTimesHash[i] = traverseHash(testHash, i)   * 1000.0f;
-                        outTimesHash[i] = emptyHashTable(i, testHash)    * 1000.0f;
+                        inTimesHash[i] = fillHashTable(i, testHash)        * 1000.0f;
+                        traversalTimesHash[i] = traverseHash(testHash, i)  * 1000.0f;
+                        outTimesHash[i] = emptyHashTable(i, testHash)      * 1000.0f;
                     }
                 }
 
@@ -108,6 +214,7 @@ int main (void) {
                     outFile << endl;
                 }
                 outFile.close();
+                run = 0;
 
                 break;
             }
@@ -156,13 +263,13 @@ double traverseHeap(MinHeap& heap, char testRun) {
     testRun += 47;
     outName = outName + "data/" + testRun  + "_out_heap.txt";
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::steady_clock::now();
 
     outFile.open(outName, std::ofstream::out);
     heap.traversalOfMinHeap(outFile);
     outFile.close();
     
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::steady_clock::now();
 
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
@@ -175,13 +282,13 @@ double traverseHash(HashTable& table, char testRun) {
     testRun += 47;
     outName = outName + "data/" + testRun + "_out_hash.txt";
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::steady_clock::now();
 
     outFile.open(outName, std::ofstream::out);
     table.print(outFile);
     outFile.close();
 
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
@@ -216,14 +323,14 @@ double emptyHeap(char testToRun, MinHeap& heap) {
     std::ifstream file;
     std::string streamInput;
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::steady_clock::now();
     file.open(inputFile);
     while(!file.eof()) {
         std::getline(file, streamInput, ',');
         heap.deleteValue(std::stoi(streamInput));
     }
     file.close();
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
@@ -236,14 +343,14 @@ double emptyHashTable(char testToRun, HashTable& table) {
 
     std::ifstream file;
     std::string streamInput;
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::steady_clock::now();
     file.open(inputFile);
     while(!file.eof()) {
         std::getline(file, streamInput, ',');
         table.remove(std::stoi(streamInput));
     }
     file.close();
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to empty: " << time.count() << endl;
     return time.count();
@@ -256,7 +363,7 @@ double fillHeap(char testToRun, MinHeap& heap) {
     std::string streamInput;
     std::string inputData = getFileName(testToRun);
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::steady_clock::now();
     infile.open(inputData, std::ifstream::in);
 
     if (infile.is_open()) {
@@ -267,7 +374,7 @@ double fillHeap(char testToRun, MinHeap& heap) {
         infile.close();
     }
     else cout << "DIDDN'T OPEN TEST: " << testToRun << endl;
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> time = end - start;
     //cout << "Time to fill: " << time.count() << endl;
 
@@ -281,7 +388,7 @@ double fillHashTable(char testToRun, HashTable& table) {
     std::string streamInput;
     std::string inputData = getFileName(testToRun);
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::steady_clock::now();
     infile.open(inputData, std::ifstream::in);
 
     if (infile.is_open()) {
@@ -292,7 +399,7 @@ double fillHashTable(char testToRun, HashTable& table) {
         infile.close();
     }
     else cout << "DID NOT OPEN TEST: " << testToRun << endl;
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> time = end - start;
 
     return time.count();
@@ -407,4 +514,379 @@ std::string getFileOutputName(char testToRun) {
             case 9: { return "data/out_la_ra.txt"; break; }
     }
     return "";
+}
+
+//////////////////////////////////////////////////////////////////////
+//                                RANDOM CLASS
+/////////////////////////////////////////////////////////////////////
+int Random::Int(int min, int max)
+{
+	std::uniform_int_distribution<int> dist(min, max);
+
+	return dist(random);
+}
+
+//////////////////////////////////////////////////////////////////////
+//                                HASH TABLE CLASS DEFINITION
+/////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////
+//             Constructors and Destructors
+
+HashTable::HashTable() {
+    capacity = 10;
+    size = 0;
+    loadFactor = 1.0f; 
+    table = new Node*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        table[i] = nullptr;
+    }
+}
+
+HashTable::~HashTable() {
+    deleteHashTable(table);
+}
+
+void HashTable::deleteHashTable(Node** oldTable) {
+    for (int i = 0; i < capacity; i++) {
+        Node* prev;
+        prev = oldTable[i];
+        if (oldTable[i] != nullptr) {
+            Node* next = prev->next;
+            delete prev;
+            while (next != nullptr) {
+                prev = next;
+                next = next->next;
+                delete prev;
+            }
+        }
+    }
+    delete[] oldTable;
+}
+
+///////////////////////////////////////////////////////
+//             Insert Functions and their support
+int HashTable::getHashIndex(int key) {
+    return key % capacity;
+}
+
+void HashTable::insert(int data) {
+    int key = getHashIndex(data);
+    if (table[key] == nullptr) {
+        Node* newNode = new Node(data);
+        table[key] = newNode;
+    }
+    else {
+        int counter = 0;
+        Node* temp = table[key];
+        Node* newNode = new Node(data);
+        while (temp->next != nullptr) {
+            temp = temp->next;
+            counter++;
+        }
+        temp->next = newNode;
+        if ((float)size / (float)capacity > loadFactor) rehash(bigger, 2);
+    }
+    size++;
+}
+
+/***** NOT USED ***********/
+void HashTable::insert(Node* node) {
+    int key = getHashIndex(node->data);
+    if (table[key] == nullptr) {
+        table[key] = node;
+    }
+    else {
+        int counter = 0;
+        Node* temp = table[key];
+        while (temp->next != nullptr) {
+            temp = temp->next;
+            counter++;
+        }
+        temp->next = node;
+    }
+}
+
+///////////////////////////////////////////////////////
+//             Rehash
+
+void HashTable::rehash(Resize choice, int factor) {
+    int newCapacity;
+    if (choice == bigger) newCapacity = capacity * factor; 
+    else newCapacity = capacity / factor;
+
+    Node** newTable = new Node*[newCapacity];
+    for (int i = 0; i < newCapacity; i++) {
+        newTable[i] = nullptr;
+        size = 0;
+    }
+    int oldCapacity = capacity;
+
+    Node** oldTable = table;
+    table = newTable;
+    capacity = newCapacity;
+
+    for(int i = 0; i < oldCapacity; i++) {
+        Node* temp = oldTable[i];
+        while (temp != nullptr) {
+            insert(temp->data);
+            temp = temp->next;
+        }
+    }
+    delete[] oldTable;
+}
+
+///////////////////////////////////////////////////////
+//             Remove
+char HashTable::remove(int data) {
+    int key = getHashIndex(data);
+    Node* prev = nullptr;
+    Node* temp = table[key];
+    while (temp != nullptr) {
+        if (temp->data == data) {
+            if (prev == nullptr) table[key] = temp->next;
+            else                 prev->next = temp->next;
+            delete temp;
+            size--;
+            if ((size < (capacity / 4)) && size > 5) rehash(smaller, 2);
+            return 1;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    return 0;
+} 
+
+char HashTable::removeAll() {
+    int initialSize = size;
+    for (int i = 0; i < initialSize; i++) remove(i);
+    return 1;
+}
+
+///////////////////////////////////////////////////////
+//             Traverse
+char HashTable::traverse(int keyToSearch) {
+    for(int i = 0; i < capacity; i++) {
+        Node* temp = table[i];
+        while (temp != nullptr) {
+            if (temp->data == keyToSearch) return 1;
+            temp = temp->next;
+        }
+    }
+    return 0;
+}
+
+///////////////////////////////////////////////////////
+//             Print
+void HashTable::print(std::ofstream& outFile) {
+    int counter = 0;
+    for(int i = 0; i < capacity; i++) {
+        Node* temp = table[i];
+        while (temp != nullptr) {
+            outFile << temp->data << ", ";
+            counter++;
+            temp = temp->next;
+        }
+    }
+    //std::cout << std::endl << "total size " << size << " counter " << counter << std::endl;
+}
+
+///////////////////////////////////////////////////////
+//           is  Empty
+char HashTable::isEmpty() {
+    if (size <= 0) return 1;
+    else return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+//                                MIN HEAP CLASS DEFINITION
+/////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////
+//                  Constructors and Destructor
+MinHeap::MinHeap() {
+    size = 0;
+    int initialCapacity = 10;
+    capacity = initialCapacity;
+    heap = new int[initialCapacity];
+}
+
+MinHeap::~MinHeap() {
+    if (heap == nullptr) {}
+    else delete[] heap;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Insert
+char MinHeap::insert(int value) {
+    if (size == 0) {
+        heap[size] = value;
+        size++;
+    }
+    else {
+        size++;
+        heap[size - 1] = value;
+        heapifyUp(size - 1);
+    }
+
+    // Check if a resize is requried
+    if (size == capacity - 1)   resizeLarger();
+
+    return 1;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Delete Value
+char MinHeap::deleteIndex(int index) {
+    if (size >= 0 && index < size) {
+        heap[index] = heap[size - 1];
+        size--;
+        heapifyDown(index);
+        if ((size <= (capacity / 4)) && (size != 0)) resizeSmaller();
+        return 1;
+    }
+    else return 0;
+}
+
+char MinHeap::deleteValue(int value) {
+    int index = search(value);
+    if (index >= 0 && index < size) 
+        return deleteIndex(index);
+    return 0;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Extract Min
+int MinHeap::extractMin() {
+    int result;
+    if (size >= 0) {
+        result = heap[0];
+        heap[0] = heap[size - 1];
+        size--;
+        heapifyDown(0);
+        if ((size <= (capacity / 4)) && (size != 0)) resizeSmaller();
+        return result;
+    }
+    else return result;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Resize Functions
+char MinHeap::resizeLarger() {
+    capacity = capacity * 2;
+    int* newHeap = new int[capacity];
+    for (int i = 0; i < size; i++) {
+        newHeap[i] = heap[i];
+    }
+    delete[] heap;
+    heap = newHeap;
+    return 1;
+}
+
+char MinHeap::resizeSmaller() {
+    capacity = capacity / 2;
+    int* newHeap = new int[capacity];
+    for (int i = 0; i < size; i++) {
+        newHeap[i] = heap[i];
+    }
+    delete[] heap;
+    heap = newHeap;
+    return 1;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Heapify Functions
+char MinHeap::heapifyUp(int index) {
+    int parent = (index - 1) / 2;
+    int temp = -1;
+
+    while (heap[index] < heap[parent]) {
+        temp = heap[index];
+        heap[index] = heap[parent];
+        heap[parent] = temp;
+
+        // break out if we traded out the root
+        if (parent == 0) break;
+        
+        // adjust index for going up
+        index = parent;
+        parent = (index - 1) /2;
+    }
+
+    return 1;
+}
+
+char MinHeap::heapifyDown(int index) {
+    int child1 = (2 * index) + 1;
+    int child2 = (2 * index) + 2;
+    int temp = -1;
+
+    while ((child1 < size) && (heap[index] > heap[child1] || heap[index] > heap[child2])) {
+        // Case of the last item being a leaf with no sibling
+        if (size - 1 == child1) {
+            if (heap[index] > heap[child1]) {
+                temp = heap[index];
+                heap[index] = heap[child1];
+                heap[child1] = temp;
+                index = child1;
+            }
+        } 
+        else if (heap[index] > heap[child1] || heap[index] > heap[child2]) {
+            if (heap[child1] < heap[child2]) {
+                temp = heap[index];
+                heap[index] = heap[child1];
+                heap[child1] = temp;
+                index = child1;
+            }
+            else {
+                temp = heap[index];
+                heap[index] = heap[child2];
+                heap[child2] = temp;
+                index = child2;
+            }
+        }
+        child1 = (index * 2) + 1;
+        child2 = (index * 2) + 2;
+    }
+    return 1;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Print Functions
+void MinHeap::printHeap() {
+    if (size > 0) {
+        for (int i = 0; i < size; i++) {
+            if (i == size-1) std::cout << heap[i] << std::endl;
+            else std::cout << heap[i] << ", ";
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Traverse Heaps
+void MinHeap::traversalOfMinHeap(std::ofstream& outFile) {
+    if (size > 0) {
+        for (int i = 0; i < size; i++) {
+            if (i == size-1) outFile << heap[i] << std::endl;
+            else outFile << heap[i] << ", ";
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Traverse Heaps
+int MinHeap::search(int itemToFind) {
+    if (size > 0) {
+        for (int i = 0; i < size; i++) {
+            if (heap[i] == itemToFind)  return i;
+        }
+    }
+    return -1;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                  Empty Functions
+char MinHeap::isEmpty() {
+    if (size <= 0) return 1;
+    else return 0;
 }
