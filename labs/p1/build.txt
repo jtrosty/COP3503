@@ -1,5 +1,0 @@
-
-g++ -g mainP4.cpp leaker.c -o pT
-
-./pT
-

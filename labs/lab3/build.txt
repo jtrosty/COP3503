@@ -1,5 +1,0 @@
-
-g++ main.cpp -o lab3ABQ
-
-./lab3ABQ
-

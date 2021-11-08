@@ -1,5 +1,0 @@
-#!/bin/bash
-
-g++ thinkProblems.cpp -o thinkProblems.out
-
-./thinkProblems.out
