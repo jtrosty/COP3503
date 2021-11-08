@@ -1,10 +1,14 @@
 deafult:
-	gcc -std=c++11 -o main main.cpp
+	g++ -std=c++11 -o main main.cpp
 
 run:
-	gcc -std=c++11 -o main main.cpp
-	./main
+	g++ -std=c++11 -o main main.cpp
+	main.exe < test.txt
 
 graph:
-	gcc -std=c++11 -o graphs2 graphs2.cpp
-	./graph
+	g++ -std=c++11 -o graphs2 graphs2.cpp
+	graphs2.exe
+
+graph3:
+	g++ -std=c++11 -o graphs3 graphs3.cpp
+	graphs3.exe
