@@ -3,30 +3,36 @@
 #include<sstream>
 #include<vector>
 #include<algorithm>
-#include<unordered_map>
+#include<map>
 using namespace std;
+using std::cout;
+using std::endl;
 
 class Graph
 {
     private:
         // Graph ADJACENCY LIST data structure here 
-
-
-
-    public:
         struct Edge {
             int toVertex;
             int weight;
             Edge* next;
             Edge(int to, int edgeWeight) : toVertex(to), weight(edgeWeight) {};
         };
-        std::unordered_map<int, Graph::Edge>* agencyList;
+        std::map<int, vector<Edge> >* agencyList;
+        map<int, int> getSortedByWeight(int vertex);
+    public:
+        Graph();
         void insertEdge(int from, int to, int weight);  
         bool isEdge(int from, int to);  
         int getWeight(int from, int to);  
         vector<int> getAdjacent(int vertex); 
         void printGraph(); 
+        void printGraph2();
 };
+
+Graph::Graph() {
+    agencyList = new std::map<int, vector<Edge> >;
+}
 
 void Graph::insertEdge(int from, int to, int weight) 
 {
@@ -35,37 +41,29 @@ void Graph::insertEdge(int from, int to, int weight)
         You will not know how many vertices there may be.
         insertEdge does not output or print anything
    */
-    if (agencyList->count(from)) {
-        Edge* temp = &(agencyList->at(from));
-        while (temp->next != nullptr) {
-            if (temp->toVertex == to) {
-                return;
-            }
-            temp = temp->next;
-        }
-        Edge* newEdge = new Edge(from, weight);
-        temp->next = newEdge;
+    Edge* newEdge = new Edge(to, weight);
+    if (agencyList->empty() || agencyList->count(from) == 0) {
+        vector<Edge> newVectEdge;
+        agencyList->emplace(from, newVectEdge);
     }
-    Edge* newEdge = new Edge(from, weight);
-    std::pair<int, Graph::Edge> itemToInsert (from, newEdge);
-    agencyList->insert(itemToInsert);
+    if (agencyList->count(to) == 0) {
+        vector<Edge> newVectEdge;
+        agencyList->emplace(to, newVectEdge);
+    }
+    agencyList->at(from).push_back(*newEdge);
 }
 
 bool Graph::isEdge(int from, int to) 
 {
     /*
-        TODO: isEdge() returns a boolean indicating true 
+        isEdge() returns a boolean indicating true 
         if there is an edge between the from and to vertex
     */
     if (agencyList->count(from)) {
-        Edge* temp = &(agencyList->at(from));
-        while (temp->next != nullptr) {
-            if (temp->toVertex == to) return true;
+        vector<Edge>* temp = &(agencyList->at(from));
+        for (int i = 0; i < temp->size(); i++) {
+            if (temp->at(i).toVertex == to) return true;
         }
-        if (temp->toVertex == to) return true;
-    }
-    else {
-        return false;
     }
     return false;
 }
@@ -74,51 +72,85 @@ int Graph::getWeight(int from, int to)
 {
     // getWeight() returns the weight of the edge between the from and to vertex
     if (agencyList->count(from)) {
-        Edge* temp = &(agencyList->at(from));
-        while (temp != nullptr) {
-            if (temp->toVertex == to) 
-                return temp->weight;
-            temp = temp->next;
+        vector<Edge>* temp = &(agencyList->at(from));
+        for (int i = 0; i < temp->size(); i++) {
+            if (temp->at(i).toVertex == to) return temp->at(i).weight;
         }
     }
-
-    return 0;
+    return -1;
 }
 
 vector<int> Graph::getAdjacent(int vertex) 
 {
-    //TODO: getAdjacent() returns a sorted vector of all vertices that are connected to a vertex
+    //getAdjacent() returns a sorted vector of all vertices that are connected to a vertex
     vector<int> result;
     if (agencyList->count(vertex)) {
-        Edge* temp = &(agencyList->at(vertex));
-        while (temp != nullptr) {
-            result.push_back(temp->toVertex);
+        vector<Edge>* temp = &(agencyList->at(vertex));
+        for (int i = 0; i < temp->size(); i++) {
+            result.push_back(temp->at(i).toVertex);
         }
     }
     if (result.size() > 1) 
         std::sort (result.begin(), result.end());
-
     return result;
+}
+
+map<int, int> Graph::getSortedByWeight(int vertex) 
+{
+    //getAdjacent() returns a sorted vector of all vertices that are connected to a vertex
+    map<int, int> result;
+    if (agencyList->count(vertex)) {
+        vector<Edge>* temp = &(agencyList->at(vertex));
+        for (int i = 0; i < temp->size(); i++) {
+            result.emplace(temp->at(i).weight, temp->at(i).toVertex);
+        }
+    }
+    return result;
+}
+
+void Graph::printGraph2()
+{
+    // printGraph() prints the graph in a format sorted by ascending vertex matrix of weights
+    int size = agencyList->size();
+    map<int, int> temp;
+    auto iter = agencyList->begin();
+    for ( ;iter != agencyList->end(); iter++) {
+        temp = getSortedByWeight(iter->first);
+        cout << iter->first << " ";
+        if(!temp.empty()) {
+            for (auto iter = temp.begin(); iter != temp.end(); iter++) {
+                if (iter == (temp.end()--)) cout << iter->second;
+                else cout << iter->second << " ";
+            }
+        }
+        cout << endl;
+    }
 }
 
 void Graph::printGraph()
 {
-    //TODO: printGraph() prints the graph in a format sorted by ascending vertex matrix of weights
+    // printGraph() prints the graph in a format sorted by ascending vertex matrix of weights
     int size = agencyList->size();
     vector<int> temp;
-    for (int i = 0; i < size; i++) {
-        temp = getAdjacent(i);
-        cout << i << " ";
-        for (int j = 0; j < temp.size(); j++) {
-            cout << temp.at(j) << " ";
+    auto iter = agencyList->begin();
+    for ( ;iter != agencyList->end(); iter++) {
+        temp = getAdjacent(iter->first);
+        if(!temp.empty()) {
+            cout << iter->first << " ";
+            for (int i = 0; i < temp.size(); i++) {
+                if (i == temp.size() - 1) cout << temp.at(i);
+                else cout << temp.at(i) << " ";
+            }
         }
+        else cout << iter->first;
+        if (iter == (--(agencyList->end()))) {}
+        else cout << endl;
     }
-    cout << endl;
 }
 
 int main()
 {
-    //DO NOT CHANGE THIS FUNCTION. CHANGE YOUR IMPLEMENTATION CODE TO MAKE IT WORK
+//DO NOT CHANGE THIS FUNCTION. CHANGE YOUR IMPLEMENTATION CODE TO MAKE IT WORK
 
     int noOfLines, operation, vertex, to, fro, weight, source, j;
     vector<int> arr;
@@ -164,4 +196,13 @@ int main()
                 break;
         }
     }
+    /*
+    Graph g;
+    g.insertEdge(1, 2, 3);
+    g.insertEdge(2, 3, 7);
+    g.insertEdge(2, 4, 5);
+    g.insertEdge(3, 4, 15);
+    g.insertEdge(4, 1, 4);
+    g.printGraph();
+    */
 }
