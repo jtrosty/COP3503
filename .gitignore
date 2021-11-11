@@ -42,6 +42,10 @@
 *.idb
 *.pdb
 
+#VS code stuff
+*.json
+*.DS_Store
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
@@ -76,4 +80,6 @@ dkms.conf
 *.sln
 *.log
 *.filters
+*.csv
+*.txt
 
