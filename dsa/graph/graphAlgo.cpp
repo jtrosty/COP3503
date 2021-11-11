@@ -23,7 +23,7 @@ public:
 		adjList.resize(vertices);
 
 		for (auto &edge : edges) {
-			adjList[edge.src].push_back(make_pair(edge.dest, edge.weight));
+			adjList[edge.src].push_back(std::make_pair(edge.dest, edge.weight));
 		}
 	}
 };
@@ -33,20 +33,34 @@ void relaxEdges() {
 }
 
 vector<int> dijkstra(const Graph& graph, int src) {
-    priority_queue<int[2]> queue;
+    int MAXINT = 0xffffffff;
+    priority_queue< pair<int, int> > queue;
+    int numVertices = graph.numVertices;
     vector<int> result;
+    result.resize(numVertices);
     // PQ.add(source, 0)
-    int source[] = {src, 0};
-    queue.push(source);
-    for (int i = 0; i < graph.numVertices; i++) {
-        source[0] = i;
-        source[1] = 0xffffffff;
-        queue.push(source);
+    queue.push(std::make_pair(0, src));
+    result.at(src) = 0;
+    // Add to PQ the reamining vertices
+    for (int i = 0; i < numVertices; i++) {
+        if (i == src) continue;
+        result.at(i) = 0xffffffff;
+        queue.push(std::make_pair(MAXINT, i));
     }
     // For others PQ.add (v, infinity)
+    pair<int, int> top;
     while (!queue.empty()) {
-        relaxEdges();
-    }
+        top = queue.top();
 
+        queue.pop();
+        int size = graph.adjList.at(top.second).size();
+        for (int i = 0; i < size; i++ ) {
+            auto vertex = graph.adjList.at(top.second).at(i);
+            if (top.first + vertex.second < result.at(i)) {
+                result.at(i) = top.first + vertex.second;
+            }
+
+        }
+    }
     return result;
 }
