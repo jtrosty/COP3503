@@ -15,4 +15,7 @@ graph3:
 
 algo:
 	g++ -std=c++11 -o algo graphAlgo.cpp
-	./algo
+	algo.exe
+prim:
+	g++ -std=c++11 -o prim prim.cpp
+	prim.exe < input.txt

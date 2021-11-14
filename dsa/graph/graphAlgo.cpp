@@ -8,6 +8,9 @@ using std::vector;
 using std::pair;
 using std::priority_queue;
 
+vector<int> dijkstra(const Graph& graph, int src); 
+bool finishCourses(int numCourses, vector<vector<int>> req); 
+
 struct Edge {
 	int src, dest, weight;
 	Edge(int _src, int _dest, int _weight) {src = _src; dest = _dest; weight = _weight;}
@@ -31,26 +34,13 @@ public:
 	}
 };
 
-void topological() {
     /*
-    Queue<vertex> q;
-    int ocunter = 0;
-    q.makeEmpty();
-    for each Vertex v
-        if (v.indegree == 0) 
-            q.enqueue(v);
-        while (!q.isEmpty()) {
-            Vertext v = q.dequeue();
-            v.topNum = ++counter; // assign next number
-            for each Vertext w adjacent to v
-                if ( --w.indegree == 0 )
-                    q.enqueue( w );
-        }
-        if (counter != NUM_VERTICES) 
-            throw CycleFoundException{};  ????
-            
-}
-
+    int smallestOrder = 0;
+    for (int i = 0; i < order.size(); i++) {
+        if (order.at(i) < order.at(smallestOrder)) smallestOrder = i;
+    }
+    */
+/*
 void prim() {
     /* Input an undirected, connected, weighted graph g.
     output: T, a minium spanning tree for G.
@@ -64,24 +54,84 @@ void prim() {
         Add e to T
         Add the endpoint of e not already in T to T.
     end-for
+}
     */
+
+int main(void) {
+    vector<vector<int>> req;
+    req.resize(2);
+    req[0] = {1, 0};
+    req[1] = {0, 2};
+
+    std::cout << "Finish classes: " << finishCourses(3, req) << std::endl;
+
+
+    vector<Edge> edge;
+    edge.push_back(Edge(0, 1, 4));
+    edge.push_back(Edge(1, 2, 1));
+    edge.push_back(Edge(2, 3, 8));
+    edge.push_back(Edge(3, 4, 9));
+    edge.push_back(Edge(3, 5, 5));
+    edge.push_back(Edge(5, 4, 12));
+    edge.push_back(Edge(6, 5, 7));
+    edge.push_back(Edge(0, 6, 10));
+    edge.push_back(Edge(1, 6, 2));
+    edge.push_back(Edge(6, 2, 6));
+    Graph testGraph(edge, 7);
+
+    std::vector<int> result = dijkstra(testGraph, 0);
+    for (int i = 0; i < 7; i++) {
+        std::cout << i << " " << result.at(i) << std::endl;
+    }
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+//                 Topological Sorting
+bool finishCourses(int numCourses, vector<vector<int>> req) {
+
+   // Code to make graph adj list
+    vector< vector<int> > adjList;
+    vector<int> sequence;
+    std::queue<int> q;
+    vector<int> order(numCourses, 0);
+    int counter = 0;
+
+    adjList.resize(numCourses);
+    // Build an adjancy list
+    for (auto v : req) {
+        adjList.at(v.at(0)).push_back(v.at(1));
+    }
+    // Collect the order level
+    for (int i =  0; i < req.size(); i++) 
+        order.at(req.at(i).at(1))++;
+
+    // If you order 0, add to the queue
+    for (int i = 0; i < order.size(); i++) {
+        if (order.at(i) == 0) q.push(i);
+    }
+
+    while (!q.empty()) {
+        int v = q.front();
+        q.pop();
+        for ( auto to : adjList.at(v)) {
+            if (--order.at(to) == 0) 
+                q.push(to);
+        }
+        sequence.push_back(v);
+        counter++;
+    }
+    if (counter == numCourses) return true;
+    else return false;
+}
+
+////////////////////////////////////////////////////////////////////////
+//                       DIJKSTRA
 vector<int> dijkstra(const Graph& graph, int src) {
-    int MAXINT = 0x7fffffff;
-    std::vector<int> distanceArray;
     std::set<int> visited;
     int numVertices = graph.numVertices;
-    distanceArray.resize(numVertices);
-    // PQ.add(source, 0)
+    std::vector<int> distanceArray(numVertices, INT_MAX);
     distanceArray.at(src) = 0;
-    // Add to PQ the reamining vertices
-    for (int i = 0; i < numVertices; i++) {
-        if (i == src) continue;
-        distanceArray.at(i) = MAXINT;
-    }
-    // For others PQ.add (v, infinity)
     int smallestVertex = 0;
 
     while (visited.size() < numVertices) {
@@ -102,32 +152,11 @@ vector<int> dijkstra(const Graph& graph, int src) {
         int size = graph.adjList.at(smallestVertex).size();
         auto vertex = graph.adjList.at(smallestVertex);
         for (int i = 0; i < size; i++ ) {
-            if (distanceArray[smallestVertex] + vertex.at(i).second < distanceArray.at(i)) {
-                distanceArray.at(i) = distanceArray[smallestVertex] + vertex.at(i).second;
+            if (distanceArray[smallestVertex] + vertex.at(i).second < distanceArray.at(vertex.at(i).first)) {
+                distanceArray.at(vertex.at(i).first) = distanceArray[smallestVertex] + vertex.at(i).second;
             }
         }
         visited.insert(smallestVertex);
     }
     return distanceArray;
-}
-
-int main(void) {
-    vector<Edge> edge;
-    edge.push_back(Edge(0, 1, 4));
-    edge.push_back(Edge(1, 2, 1));
-    edge.push_back(Edge(2, 3, 8));
-    edge.push_back(Edge(3, 4, 9));
-    edge.push_back(Edge(3, 5, 5));
-    edge.push_back(Edge(5, 4, 12));
-    edge.push_back(Edge(6, 5, 7));
-    edge.push_back(Edge(0, 6, 10));
-    edge.push_back(Edge(1, 6, 2));
-    edge.push_back(Edge(6, 2, 6));
-    Graph testGraph(edge, 7);
-
-    std::vector<int> result = dijkstra(testGraph, 0);
-    for (int i = 0; i < 7; i++) {
-        std::cout << i << " " << result.at(i) << std::endl;
-    }
-
 }
