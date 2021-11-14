@@ -12,3 +12,7 @@ graph:
 graph3:
 	g++ -std=c++11 -o graphs3 graphs3.cpp
 	graphs3.exe
+
+algo:
+	g++ -std=c++11 -o algo graphAlgo.cpp
+	./algo
