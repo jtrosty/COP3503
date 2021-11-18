@@ -10,11 +10,23 @@ using std::string;
 class AdjacencyList { 
     private: 
     //Think about what member variables you need to initialize 
+    struct Data {
+        std::vector<int> adjListTo;
+
+        // The adjListFrom ints correspond to the degrees in degre
+        std::vector<int> adjListFrom;
+        std::vector<float> degree;
+    };
     int indexCounter;
     std::map<string, int> index;
-    std::map<int, std::vector<int>> adjList;
+    std::map<int, Data > adjData;
+    std::vector<float> rank;
+
+//std::vector<int> adjListFrom;
     // resutls
-    std:: vector<float> rank;
+
+    void CalculateDegree();
+    void CalculateRank();
 
     public: 
     // Constructor
@@ -23,11 +35,11 @@ class AdjacencyList {
     void PageRank(int n);
 
     // Insertion functions
-    int insertPage(string name);
-    bool insertPage(string from, string to);
+    int InsertPage(string name);
+    bool InsertPage(string from, string to);
 
     // Print functions
-    void printAll();
+    void PrintAll();
 }; 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -37,41 +49,81 @@ AdjacencyList::AdjacencyList() {
     indexCounter = 0;
 }
  
-void AdjacencyList::PageRank(int n){  } // prints the PageRank of all pages after p powerIterations in ascending alphabetical order of webpages and rounding rank to two decimal places 
+// prints the PageRank of all pages after p powerIterations in ascending alphabetical order of webpages and rounding rank to two decimal places 
+void AdjacencyList::PageRank(int n){  
+    rank.resize(indexCounter);
+    for (int i = 0; i < indexCounter; i++) {
+
+    }
+
+} 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//                  Calculate Degree funtions
+void AdjacencyList::CalculateDegree() {
+    for (int i = 0; i < indexCounter; i++) {
+        std::vector<int>* current = &adjData.at(i).adjListFrom;
+        int numEdges = current->size();
+        for (int j = 0; j < numEdges; j++) {
+            // Calculate degree, iterate through the 'from list' got to the from vertex and determine number of
+            // 'to's, the degree at current vertex is 1 / (numOfTos) of the from Vertex
+            float degree = ((float) 1.0 / (float) adjData.at(current->at(j)).adjListTo.size());
+            adjData.at(i).degree.push_back(degree);
+        }
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//                  Calculate Rank funtions
+void AdjacencyList::CalculateRank(){  
+    rank.resize(indexCounter);
+    for (int i = 0; i < indexCounter; i++) {
+        rank.at(i) = 1.0 / (float) indexCounter;
+    }
+    for (int i = 0; i < indexCounter; i++) {
+        rank.at(i) = 1.0 / (float) indexCounter;
+    }
+} 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //                  Insertion funtions
-int AdjacencyList::insertPage(string name) {
+int AdjacencyList::InsertPage(string name) {
     if (!index.count(name)) 
         index.emplace(name, indexCounter++);
     return index.at(name);
 }
 
-bool AdjacencyList::insertPage(string from, string to) {
+bool AdjacencyList::InsertPage(string from, string to) {
     // Adds the webpages to the index
     int fromInt = insertPage(from);
     int toInt = insertPage(to);
 
     // Logic to add webpage to adjency list
-    if (!adjList.count(fromInt)) {
+    if (!adjData.count(fromInt)) {
         // Need to make the vector to add it to the list
-        std::vector<int> toVector = {toInt};
-        adjList.emplace(fromInt, toVector);
+        Data newAdjList;
+        adjData.emplace(fromInt, newAdjList);
     }
-    else  adjList.at(fromInt).push_back(toInt);
+    if (!adjData.count(toInt)) {
+        // Need to make the vector to add it to the list
+        Data newAdjList;
+        adjData.emplace(toInt, newAdjList);
+    }
+    adjData.at(fromInt).adjListTo.push_back(toInt);
+    adjData.at(toInt).adjListFrom.push_back(fromInt);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //                  Print funtions
-void AdjacencyList::printAll() {
+void AdjacencyList::PrintAll() {
     for (auto iter = index.begin(); iter != index.end(); iter++) {
         cout << iter->first << ": " << iter->second << endl;
     }
     for (int i = 0; i < indexCounter; i++) {
         cout << i << ": ";
-        auto a = adjList.at(i);
-        for (int j = 0; j < adjList.at(i).size(); j++) {
-            cout << a.at(j) << " ";
+        auto a = adjData.at(i);
+        for (int j = 0; j < a.adjListTo.size(); j++) {
+            cout << a.adjListTo.at(j) << " ";
         }
         cout << endl;
     }
