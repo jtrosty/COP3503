@@ -95,8 +95,8 @@ int AdjacencyList::InsertPage(string name) {
 
 bool AdjacencyList::InsertPage(string from, string to) {
     // Adds the webpages to the index
-    int fromInt = insertPage(from);
-    int toInt = insertPage(to);
+    int fromInt = InsertPage(from);
+    int toInt = InsertPage(to);
 
     // Logic to add webpage to adjency list
     if (!adjData.count(fromInt)) {
@@ -146,11 +146,11 @@ int main()
     { 
         std::cin >> from; 
         std::cin >> to; 
-        websites.insertPage(from, to);
+        websites.InsertPage(from, to);
         // Do Something 
     } 
     //Create a graph object 
-    websites.printAll();
+    websites.PrintAll();
 
     //Created_Graph.PageRank(power_iterations); 
 } 
