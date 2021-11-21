@@ -20,15 +20,14 @@ class AdjacencyList {
         std::vector<int> adjListFrom;
         std::vector<float> degree;
     };
+
     int indexCounter;
     std::map<string, int> index;
     std::map<int, Data > adjData;
     std::vector<float> rankPrev;
     std::vector<float> rank;
 
-//std::vector<int> adjListFrom;
-    // resutls
-
+    // Functions perform the work to support PageRank
     void CalculateDegree();
     void CalculateRank(int n);
 
