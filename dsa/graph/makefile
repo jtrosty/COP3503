@@ -3,7 +3,7 @@ deafult:
 
 run:
 	g++ -std=c++11 -o main main.cpp
-	main.exe < test.txt
+	main.exe < test1.txt
 
 graph:
 	g++ -std=c++11 -o graphs2 graphs2.cpp
