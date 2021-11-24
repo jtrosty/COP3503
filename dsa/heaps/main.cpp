@@ -1,6 +1,48 @@
 #include <iostream>
 #include <sstream>
+#include <vector>
 #include <string>
+#include <queue>
+using std::vector;
+
+//////////////////////////////////////////////////////////////////////
+//                   Heap 6.1.2
+vector<double> findMedian(vector<int> arr) 
+{ 
+    vector<double> result;
+    double temp;
+    std::priority_queue< int, vector<int>, std::greater<int> > pq;
+    std::priority_queue< int, vector<int>, std::greater<int> > pqSlow;
+    for (int i = 0; i < arr.size(); i++) pq.push(arr.at(i));
+    for (int i = 0; i < arr.size(); i++) {
+
+        if (i == 0) {
+            result.push_back(pq.top());
+            pqSlow.push(pq.top());
+        }
+        else if (i % 2 == 0) {
+
+
+        }
+        else {
+            temp = ((double)pq.top() + (double)pqSlow.top()) / 2.0;
+            pqSlow.push(pq.top());
+            result.push_back()
+        }
+        pq.pop();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//                   Heap 6.1.2
+int kthlargest(vector<int>& nums, int k)
+{
+    std::priority_queue<int> pq;
+    //your code here
+    for (int i = 0; i < nums.size(); i++) pq.push(nums.at(i));
+    for (int i = 1; i < k; i++) pq.pop();
+    return pq.top();
+}
 //using namespace std;
 //////////////////////////////////////////////////////////////////////
 //                   Heap 6.1.1
@@ -25,7 +67,7 @@ int readHeap(int* theheap) {
 void heapRemove(int* theheap, int& size)
 {
    //your code here  
-   // 'Delete' the first nod,e reduce the size of the array.
+   // 'Delete' the first node reduce the size of the array.
    theheap[0] = theheap[(size - 1)];
    size--;
    int root = 0;
@@ -37,17 +79,27 @@ void heapRemove(int* theheap, int& size)
         || theheap[root] > theheap[rightChild]) 
         && (leftChild < size || rightChild < size)) {
         //std::cout << "root " << root << std::endl;
-        if (theheap[leftChild] < theheap[rightChild] && leftChild < size - 1) {
-            temp = theheap[leftChild];
-            theheap[leftChild] = theheap[root];
-            theheap[root] = temp;
-            root = leftChild;
+        if (size - 1 == leftChild) {
+            if (theheap[root] > theheap[leftChild]) {
+                temp = theheap[root];
+                theheap[root] = theheap[leftChild];
+                theheap[leftChild] = temp;
+                root = leftChild;
+            }
         }
-        if (theheap[rightChild] < theheap[leftChild] && rightChild < size - 1) {
-            temp = theheap[rightChild];
-            theheap[rightChild] = theheap[root];
-            theheap[root] = temp;
-            root = rightChild;
+        else if (theheap[root] > theheap[leftChild] || theheap[root] > theheap[rightChild]) {
+            if (theheap[leftChild] < theheap[rightChild]) {
+                temp = theheap[leftChild];
+                theheap[leftChild] = theheap[root];
+                theheap[root] = temp;
+                root = leftChild;
+            }
+            else {
+                temp = theheap[rightChild];
+                theheap[rightChild] = theheap[root];
+                theheap[root] = temp;
+                root = rightChild;
+            }
         }
         leftChild = (2 * root) + 1;
         rightChild = (2 * root) + 2;
