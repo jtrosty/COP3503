@@ -1,0 +1,14 @@
+diff --git a/init/main.c b/init/main.c
+index 02f6b6bd6a17..2da83da8a9ba 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1112,7 +1112,7 @@ static int __ref kernel_init(void *unused)
+ 	 *
+-	 * TROST_JONATHAN: Modificaiton for P0.  
++	 * TROST_JONATHAN: Modificaiton for EX2.  
+ 	 *
+ 	 */
+
+-	printk(KERN_ERR "\n##### Jonathan Trost (UFID: 6736-9531) Welcome to reptilian, there are many like it, but this one is mine. #####\n\n");
++	printk(KERN_ERR "\n### Jonathan Trost (Exercise 2) ###\n\n");
+

@@ -1,0 +1,37 @@
+.TH Ex1: The Command Line 1
+.SH Ex1: The Command Line
+The Command Line \- Learn Linux Terminal Commands
+.SH Synopsis
+Learn Linux terminal commands that will be used heavily with this class. Gain familiarity with man pages. 
+.SH Description
+.SS For the 'Terminal Navigation' portion of the assignment we created a folder. From that folder a search was performed for the phrase 'android_dev' in the Kernel. The result of the search was piped into a text file inside of the folder created. The folder was archived then zipped using the 'tar' command and 'gzip.' This man page was created to document the exercise and introduce us to the basics of man page creation and the 'troff' scripting language.  
+.SH Step 1: Make Folder
+.B MKDIR trost_jonathan
+This created the folder trost_jonathan.
+.SH Step 2 and 3: Perform search
+.B grep -ilr android_dev /usr/rep/src/reptilian-kernel/
+\- This command performed a search for the phrase 'android_dev' in all files within the director of /reptilian-kernel. The flags used were i: to ensure make the search ignore casees. l: This only caused the files that contained to print out, wihtout this, every line in the file would of printed out. The assginment only called for files being printed.  r: Recursively read all files under the directory to be searched.  
+.SH
+.B grep -ilr android_dev /usr/rep/src/reptilian-kernel/ > ex1.txt
+\- The difference from above is the additon of '> ex1.txt', the '>' causes the stdout of the 'grep' function to be directed to 'ex1.txt' instead of to the command line. 
+.SH Step 4: Take screenshots. 
+.SS Screenshots of the command and output were taken using the windows 'snipping tool' application.
+.SH Step 5: Copy ex1.txt to trost_jonathan
+.B cp ex1.txt ../trost_jonathan/
+\- The cp commands performs a copy and copied ex1.txt to the destiniation directory trost_jonathan. 
+.SH Step 6: Archive trost_jonathan to tar
+.B tar -cvf ex1.tar trost_jonathan 
+\- The command archives the trost_jonathan folder and names the result ex1.tar.
+.SH Step 7: Compress ex1.tar 
+.B gzip ex1.tar.gz ex1.tar 
+\- The commmand takes ex1.tar and compresses the archive file and naems it ex1.tar.gz.
+.SH TESTING
+.SS None.
+.SH BUGS
+.SS Not Applicable.
+.SH LINK
+.SS Not Applicable.
+.SH REFERENCES/CITATIONS
+.SS Linux man pages online - man7.org/linux/man-pages/index.html
+.SH AUTHOR
+.SS Jonathan Trost

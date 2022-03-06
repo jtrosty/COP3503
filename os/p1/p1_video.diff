@@ -1,0 +1,115 @@
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index bbfc6d440870..dbd180a47f9c 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -343,6 +343,11 @@
+ 332	common	statx			__x64_sys_statx
+ 333	common	io_pgetevents		__x64_sys_io_pgetevents
+ 334	common	rseq			__x64_sys_rseq
++# Jon Trost addition
++335	common	get_process_log_level	__x64_sys_get_process_log_level
++336	common	set_process_log_level	__x64_sys_set_process_log_level
++337 common  msg_process_log         __x64_sys_msg_process_log
++
+ 424	common	pidfd_send_signal	__x64_sys_pidfd_send_signal
+ 434	common	pidfd_open		__x64_sys_pidfd_open
+ 
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 8e5b2c6d5dea..2fd05f534803 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1121,6 +1121,15 @@ asmlinkage long sys_old_mmap(struct mmap_arg_struct __user *arg);
+  */
+ asmlinkage long sys_ni_syscall(void);
+ 
++/*
++ * Jon Trost added syscall
++ *
++ */
++asmlinkage int sys_msg_process_log(char *msg, int level);
++asmlinkage int sys_get_process_log_level(); 
++asmlinkage int sys_set_process_log_level(int level_to_set); 
++
++
+ #endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
+ 
+ 
+ static noinline void __init kernel_init_freeable(void)
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 0a1cdee858de..8037d1a9d6e0 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+ 
+@@ -792,6 +790,72 @@ SYSCALL_DEFINE3(getresgid, gid_t __user *, rgidp, gid_t __user *, egidp, gid_t _
+ 	return retval;
+ }
+ 
++/*
++ * JON TROST: SYSCALL definitions for project 1..
++ */
++static int process_log_level = 0;
++
++SYSCALL_DEFINE0(get_process_log_level) {
++	return process_log_level;
++}
++
++SYSCALL_DEFINE2(msg_process_log, char*, msg, int, level) {
++
++    if (level > 7 || level < 0) 
++        return -EINVAL; // Invalid argumetn error
++    
++    char* levelName;
++    switch(level) {
++        case 0:
++            levelName = (char*) "PROC_OVERRIDE";
++            break;
++        case 1: 
++            levelName = "PROC_ALERT";
++            break;
++        case 2: 
++            levelName = "PROC_CRITICAL";
++            break;
++        case 3: 
++            levelName = "PROC_ERROR";
++            break;
++        case 4: 
++            levelName = "PROC_WARNING";
++            break;
++        case 5: 
++            levelName = "PROC_NOTICE";
++            break;
++        case 6: 
++            levelName = "PROC_INFO";
++            break;
++        case 7: 
++            levelName = "PROC_DEBUG";
++            break;
++    }
++
++    if (level > process_log_level) {
++        // invalid log level
++        return -1;
++    }
++    else {
++        char nameExecutable[TASK_COMM_LEN];
++        printk("%s [%s, %i]: %s", (char*)levelName, get_task_comm( nameExecutable,get_current()), task_pid_nr(current), (char*)msg);
++    }
++	return process_log_level;
++}
++
++SYSCALL_DEFINE1(set_process_log_level, int, new_process_log_level) {
++
++    if (!capable(CAP_SYS_ADMIN)) 
++        return -EPERM; // Operation not permitted
++
++    if (new_process_log_level > 7 || new_process_log_level < 0) 
++        return -EINVAL; // Invalid argumetn error
++
++	process_log_level = new_process_log_level;
++	return process_log_level;
++}
++
++
+ 
+ /*
+  * "setfsuid()" sets the fsuid - the uid used for filesystem checks. This
