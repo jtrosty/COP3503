@@ -1,7 +1,7 @@
 @echo off
 
 pushd debug    
-cl -Zi -nologo ..\MemoryManager.cpp 
+cl -Zi -nologo ..\MemoryManager.cpp ..\main.cpp
 
 popd
 

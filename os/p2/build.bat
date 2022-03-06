@@ -1,3 +1,3 @@
 @echo off
 
-g++ -std=c++11 MemoryManager.cpp -g -o main
+g++ -std=c++11 MemoryManager.cpp main.cpp -g -o main

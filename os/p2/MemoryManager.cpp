@@ -49,14 +49,17 @@ void MemoryManager::shutdown() {
 
 
 void* MemoryManager::allocate(size_t sizeInBytes) {
-    void* address = currentAllocator(sizeInBytes, holeTracker);
-    if (address == (void*)-1)  {
+    void* testList = 0;
+    int sizeInWords = sizeInBytes / wordSize;
+    int wordOffset = currentAllocator(sizeInWords, testList);
+    if (wordOffset == -1)  {
         printf("Unable to allocated enough memory.");
-
         // Compaction? 
     }
     else {
-
+        unsigned byteOffset = wordOffset * wordSize;
+        void* result = (int*)blockOfMemory + sizeof(byteOffset);
+        return result;
     }
 }
 
@@ -117,10 +120,3 @@ unsigned MemoryManager::getMemoryLimit() {
     return numOfBytes;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//                               Main Test 
-////////////////////////////////////////////////////////////////////////////////////////////////
-void main() {
-
-}
