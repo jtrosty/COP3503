@@ -58,7 +58,6 @@ void* MemoryManager::allocate(size_t sizeInBytes) {
     else {
 
     }
-
 }
 
 // Best Fit
