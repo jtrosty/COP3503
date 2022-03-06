@@ -23,13 +23,11 @@ void MemoryManager::initialize(size_t sizeInWords) {
     blockOfMemory = malloc(numOfBytes);
 
     // Worry about mmap later and munmap
-    
 
     hole firstHole;
     firstHole.start = 0;
     firstHole.size = numOfBytes;
     holeTracker.push_back(firstHole);
-    
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,9 +61,42 @@ void* MemoryManager::allocate(size_t sizeInBytes) {
     }
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                               Get Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+void* MemoryManager::getList() {
+    int size = holeTracker.size();
+    if (size == 0) return NULL;
+    short list[1 + 2 * size];
+    
+
+
+}
+
+unsigned MemoryManager::getWordSize() {
+    return wordSize;
+}
+
+void* MemoryManager::getMemoryStart() {
+    return &blockOfMemory;
+}
+
+unsigned MemoryManager::getMemoryLimit() {
+    return numOfBytes;
+}
+
+// *********************************************************************************************
+//                         END OF CLASS DEFINITION
+// *********************************************************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                        Best and Worst Fit Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
 // Best Fit
-int MemoryManager::bestFit(int sizeInWords, void* list) {
-    // need the smallet hole that will fit the memory
+int bestFit(int sizeInWords, void* list) {
+    // need thesmallet hole that will fit the memory
+
     std::sort (holeTracker.begin(), holeTracker.end(), sortHole);
     int bestFit = -1;
     for (int i = 0; i < holeTracker.size(); i++) {
@@ -87,7 +118,7 @@ int MemoryManager::bestFit(int sizeInWords, void* list) {
 }
 
 // Worst Fit
-int MemoryManager::worstFit(int sizeInWords, void* list) {
+int worstFit(int sizeInWords, void* list) {
     // Need the largest hole that fits the required bit
     std::sort (holeTracker.begin(), holeTracker.end(), sortHole);
     int bestFit = -1;
@@ -102,21 +133,3 @@ int MemoryManager::worstFit(int sizeInWords, void* list) {
     }
     return holeTracker.at(bestFit).start;
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//                               Get Functions
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-unsigned MemoryManager::getWordSize() {
-    return wordSize;
-}
-
-void* MemoryManager::getMemoryStart() {
-    return &blockOfMemory;
-}
-
-unsigned MemoryManager::getMemoryLimit() {
-    return numOfBytes;
-}
-

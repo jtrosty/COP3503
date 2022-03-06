@@ -29,7 +29,7 @@ class MemoryManager {
         //void free(void* address);
         void setAllocator(std::function<int(int, void* )> allocator);//
         //int dumpMemoryMap(char* filename);
-        //void* getList();
+        void* getList();
         //void* getBitmap();
         unsigned getWordSize();
         void* getMemoryStart();
