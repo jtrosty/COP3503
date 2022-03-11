@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <vector>
 #include <algorithm>
+#include <stdio.h>
 //#include <sys/mman.h>
 
 class MemoryManager {

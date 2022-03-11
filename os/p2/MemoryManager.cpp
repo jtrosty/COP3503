@@ -68,11 +68,17 @@ void* MemoryManager::allocate(size_t sizeInBytes) {
 
 void* MemoryManager::getList() {
     int size = holeTracker.size();
+    std::sort (holeTracker.begin(), holeTracker.end(), sortHole);
+
     if (size == 0) return NULL;
-    short list[1 + 2 * size];
-    
+    short list[1 + (2 * size)];
 
-
+    list[0] = size;
+    for (int i = 1; i < size; i =+ 2) {
+        list[i] = holeTracker.at(i - 1).start;
+        list[i + 1] = holeTracker.at(i - 1).size;
+    }
+    return list;
 }
 
 unsigned MemoryManager::getWordSize() {
@@ -97,8 +103,9 @@ unsigned MemoryManager::getMemoryLimit() {
 int bestFit(int sizeInWords, void* list) {
     // need thesmallet hole that will fit the memory
 
-    std::sort (holeTracker.begin(), holeTracker.end(), sortHole);
     int bestFit = -1;
+    short size = 0;
+    size << list;
     for (int i = 0; i < holeTracker.size(); i++) {
         // This assumes that it is sorted from smallet to largest
         if (sizeInWords < holeTracker.at(i).size) {
@@ -120,7 +127,6 @@ int bestFit(int sizeInWords, void* list) {
 // Worst Fit
 int worstFit(int sizeInWords, void* list) {
     // Need the largest hole that fits the required bit
-    std::sort (holeTracker.begin(), holeTracker.end(), sortHole);
     int bestFit = -1;
     int lastIndex = holeTracker.size() - 1;
     if (holeTracker.at(lastIndex).size < sizeInWords) {
