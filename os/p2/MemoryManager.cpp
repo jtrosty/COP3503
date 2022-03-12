@@ -104,15 +104,16 @@ int bestFit(int sizeInWords, void* list) {
     // need thesmallet hole that will fit the memory
 
     int bestFit = -1;
-    short size = 0;
-    size << list;
-    for (int i = 0; i < holeTracker.size(); i++) {
+    short* shList = (short*)list;
+    short size = shList[0];
+    for (int i = 1; i < size; i += 2) {
         // This assumes that it is sorted from smallet to largest
-        if (sizeInWords < holeTracker.at(i).size) {
+        if (sizeInWords < shList[i + 1]) {
             bestFit = i;
         }
         else {
             // hole is not big enough
+            // The previous point had the best fitting 
             break;
         }
     }
@@ -121,21 +122,29 @@ int bestFit(int sizeInWords, void* list) {
         printf("No hole is large enough for memory.");
         return bestFit;
     }
-    return holeTracker.at(bestFit).start;
+    return shList[i];
 }
 
 // Worst Fit
 int worstFit(int sizeInWords, void* list) {
-    // Need the largest hole that fits the required bit
-    int bestFit = -1;
-    int lastIndex = holeTracker.size() - 1;
-    if (holeTracker.at(lastIndex).size < sizeInWords) {
-        bestFit = lastIndex;
+    int worstFit = -1;
+    short* shList = (short*)list;
+    short size = shList[0];
+    for (int i = 1; i < size; i += 2) {
+        // This assumes that it is sorted from smallet to largest
+        if (sizeInWords < shList[i + 1]) {
+            worstFit = i;
+        }
+        else {
+            // hole is not big enough
+            // The previous point had the best fitting 
+            break;
+        }
     }
-    if (bestFit == -1) {
+    if (worstFit == -1) {
         //no space big enough
         printf("No hole is large enough for memory.");
-        return bestFit;
+        return worstFit;
     }
-    return holeTracker.at(bestFit).start;
+    return shList[i];
 }
