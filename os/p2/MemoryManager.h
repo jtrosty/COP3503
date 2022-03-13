@@ -5,6 +5,9 @@
 #include <stdio.h>
 //#include <sys/mman.h>
 
+int worstFit(int sizeInWords, void* list); 
+int bestFit(int sizeInWords, void* list); 
+
 class MemoryManager {
     public:
         struct hole {
