@@ -29,9 +29,9 @@ class MemoryManager {
         void* allocate(size_t sizeInBytes);//
         //void free(void* address);
         void setAllocator(std::function<int(int, void* )> allocator);//
-        //int dumpMemoryMap(char* filename);
+        int dumpMemoryMap(char* filename);
         void* getList();
-        //void* getBitmap();
+        void* getBitmap();
         unsigned getWordSize();
         void* getMemoryStart();
         unsigned getMemoryLimit();

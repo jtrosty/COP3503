@@ -6,7 +6,7 @@
 
 MemoryManager::MemoryManager(unsigned wordSize, std::function<int(int, void*)> allocator) {
     numOfBytes = 0;
-    wordSize = wordSize;
+    this->wordSize = wordSize;
     blockOfMemory = nullptr;
     currentAllocator = allocator;
 }
@@ -61,10 +61,34 @@ void* MemoryManager::allocate(size_t sizeInBytes) {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                               File Output Function
+////////////////////////////////////////////////////////////////////////////////////////////////
+int MemoryManager::dumpMemoryMap(char* filename) {
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //                               Get Functions
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+void* MemoryManager::getBitmap() {
+    int size = (numOfBytes / wordSize);
+    char* bitMap = new char[size + (2 * sizeof(char))];
+    for (int i = (2 * sizeof(char)); i < size; i++) {
+        bitMap[i] = 1;
+    }
+    ((short*)bitMap)[0] = size;
+
+    for (auto iter = holeTracker.begin(); iter != holeTracker.end(); iter++) {
+        int i = iter->start;
+        int size = iter->size;
+        for (i; i < (i + size); i++) {
+            bitMap[i] = 0;
+        }
+    }
+    return (void*)bitMap;
+}
 
 void* MemoryManager::getList() {
     int size = holeTracker.size();
@@ -122,29 +146,25 @@ int bestFit(int sizeInWords, void* list) {
         printf("No hole is large enough for memory.");
         return bestFit;
     }
-    return shList[i];
+    int result = shList[bestFit];
+    free(shList);
+    return shList[bestFit];
 }
 
 // Worst Fit
+// TODO: make sure this is f'd 
 int worstFit(int sizeInWords, void* list) {
     int worstFit = -1;
     short* shList = (short*)list;
     short size = shList[0];
-    for (int i = 1; i < size; i += 2) {
-        // This assumes that it is sorted from smallet to largest
-        if (sizeInWords < shList[i + 1]) {
-            worstFit = i;
-        }
-        else {
-            // hole is not big enough
-            // The previous point had the best fitting 
-            break;
-        }
+    //We just ened teh biggest space available. 
+    int result = -2;
+    if (size > 0) {
+        result = shList[size - 1];
     }
-    if (worstFit == -1) {
-        //no space big enough
-        printf("No hole is large enough for memory.");
-        return worstFit;
+    else {
+        result = -1;
     }
-    return shList[i];
+    free(shList);
+    return result;
 }
