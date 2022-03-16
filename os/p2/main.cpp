@@ -9,9 +9,10 @@ void printList(void* list) {
     unsigned short* shList = (unsigned short*)list;
     unsigned short size = shList[0];
     size_t* byteList = (size_t*)list;
-    unsigned int length = sizeof(short) + (4 * size * sizeof(char));
-    for (unsigned int i = 0; i < length; i++) {
-        printf("%X", byteList[i] & 0x000f);
+    unsigned int lengthByte = sizeof(short) + (4 * size * sizeof(char));
+    unsigned int lengthShort = (2 * size) + 1;
+    for (unsigned int i = 0; i < lengthShort; i++) {
+        printf("%s", shList[i]);
     }
     printf("\n");
 }

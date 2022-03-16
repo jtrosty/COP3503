@@ -79,7 +79,7 @@ void* MemoryManager::allocate(size_t sizeInBytes) {
 
 void MemoryManager::free(void* address) {
     // Get the offset
-    int offset = (int)address - (int)blockOfMemory;
+    int offset = (int*)address - (int*)blockOfMemory;
     size_t sizeInBytes = allocatedTracker.at(address);
     allocatedTracker.erase(address);
     int holeToAdjust = -1;
