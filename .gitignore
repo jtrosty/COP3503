@@ -64,6 +64,7 @@ dkms.conf
 *.tga
 *.png
 *.bmp
+*.jpg
 
 # etc
 *.zip
