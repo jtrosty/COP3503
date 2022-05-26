@@ -20,6 +20,7 @@ public class LexerTests {
 
     private static Stream<Arguments> testIdentifier() {
         return Stream.of(
+                Arguments.of("test 1 char", "aaaa", true),
                 Arguments.of("Alphabetic", "getName", true),
                 Arguments.of("Alphanumeric", "thelegend27", true),
                 Arguments.of("Leading Hyphen", "-five", false),
@@ -36,8 +37,9 @@ public class LexerTests {
     private static Stream<Arguments> testInteger() {
         return Stream.of(
                 Arguments.of("Single Digit", "1", true),
-                Arguments.of("Decimal", "123.456", false),
-                Arguments.of("Signed Decimal", "-1.0", false),
+                Arguments.of("Multiple Digits", "123456", true),
+                Arguments.of("Positive Integer", "+1", true),
+                Arguments.of("Negative Integer", "-1", true),
                 Arguments.of("Trailing Decimal", "1.", false),
                 Arguments.of("Leading Decimal", ".5", false)
         );
@@ -51,11 +53,12 @@ public class LexerTests {
 
     private static Stream<Arguments> testDecimal() {
         return Stream.of(
-                Arguments.of("Integer", "1", false),
-                Arguments.of("Multiple Digits", "123.456", true),
+                Arguments.of("Decimal", "123.456", true),
                 Arguments.of("Negative Decimal", "-1.0", true),
+                Arguments.of("Positive Decimal", "+1.0", true),
                 Arguments.of("Trailing Decimal", "1.", false),
-                Arguments.of("Leading Decimal", ".5", false)
+                Arguments.of("Leading Decimal", ".5", false),
+                Arguments.of("Integer", "1", false)
         );
     }
 
