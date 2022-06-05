@@ -41,6 +41,7 @@ public class LexerTests {
                 Arguments.of("Positive Integer", "+1", true),
                 Arguments.of("Negative Integer", "-1", true),
                 Arguments.of("Trailing Decimal", "1.", false),
+                Arguments.of("Non integer", "+@0", false),
                 Arguments.of("Leading Decimal", ".5", false)
         );
     }

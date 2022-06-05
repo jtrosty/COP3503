@@ -34,7 +34,7 @@ public final class Lexer {
     String identifierFirstLetter = "[a-zA-Z_]";
     String identifierAfterFirst = "[A-Za-z0-9_-]";
     String numberStart = "[0-9\\+-]";
-    String number = "[0-9]";
+    String number = "[0-9\\.]";
     String decimal = "\\.";
     String numberAfter = "[0-9\\.\\+-]";
     String numberAfterDecimal = "[0-9]";
@@ -103,6 +103,10 @@ public final class Lexer {
             while(peek(number)) {
                 chars.advance();
             }
+        }
+        else {
+
+
         }
         return chars.emit(tokenType);
     }
