@@ -133,7 +133,6 @@ final class ParserExpressionTests {
                 )
         );
     }
-
     @ParameterizedTest
     @MethodSource
     void testBinaryExpression(String test, List<Token> tokens, Ast.Expr.Binary expected) {

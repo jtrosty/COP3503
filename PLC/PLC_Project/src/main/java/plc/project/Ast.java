@@ -372,7 +372,7 @@ public abstract class Ast {
 
     }
 
-    public static abstract class Expr extends Ast {
+    public static class Expr extends Ast {
 
         public static final class Literal extends Expr {
 
