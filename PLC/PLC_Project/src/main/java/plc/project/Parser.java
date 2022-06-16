@@ -31,8 +31,18 @@ public final class Parser {
     /**
      * Parses the {@code source} rule.
      */
+    String let = "LET";
+    String def = "DEF";
     public Ast.Source parseSource() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        List<Ast.Field> fields = new ArrayList<>();
+        List<Ast.Method> methods = new ArrayList<>();
+        while (match(let)) {
+            fields.add(parseField());
+        }
+        while (match(def)) {
+            methods.add(parseMethod());
+        }
+        return new Ast.Source(fields, methods);
     }
 
     /**
@@ -40,15 +50,57 @@ public final class Parser {
      * next tokens start a field, aka {@code LET}.
      */
     public Ast.Field parseField() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        Optional<Ast.Expr> value = Optional.empty();
+        if (!match(Token.Type.IDENTIFIER)) {
+            throw new ParseException("Expected identifier.", tokens.index);
+        }
+        String name = tokens.get(-1).getLiteral();
+        if (match("=")) {
+            value = Optional.of(parseExpression());
+        }
+        if (!match(";")) {
+            throw new ParseException("Expected semicolon.", tokens.index);
+        }
+        return new Ast.Field(name, value);
     }
 
     /**
      * Parses the {@code method} rule. This method should only be called if the
      * next tokens start a method, aka {@code DEF}.
      */
+    String do_PLC = "DO";
+    String end_PLC = "END";
     public Ast.Method parseMethod() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        List<String> parameters = new ArrayList<>();
+        List<Ast.Stmt> statements = new ArrayList<>();
+        if (!match(Token.Type.IDENTIFIER)) {
+            throw new ParseException("Expected identifier.", tokens.index);
+        }
+        String name = tokens.get(-1).getLiteral();
+        if (!match("(")) {
+            throw new ParseException("Expected open paranthesis.", tokens.index);
+        }
+        if (match(Token.Type.IDENTIFIER)) {
+            parameters.add(tokens.get(-1).getLiteral());
+        }
+        while (!match(")")) {
+            if (!match(",")) {
+                throw new ParseException("Expected comma.", tokens.index);
+            }
+            if (!match(Token.Type.IDENTIFIER)) {
+                throw new ParseException("Expected identifier.", tokens.index);
+            }
+            parameters.add(tokens.get(-1).getLiteral());
+        }
+        if (!match(do_PLC)) {
+            throw new ParseException("Expected \"DO\".", tokens.index);
+        }
+
+        while (!match(end_PLC)) {
+            statements.add(parseStatement());
+        }
+
+        return new Ast.Method(name, parameters, statements);
     }
 
     /**
@@ -56,27 +108,29 @@ public final class Parser {
      * If the next tokens do not start a declaration, if, while, or return
      * statement, then it is an expression/assignment statement.
      */
-    String declaration = "(LET)|(FOR)|(IF)|(WHILE)|(RETURN)";
-
+    String declaration_PLC = "LET";
+    String for_PLC = "FOR";
+    String if_PLC = "IF";
+    String while_PLC = "WHILE";
+    String return_PLC = "RETURN";
+    String else_PLC = "ELSE";
     public Ast.Stmt parseStatement() throws ParseException {
-        if (peek(declaration)) {
-            if(peek("(LET)")) {
-                return parseDeclarationStatement();
-            }
-            if(peek("(FOR)")) {
-                return parseForStatement();
-            }
-            if(peek("(IF)")) {
-                return parseIfStatement();
-            }
-            if(peek("(WHILE)")) {
-                return parseWhileStatement();
-            }
-            if(peek("(RETURN)")) {
-                return parseReturnStatement();
-            }
-            throw new ParseException("Expected Declaration, THIS SHOULD NEVER BE THROWN", tokens.index);
-        } else {
+        if(peek(declaration_PLC)) {
+            return parseDeclarationStatement();
+        }
+        if(peek(if_PLC)) {
+            return parseIfStatement();
+        }
+        if(peek(for_PLC)) {
+            return parseForStatement();
+        }
+        if(peek(while_PLC)) {
+            return parseWhileStatement();
+        }
+        if(peek(return_PLC)) {
+            return parseReturnStatement();
+        }
+        else {
             Ast.Expr expr = parseExpression();
             // TODO: If the next token is =, then need to handle and assignment.
             if (match("=")) {
@@ -99,7 +153,7 @@ public final class Parser {
      * statement, aka {@code LET}.
      */
     public Ast.Stmt.Declaration parseDeclarationStatement() throws ParseException {
-        match("LET");
+        match(declaration_PLC);
         if(!match(Token.Type.IDENTIFIER)) {
             throw new ParseException("Expected identifier", tokens.index);
         }
@@ -123,7 +177,23 @@ public final class Parser {
      * {@code IF}.
      */
     public Ast.Stmt.If parseIfStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        match(if_PLC);
+        List<Ast.Stmt> thenStatements = new ArrayList<>();
+        List<Ast.Stmt> elseStatements = new ArrayList<>();
+
+        Ast.Expr condition = parseExpression();
+        if (!match(do_PLC)) {
+            throw new ParseException("Expected \"DO\".", tokens.index);
+        }
+        while (!peek(else_PLC) & !peek(end_PLC)) {
+            thenStatements.add(parseStatement());
+        }
+        if(match(else_PLC)) {
+            while (!match(end_PLC)) {
+                elseStatements.add(parseStatement());
+            }
+        }
+        return new Ast.Stmt.If(condition, thenStatements, elseStatements);
     }
 
     /**
@@ -131,8 +201,25 @@ public final class Parser {
      * should only be called if the next tokens start a for statement, aka
      * {@code FOR}.
      */
+    String in_PLC = "IN";
     public Ast.Stmt.For parseForStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        match((for_PLC));
+        if (!match(Token.Type.IDENTIFIER)) {
+            throw new ParseException("Expected identifier", tokens.index);
+        }
+        String name = tokens.get(-1).getLiteral();
+        if (!match(in_PLC)) {
+            throw new ParseException("Expected \"IN\"", tokens.index);
+        }
+        Ast.Expr value = parseExpression();
+        List<Ast.Stmt> statements = new ArrayList<>();
+        if (!match(do_PLC)) {
+            throw new ParseException("Expected \"DO\"", tokens.index);
+        }
+        while (!match(end_PLC)) {
+            statements.add(parseStatement());
+        }
+        return new Ast.Stmt.For(name, value, statements);
     }
 
     /**
@@ -140,7 +227,17 @@ public final class Parser {
      * should only be called if the next tokens start a while statement, aka
      * {@code WHILE}.
      */
-    public Ast.Stmt.While parseWhileStatement() throws ParseException { throw new UnsupportedOperationException(); //TODO
+    public Ast.Stmt.While parseWhileStatement() throws ParseException {
+        match(while_PLC);
+        Ast.Expr condition = parseExpression();
+        if (!match(do_PLC)) {
+            throw new ParseException("Expected \"DO\"", tokens.index);
+        }
+        List<Ast.Stmt> statements = new ArrayList<>();
+        while (!match(end_PLC)) {
+            statements.add(parseStatement());
+        }
+        return new Ast.Stmt.While(condition, statements);
     }
 
     /**
@@ -149,7 +246,12 @@ public final class Parser {
      * {@code RETURN}.
      */
     public Ast.Stmt.Return parseReturnStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        match(return_PLC);
+        Ast.Expr expression = parseExpression();
+        if (!match(";")) {
+            throw new ParseException("Expected \";\"", tokens.index);
+        }
+        return new Ast.Stmt.Return(expression);
     }
 
     /**
@@ -178,23 +280,18 @@ public final class Parser {
     String divide = "/";
 
     public Ast.Expr parseLogicalExpression() throws ParseException {
-        Ast.Expr left = parseAdditiveExpression();
-        if (match(equal)) {
-            String operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            return new Ast.Expr.Binary(operator, left, parseEqualityExpression());
+        Ast.Expr left = parseEqualityExpression();
+        Ast.Expr right;
+        String operator;
+
+        if (match(and)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
         }
-        else if (match(notEqual)) {
-            String operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            return new Ast.Expr.Binary(operator, left, parseEqualityExpression());
-        } else if (match(add) | match(subtract) | match(multiply) | match(divide)) {
-            String operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            return new Ast.Expr.Binary(operator, left, parseAdditiveExpression());
-        }
-        if (    match(and) |   match(or) |
-                match(lessThan)     |   match(lessThanOrEqual) |
-                match(greaterThan)  |   match(greaterThanOrEqual)) {
-            String operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            Ast.Expr right = parseAdditiveExpression();
+        else if (match(or)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
         return left;
@@ -204,8 +301,21 @@ public final class Parser {
      * Parses the {@code equality-expression} rule.
      */
     public Ast.Expr parseEqualityExpression() throws ParseException {
-        Ast.Expr right = parseAdditiveExpression();
-        return right;
+        Ast.Expr left = parseAdditiveExpression();
+        Ast.Expr right;
+        String operator;
+
+        if (match(equal)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        else if (match(notEqual)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        return left;
     }
 
     /**
@@ -213,7 +323,21 @@ public final class Parser {
      */
     String additiveExpr = "(+)|(-)";
     public Ast.Expr parseAdditiveExpression() throws ParseException {
-        return parseMultiplicativeExpression();
+        Ast.Expr left = parseMultiplicativeExpression();
+        Ast.Expr right;
+        String operator;
+
+        if (match(add)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        else if (match(subtract)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        return left;
     }
 
     /**
@@ -221,10 +345,21 @@ public final class Parser {
      */
     String multiplicativeExpr = "(*)|(/)";
     public Ast.Expr parseMultiplicativeExpression() throws ParseException {
-        if (match(multiplicativeExpr)) {
-            throw new UnsupportedOperationException(); //TODO
+        Ast.Expr left = parseSecondaryExpression();
+        Ast.Expr right;
+        String operator;
+
+        if (match(multiply)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
         }
-        return parseSecondaryExpression();
+        else if (match(divide)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        return left;
     }
 
     /**
@@ -245,7 +380,7 @@ public final class Parser {
                 if (match("(")) {
                     Ast.Expr.Function exprFunction;
                     if (match(")")) {
-                        return new Ast.Expr.Function(Optional.empty(), name, arguments);
+                        return new Ast.Expr.Function( reciever, name, arguments);
                     } else {
                         while (!match(")")) {
                             if (!match(",")) {
@@ -317,6 +452,7 @@ public final class Parser {
                     return new Ast.Expr.Function(Optional.empty(), name, arguments);
                 }
                 else {
+                    arguments.add(parseExpression());
                     while (!match(")")) {
                         if (!match(",")) {
                             throw new ParseException("Expected comma between arguments", tokens.index);

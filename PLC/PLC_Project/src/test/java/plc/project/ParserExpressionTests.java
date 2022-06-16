@@ -37,6 +37,21 @@ final class ParserExpressionTests {
                                 new Token(Token.Type.OPERATOR, ";", 6)
                         ),
                         new Ast.Stmt.Expression(new Ast.Expr.Function(Optional.empty(), "name", Arrays.asList()))
+                ),
+                Arguments.of("Function Multiple arguments",
+                        Arrays.asList(
+                                //name();
+                                new Token(Token.Type.IDENTIFIER, "name", 0),
+                                new Token(Token.Type.OPERATOR, "(", 4),
+                                new Token(Token.Type.IDENTIFIER, "expr1", 5),
+                                new Token(Token.Type.OPERATOR, ",", 10),
+                                new Token(Token.Type.IDENTIFIER, "expr2", 11),
+                                new Token(Token.Type.OPERATOR, ",", 16),
+                                new Token(Token.Type.IDENTIFIER, "expr3", 17),
+                                new Token(Token.Type.OPERATOR, ")", 22),
+                                new Token(Token.Type.OPERATOR, ";", 23)
+                        ),
+                        new Ast.Stmt.Expression(new Ast.Expr.Function(Optional.empty(), "name", Arrays.asList()))
                 )
         );
     }
@@ -88,6 +103,10 @@ final class ParserExpressionTests {
                 Arguments.of("Character Literal",
                         Arrays.asList(new Token(Token.Type.CHARACTER, "'c'", 0)),
                         new Ast.Expr.Literal('c')
+                ),
+                Arguments.of("Character escape",
+                        Arrays.asList(new Token(Token.Type.CHARACTER, "'\n'", 0)),
+                        new Ast.Expr.Literal('\n')
                 ),
                 Arguments.of("String Literal",
                         Arrays.asList(new Token(Token.Type.STRING, "\"string\"", 0)),
@@ -153,6 +172,20 @@ final class ParserExpressionTests {
                                 new Ast.Expr.Access(Optional.empty(), "expr2")
                         )
                 ),
+                Arguments.of("Binary And then a times",
+                        Arrays.asList(
+                                //expr1 AND expr2
+                                new Token(Token.Type.IDENTIFIER, "expr1", 0),
+                                new Token(Token.Type.IDENTIFIER, "+", 6),
+                                new Token(Token.Type.IDENTIFIER, "expr2", 8),
+                                new Token(Token.Type.IDENTIFIER, "*", 14),
+                                new Token(Token.Type.IDENTIFIER, "expr3", 16)
+                        ),
+                        new Ast.Expr.Binary("*",
+                                new Ast.Expr.Access(Optional.empty(), "expr2"),
+                                new Ast.Expr.Access(Optional.empty(), "expr3")
+                        )
+                ),
                 Arguments.of("Binary Equality",
                         Arrays.asList(
                                 //expr1 == expr2
@@ -161,6 +194,18 @@ final class ParserExpressionTests {
                                 new Token(Token.Type.IDENTIFIER, "expr2", 9)
                         ),
                         new Ast.Expr.Binary("==",
+                                new Ast.Expr.Access(Optional.empty(), "expr1"),
+                                new Ast.Expr.Access(Optional.empty(), "expr2")
+                        )
+                ),
+                Arguments.of("Binary In-Equality",
+                        Arrays.asList(
+                                //expr1 == expr2
+                                new Token(Token.Type.IDENTIFIER, "expr1", 0),
+                                new Token(Token.Type.OPERATOR, "!=", 6),
+                                new Token(Token.Type.IDENTIFIER, "expr2", 9)
+                        ),
+                        new Ast.Expr.Binary("!=",
                                 new Ast.Expr.Access(Optional.empty(), "expr1"),
                                 new Ast.Expr.Access(Optional.empty(), "expr2")
                         )
