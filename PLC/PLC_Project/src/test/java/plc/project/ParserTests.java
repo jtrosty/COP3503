@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -64,8 +65,53 @@ final class ParserTests {
                                         new Ast.Stmt.Expression(new Ast.Expr.Access(Optional.empty(), "stmt"))
                                 )))
                         )
+                ),
+                Arguments.of("Field Method",
+                        Arrays.asList(
+                                //DEF name() DO stmt; END
+                                new Token(Token.Type.IDENTIFIER, "LET", 0),
+                                new Token(Token.Type.IDENTIFIER, "name", 3),
+                                new Token(Token.Type.OPERATOR, "=", 7),
+                                new Token(Token.Type.IDENTIFIER, "expr", 8),
+                                new Token(Token.Type.OPERATOR, ";", 12),
+                                new Token(Token.Type.CHARACTER, "\n", 13),
+                                new Token(Token.Type.IDENTIFIER, "DEF", 14),
+                                new Token(Token.Type.IDENTIFIER, "name", 17),
+                                new Token(Token.Type.OPERATOR, "(", 18),
+                                new Token(Token.Type.OPERATOR, ")", 19),
+                                new Token(Token.Type.IDENTIFIER, "DO", 20),
+                                new Token(Token.Type.IDENTIFIER, "stmt", 22),
+                                new Token(Token.Type.OPERATOR, ";", 23),
+                                new Token(Token.Type.IDENTIFIER, "END", 24)
+                        ),
+        new Ast.Source(
+                Arrays.asList(new Ast.Field("name", Optional.of(new Ast.Expr.Access(Optional.empty(), "expr")))),
+                                Arrays.asList(new Ast.Method("name", Arrays.asList(), Arrays.asList(
+                                        new Ast.Stmt.Expression(new Ast.Expr.Access(Optional.empty(), "stmt"))
+                                )))
+                ),
+                Arguments.of("Method Field",
+                        Arrays.asList(
+                                //DEF name() DO stmt; END
+                                new Token(Token.Type.IDENTIFIER, "DEF", 0),
+                                new Token(Token.Type.IDENTIFIER, "name", 4),
+                                new Token(Token.Type.OPERATOR, "(", 8),
+                                new Token(Token.Type.OPERATOR, ")", 9),
+                                new Token(Token.Type.IDENTIFIER, "DO", 11),
+                                new Token(Token.Type.IDENTIFIER, "stmt", 14),
+                                new Token(Token.Type.OPERATOR, ";", 18),
+                                new Token(Token.Type.IDENTIFIER, "END", 20),
+                                new Token(Token.Type.CHARACTER, "\n", 23),
+                                new Token(Token.Type.IDENTIFIER, "LET", 24),
+                                new Token(Token.Type.IDENTIFIER, "name", 27),
+                                new Token(Token.Type.OPERATOR, "=", 31),
+                                new Token(Token.Type.IDENTIFIER, "expr", 32),
+                                new Token(Token.Type.OPERATOR, ";", 26)
+                        ),
+                        new Ast.Source(new ArrayList<Ast.Field>(), new ArrayList<Ast.Method>()))
                 )
         );
+
     }
 
     @ParameterizedTest
@@ -215,6 +261,22 @@ final class ParserTests {
                                 "elem",
                                 new Ast.Expr.Access(Optional.empty(), "list"),
                                 Arrays.asList(new Ast.Stmt.Expression(new Ast.Expr.Access(Optional.empty(), "stmt")))
+                        )
+                ),
+                Arguments.of("For",
+                        Arrays.asList(
+                                //FOR elem IN list DO stmt; END
+                                new Token(Token.Type.IDENTIFIER, "FOR", 0),
+                                new Token(Token.Type.IDENTIFIER, "elem", 6),
+                                new Token(Token.Type.IDENTIFIER, "IN", 9),
+                                new Token(Token.Type.IDENTIFIER, "list", 12),
+                                new Token(Token.Type.IDENTIFIER, "DO", 17),
+                                new Token(Token.Type.IDENTIFIER, "END", 20)
+                        ),
+                        new Ast.Stmt.For(
+                                "elem",
+                                new Ast.Expr.Access(Optional.empty(), "list"),
+                                Arrays.asList()
                         )
                 )
         );
@@ -396,6 +458,24 @@ final class ParserTests {
 
     @ParameterizedTest
     @MethodSource
+    void testError(String test, List<Token> tokens, Ast.Stmt expected) {
+        test(tokens, expected, Parser::parseStatement);
+    }
+    private static Stream<Arguments> testError() {
+        return Stream.of(
+                Arguments.of("Zero Arguments",
+                        Arrays.asList(
+                                //name()
+                                new Token(Token.Type.IDENTIFIER, "name", 0),
+                                new Token(Token.Type.OPERATOR, "(", 4),
+                                new Token(Token.Type.OPERATOR, ")", 5)
+                        ),
+                        new Ast.Expr.Function(Optional.empty(), "name", Arrays.asList())
+                )
+        );
+    }
+    @ParameterizedTest
+    @MethodSource
     void testAccessExpression(String test, List<Token> tokens, Ast.Expr.Access expected) {
         test(tokens, expected, Parser::parseExpression);
     }
@@ -466,6 +546,7 @@ final class ParserTests {
                 )
         );
     }
+
 
     @Test
     void testExample1() {
