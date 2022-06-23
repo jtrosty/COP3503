@@ -108,6 +108,14 @@ final class ParserExpressionTests {
                         Arrays.asList(new Token(Token.Type.CHARACTER, "'\n'", 0)),
                         new Ast.Expr.Literal('\n')
                 ),
+                Arguments.of("Character test",
+                        Arrays.asList(new Token(Token.Type.CHARACTER, "'\b'", 0)),
+                        new Ast.Expr.Literal('\b')
+                ),
+                Arguments.of("Character test again",
+                        Arrays.asList(new Token(Token.Type.CHARACTER, "'\t'", 0)),
+                        new Ast.Expr.Literal('\t')
+                ),
                 Arguments.of("String Literal",
                         Arrays.asList(new Token(Token.Type.STRING, "\"string\"", 0)),
                         new Ast.Expr.Literal("string")

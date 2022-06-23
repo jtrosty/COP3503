@@ -306,12 +306,12 @@ public final class Parser {
 
         if (match(and)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
+            right = parseEqualityExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
         else if (match(or)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
+            right = parseEqualityExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
         return left;
@@ -325,7 +325,27 @@ public final class Parser {
         Ast.Expr right;
         String operator;
 
-        if (match(equal)) {
+        if (match(lessThan)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        else if (match(lessThanOrEqual)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        else if (match(greaterThan)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        else if (match(greaterThanOrEqual)) {
+            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
+            right = parseAdditiveExpression();
+            return new Ast.Expr.Binary(operator, left, right);
+        }
+        else if (match(equal)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
             right = parseAdditiveExpression();
             return new Ast.Expr.Binary(operator, left, right);
@@ -349,12 +369,12 @@ public final class Parser {
 
         if (match(add)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
+            right = parseMultiplicativeExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
         else if (match(subtract)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
+            right = parseMultiplicativeExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
         return left;
@@ -371,12 +391,12 @@ public final class Parser {
 
         if (match(multiply)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
+            right = parseSecondaryExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
         else if (match(divide)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
+            right = parseSecondaryExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
         return left;
@@ -451,8 +471,30 @@ public final class Parser {
             BigDecimal decimal = new BigDecimal(tokens.get(-1).getLiteral());
             return new Ast.Expr.Literal(decimal);
         } else if (match(Token.Type.CHARACTER)) {
-            Character character = new Character((tokens.get(-1).getLiteral().replaceAll("(\\')", "")).charAt(0));
-            return new Ast.Expr.Literal(character);
+            String stringInitial = tokens.get(-1).getLiteral();
+            String stringFinal = stringInitial.substring(1, stringInitial.length() - 1);
+            if (stringInitial == "\\b") {
+                return new Ast.Expr.Literal("\b");
+            }
+            else if (stringInitial == "\\n") {
+                return new Ast.Expr.Literal("\n");
+            }
+            else if (stringInitial == "\\r") {
+                return new Ast.Expr.Literal("\r");
+            }
+            else if (stringInitial == "\\t") {
+                return new Ast.Expr.Literal("\t");
+            }
+            else if (stringInitial == "\\'") {
+                return new Ast.Expr.Literal("\'");
+            }
+            else if (stringInitial == "\\\"") {
+                return new Ast.Expr.Literal("\"");
+            }
+            else if (stringInitial == "\\\\") {
+                return new Ast.Expr.Literal("\\");
+            }
+            return new Ast.Expr.Literal(stringFinal.charAt(0));
         } else if (match(Token.Type.STRING)) {
             String newString = new String(tokens.get(-1).getLiteral());
             newString = correctString(newString);
@@ -480,7 +522,7 @@ public final class Parser {
                         arguments.add(parseExpression());
                     }
                 }
-                // TODO: Need to figure out how to handle reciever
+                // TODO: Need to figure out how to handle receiver
                 exprFunction = new Ast.Expr.Function(Optional.empty(),name, arguments);
                 return exprFunction;
             }
