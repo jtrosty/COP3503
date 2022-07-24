@@ -268,6 +268,8 @@ public final class AnalyzerTests {
     }
 
     private static Stream<Arguments> testLiteralExpression() {
+        BigDecimal biggerThanDouble = BigDecimal.valueOf(Long.MAX_VALUE);
+        biggerThanDouble.add(BigDecimal.valueOf(Long.MAX_VALUE));
         return Stream.of(
                 Arguments.of("Boolean",
                         // TRUE
@@ -282,6 +284,16 @@ public final class AnalyzerTests {
                 Arguments.of("Integer Invalid",
                         // 9223372036854775807
                         new Ast.Expr.Literal(BigInteger.valueOf(Long.MAX_VALUE)),
+                        null
+                ),
+                Arguments.of("Double Valid",
+                        // 2147483647
+                        new Ast.Expr.Literal(BigDecimal.valueOf(Double.MAX_VALUE)),
+                        init(new Ast.Expr.Literal(BigDecimal.valueOf(Double.MAX_VALUE)), ast -> ast.setType(Environment.Type.DECIMAL))
+                ),
+                Arguments.of("Double Invalid",
+                        // 9223372036854775807
+                        new Ast.Expr.Literal(biggerThanDouble),
                         null
                 )
         );

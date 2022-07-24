@@ -106,6 +106,7 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
     public Environment.PlcObject visit(Ast.Stmt.Assignment ast) {
         // Check if ast first argument is an access type.
         Ast.Expr receiver = ast.getReceiver();
+        scope = new Scope(scope);
         if (receiver instanceof Ast.Expr.Access) {
             Ast.Expr.Access accessReceiver = (Ast.Expr.Access) receiver;
             // now check if the access type has a receiver itself
@@ -125,7 +126,9 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
         }
         else {
             //TODO: Maybe do something here?
+            throw new RuntimeException("Receiver should be of type Ast.Expr.Access");
         }
+        scope = scope.getParent();
         return Environment.NIL;
     }
 
