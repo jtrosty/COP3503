@@ -126,6 +126,24 @@ public class GeneratorTests {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource
+    void testAccessExpression(String test, Ast.Expr.Access ast, String expected) {
+        test(ast, expected);
+    }
+
+    private static Stream<Arguments> testAccessExpression() {
+        return Stream.of(
+                Arguments.of("Access",
+                        // "Ben" + 10p
+                        init(new Ast.Expr.Access(Optional.of(
+                                        init(new Ast.Expr.Access(Optional.empty(), "object"), ast -> ast.setVariable(new Environment.Variable("object", "object", Environment.Type.ANY, Environment.NIL)))
+                                ), "field"), ast -> ast.setVariable(new Environment.Variable("field", "field", Environment.Type.INTEGER, Environment.NIL))
+                        ), String.join(System.lineSeparator(),
+                                "object.field"
+                        ))
+        );
+    }
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
     void testBinaryExpression(String test, Ast.Expr.Binary ast, String expected) {
         test(ast, expected);
     }

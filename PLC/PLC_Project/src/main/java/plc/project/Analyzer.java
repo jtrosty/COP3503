@@ -1,6 +1,5 @@
 package plc.project;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -418,7 +417,6 @@ public final class Analyzer implements Ast.Visitor<Void> {
             ast.setFunction(receiverFunction);
         }
         else {
-
             // otherwise it is a function in the current scope.
             for (int i = 0; i < ast.getArguments().size(); i++) {
                 visit(ast.getArguments().get(i));
@@ -426,8 +424,6 @@ public final class Analyzer implements Ast.Visitor<Void> {
             }
             ast.setFunction(scope.lookupFunction(ast.getName(), ast.getArguments().size()));
         }
-
-
         return null;
     }
 

@@ -193,6 +193,41 @@ final class ParserTests {
                                 Arrays.asList(new Ast.Stmt.Expression(new Ast.Expr.Access(Optional.empty(), "stmt1"))),
                                 Arrays.asList(new Ast.Stmt.Expression(new Ast.Expr.Access(Optional.empty(), "stmt2")))
                         )
+                ),
+                Arguments.of("If missing end",
+                        Arrays.asList(
+                                //IF expr DO stmt; END
+                                new Token(Token.Type.IDENTIFIER, "IF", 0),
+                                new Token(Token.Type.IDENTIFIER, "expr", 3),
+                                new Token(Token.Type.IDENTIFIER, "DO", 8),
+                                new Token(Token.Type.IDENTIFIER, "stmt", 11),
+                                new Token(Token.Type.OPERATOR, ";", 15)
+                        ),
+                        null
+                ),
+                Arguments.of("If missing semicolon",
+                        Arrays.asList(
+                                //IF expr DO stmt; END
+                                new Token(Token.Type.IDENTIFIER, "IF", 0),
+                                new Token(Token.Type.IDENTIFIER, "expr", 3),
+                                new Token(Token.Type.IDENTIFIER, "DO", 8),
+                                new Token(Token.Type.IDENTIFIER, "stmt", 11)
+                        ),
+                        null
+                ),
+                Arguments.of("Else missing end",
+                        Arrays.asList(
+                                //IF expr DO stmt1; ELSE stmt2; END
+                                new Token(Token.Type.IDENTIFIER, "IF", 0),
+                                new Token(Token.Type.IDENTIFIER, "expr", 3),
+                                new Token(Token.Type.IDENTIFIER, "DO", 8),
+                                new Token(Token.Type.IDENTIFIER, "stmt1", 11),
+                                new Token(Token.Type.OPERATOR, ";", 16),
+                                new Token(Token.Type.IDENTIFIER, "ELSE", 18),
+                                new Token(Token.Type.IDENTIFIER, "stmt2", 23),
+                                new Token(Token.Type.OPERATOR, ";", 28)
+                        ),
+                        null
                 )
         );
     }
@@ -222,6 +257,19 @@ final class ParserTests {
                                 new Ast.Expr.Access(Optional.empty(), "list"),
                                 Arrays.asList(new Ast.Stmt.Expression(new Ast.Expr.Access(Optional.empty(), "stmt")))
                         )
+                ),
+                Arguments.of("For missing end",
+                        Arrays.asList(
+                                //FOR elem IN list DO stmt; END
+                                new Token(Token.Type.IDENTIFIER, "FOR", 0),
+                                new Token(Token.Type.IDENTIFIER, "elem", 6),
+                                new Token(Token.Type.IDENTIFIER, "IN", 9),
+                                new Token(Token.Type.IDENTIFIER, "list", 12),
+                                new Token(Token.Type.IDENTIFIER, "DO", 17),
+                                new Token(Token.Type.IDENTIFIER, "stmt", 20),
+                                new Token(Token.Type.OPERATOR, ";", 24)
+                        ),
+                        null
                 )
         );
     }
@@ -248,6 +296,17 @@ final class ParserTests {
                                 new Ast.Expr.Access(Optional.empty(), "expr"),
                                 Arrays.asList(new Ast.Stmt.Expression(new Ast.Expr.Access(Optional.empty(), "stmt")))
                         )
+                ),
+                Arguments.of("While missing end",
+                        Arrays.asList(
+                                //WHILE expr DO stmt; END
+                                new Token(Token.Type.IDENTIFIER, "WHILE", 0),
+                                new Token(Token.Type.IDENTIFIER, "expr", 6),
+                                new Token(Token.Type.IDENTIFIER, "DO", 11),
+                                new Token(Token.Type.IDENTIFIER, "stmt", 14),
+                                new Token(Token.Type.OPERATOR, ";", 18)
+                        ),
+                        null
                 )
         );
     }
@@ -268,6 +327,14 @@ final class ParserTests {
                                 new Token(Token.Type.OPERATOR, ";", 11)
                         ),
                         new Ast.Stmt.Return(new Ast.Expr.Access(Optional.empty(), "expr"))
+                ),
+                Arguments.of("Return Statement fail",
+                        Arrays.asList(
+                                //RETURN expr;
+                                new Token(Token.Type.IDENTIFIER, "RETURN", 0),
+                                new Token(Token.Type.IDENTIFIER, "expr", 7)
+                        ),
+                        null
                 )
         );
     }
@@ -295,6 +362,14 @@ final class ParserTests {
                 Arguments.of("Character Literal",
                         Arrays.asList(new Token(Token.Type.CHARACTER, "'c'", 0)),
                         new Ast.Expr.Literal('c')
+                ),
+                Arguments.of("Character Escape",
+                        Arrays.asList(new Token(Token.Type.CHARACTER, "'\\b'", 0)),
+                        new Ast.Expr.Literal('\b')
+                ),
+                Arguments.of("Character Escape back space",
+                        Arrays.asList(new Token(Token.Type.CHARACTER, "'\\\\'", 0)),
+                        new Ast.Expr.Literal('\\')
                 ),
                 Arguments.of("String Literal",
                         Arrays.asList(new Token(Token.Type.STRING, "\"string\"", 0)),

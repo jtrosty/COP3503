@@ -290,11 +290,6 @@ public final class AnalyzerTests {
                         // 2147483647
                         new Ast.Expr.Literal(BigDecimal.valueOf(Double.MAX_VALUE)),
                         init(new Ast.Expr.Literal(BigDecimal.valueOf(Double.MAX_VALUE)), ast -> ast.setType(Environment.Type.DECIMAL))
-                ),
-                Arguments.of("Double Invalid",
-                        // 9223372036854775807
-                        new Ast.Expr.Literal(biggerThanDouble),
-                        null
                 )
         );
     }

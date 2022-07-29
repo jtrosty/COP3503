@@ -33,12 +33,12 @@ public final class Parser {
      * Helper functions.
      */
     private int getErrorIndex() {
-        int indexOfCurrentToken = tokens.getTokenIndex();
-        int lengthOfToken = tokens.getLiteralLength();
-        if (tokens.has(tokens.index + 1)) {
-            return (indexOfCurrentToken + lengthOfToken + 1);
+        //int indexOfCurrentToken = tokens.getTokenIndex();
+        //int lengthOfToken = tokens.getLiteralLength();
+        if (tokens.has(0)) {
+            return (tokens.getTokenIndex());
         }
-        return (indexOfCurrentToken + lengthOfToken);
+        return (tokens.get(-1).getIndex() + tokens.get(-1).getLiteral().length());
     }
 
     /**
@@ -46,10 +46,12 @@ public final class Parser {
      */
     String let = "LET";
     String def = "DEF";
+    String type_PLC = ":";
+
     public Ast.Source parseSource() throws ParseException {
         List<Ast.Field> fields = new ArrayList<>();
         List<Ast.Method> methods = new ArrayList<>();
-        while (match(let)) {
+        while (match(let) && tokens.has(0)) {
             fields.add(parseField());
         }
         while (match(Token.Type.CHARACTER)) {
@@ -71,17 +73,29 @@ public final class Parser {
      */
     public Ast.Field parseField() throws ParseException {
         Optional<Ast.Expr> value = Optional.empty();
+        // the name
         if (!match(Token.Type.IDENTIFIER)) {
             throw new ParseException("Expected identifier.", getErrorIndex());
         }
         String name = tokens.get(-1).getLiteral();
+
+        // the type
+        if (!match(type_PLC) && tokens.has(0)) {
+            throw new ParseException("Expected colon for type.", getErrorIndex());
+        }
+        if (!match(Token.Type.IDENTIFIER)) {
+            throw new ParseException("Expected identifier for type.", getErrorIndex());
+        }
+        String typeName = tokens.get(-1).getLiteral();
+
+        //The optional expressioin
         if (match("=")) {
             value = Optional.of(parseExpression());
         }
-        if (!match(";")) {
+        if (!match(";") && tokens.has(0)) {
             throw new ParseException("Expected semicolon.", getErrorIndex());
         }
-        return new Ast.Field(name, value);
+        return new Ast.Field(name, typeName, value);
     }
 
     /**
@@ -92,35 +106,83 @@ public final class Parser {
     String end_PLC = "END";
     public Ast.Method parseMethod() throws ParseException {
         List<String> parameters = new ArrayList<>();
+        List<String> parameterTypes = new ArrayList<>();
         List<Ast.Stmt> statements = new ArrayList<>();
+        Optional<String> returnType = Optional.empty();
+
+        // Get name
         if (!match(Token.Type.IDENTIFIER)) {
             throw new ParseException("Expected identifier.", getErrorIndex());
         }
         String name = tokens.get(-1).getLiteral();
+
         if (!match("(")) {
             throw new ParseException("Expected open paranthesis.", getErrorIndex());
         }
-        if (match(Token.Type.IDENTIFIER)) {
-            parameters.add(tokens.get(-1).getLiteral());
-        }
-        while (!match(")")) {
-            if (!match(",")) {
-                throw new ParseException("Expected comma.", getErrorIndex());
+
+        // Then we have at least 1 identifier
+        if (peek(Token.Type.IDENTIFIER)) {
+            if (match(Token.Type.IDENTIFIER)) {
+                parameters.add(tokens.get(-1).getLiteral());
+            }
+
+            // The type of return
+            if (!match(type_PLC) && tokens.has(0)) {
+                throw new ParseException("Expected semicolon.", getErrorIndex());
             }
             if (!match(Token.Type.IDENTIFIER)) {
                 throw new ParseException("Expected identifier.", getErrorIndex());
             }
-            parameters.add(tokens.get(-1).getLiteral());
+            parameterTypes.add(tokens.get(-1).getLiteral());
+
+            // If there are more parameters
+            while (!match(")") && tokens.has(0)) {
+                if (!match(",")) {
+                    throw new ParseException("Expected comma between parameters.", getErrorIndex());
+                }
+                // Parameter name
+                if (!match(Token.Type.IDENTIFIER)) {
+                    throw new ParseException("Expected identifier.", getErrorIndex());
+                }
+                parameters.add(tokens.get(-1).getLiteral());
+
+                // The type of return
+                if (!match(type_PLC) && tokens.has(0)) {
+                    throw new ParseException("Expected semicolon.", getErrorIndex());
+                }
+                if (!match(Token.Type.IDENTIFIER)) {
+                    throw new ParseException("Expected identifier.", getErrorIndex());
+                }
+                parameterTypes.add(tokens.get(-1).getLiteral());
+            }
         }
+        else {
+            if(!match(")")) {
+                throw new ParseException("Expected closing parenthesis.", getErrorIndex());
+            }
+        }
+
+        // The optional return type
+        if (match(type_PLC)) {
+            if (!match(Token.Type.IDENTIFIER)) {
+                throw new ParseException("Expected return type after colon.", getErrorIndex());
+            }
+            returnType = Optional.of(tokens.get(-1).getLiteral());
+        }
+
+        // The DO portion
         if (!match(do_PLC)) {
             throw new ParseException("Expected \"DO\".", getErrorIndex());
         }
 
-        while (!match(end_PLC)) {
+        while (!match(end_PLC) && tokens.has(0)) {
             statements.add(parseStatement());
         }
+        if (tokens.has(0) && !match(end_PLC)) {
+            throw new ParseException("Expected \"END\".", getErrorIndex());
+        }
 
-        return new Ast.Method(name, parameters, statements);
+        return new Ast.Method(name, parameters, parameterTypes, returnType, statements);
     }
 
     /**
@@ -173,22 +235,33 @@ public final class Parser {
      * statement, aka {@code LET}.
      */
     public Ast.Stmt.Declaration parseDeclarationStatement() throws ParseException {
+        Optional<String> typeForDeclaration = Optional.empty();
+
         match(declaration_PLC);
         if(!match(Token.Type.IDENTIFIER)) {
             throw new ParseException("Expected identifier", getErrorIndex());
         }
         String name = tokens.get(-1).getLiteral();
 
+        // The optional type
+        if (match(type_PLC)) {
+            if (!match(Token.Type.IDENTIFIER)) {
+                throw new ParseException("Expected type after colon.", getErrorIndex());
+            }
+            typeForDeclaration = Optional.of(tokens.get(-1).getLiteral());
+        }
+
+        // the optional value
         Optional<Ast.Expr> value = Optional.empty();
         // Below does the check if we are going to have the optional empty or not.
         if (match("=")) {
             value = Optional.of(parseExpression());
         }
 
-        if(!match(";")) {
+        if(!match(";") && tokens.has(0)) {
             throw new ParseException("Expected semicolon.", getErrorIndex());
         }
-        return new Ast.Stmt.Declaration(name, value);
+        return new Ast.Stmt.Declaration(name, typeForDeclaration, value);
     }
 
     /**
@@ -209,8 +282,11 @@ public final class Parser {
             thenStatements.add(parseStatement());
         }
         if(match(else_PLC)) {
-            while (!match(end_PLC)) {
+            while (!match(end_PLC) && tokens.has(0)) {
                 elseStatements.add(parseStatement());
+                if (!tokens.has(0)) {
+                    throw new ParseException("Expected \"END\" at completion of \"IF\" statement.", getErrorIndex());
+                }
             }
         }
         return new Ast.Stmt.If(condition, thenStatements, elseStatements);
@@ -236,8 +312,11 @@ public final class Parser {
         if (!match(do_PLC)) {
             throw new ParseException("Expected \"DO\"", getErrorIndex());
         }
-        while (!match(end_PLC)) {
+        while (!match(end_PLC) && tokens.has(0)) {
             statements.add(parseStatement());
+            if (!tokens.has(0)) {
+                throw new ParseException("Expected \"END\" at completion of \"FOR\" statement.", getErrorIndex());
+            }
         }
         return new Ast.Stmt.For(name, value, statements);
     }
@@ -254,8 +333,11 @@ public final class Parser {
             throw new ParseException("Expected \"DO\"", getErrorIndex());
         }
         List<Ast.Stmt> statements = new ArrayList<>();
-        while (!match(end_PLC)) {
+        while (!match(end_PLC) && tokens.has(0)) {
             statements.add(parseStatement());
+            if (!tokens.has(0)) {
+                throw new ParseException("Expected \"END\" at completion of \"WHILE\" statement.", getErrorIndex());
+            }
         }
         return new Ast.Stmt.While(condition, statements);
     }
@@ -323,38 +405,19 @@ public final class Parser {
     public Ast.Expr parseEqualityExpression() throws ParseException {
         Ast.Expr left = parseAdditiveExpression();
         Ast.Expr right;
-        String operator;
+        String operator = "empty";
 
-        if (match(lessThan)) {
+        if (match(lessThan) ||
+            match(lessThanOrEqual) ||
+            match(greaterThan) ||
+            match(greaterThanOrEqual) ||
+            match(equal) ||
+            match(notEqual)) {
             operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
             right = parseAdditiveExpression();
             return new Ast.Expr.Binary(operator, left, right);
         }
-        else if (match(lessThanOrEqual)) {
-            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
-            return new Ast.Expr.Binary(operator, left, right);
-        }
-        else if (match(greaterThan)) {
-            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
-            return new Ast.Expr.Binary(operator, left, right);
-        }
-        else if (match(greaterThanOrEqual)) {
-            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
-            return new Ast.Expr.Binary(operator, left, right);
-        }
-        else if (match(equal)) {
-            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
-            return new Ast.Expr.Binary(operator, left, right);
-        }
-        else if (match(notEqual)) {
-            operator = tokens.get(-1).getLiteral(); // This will return the literal string of the variable
-            right = parseAdditiveExpression();
-            return new Ast.Expr.Binary(operator, left, right);
-        }
+
         return left;
     }
 
@@ -473,26 +536,26 @@ public final class Parser {
         } else if (match(Token.Type.CHARACTER)) {
             String stringInitial = tokens.get(-1).getLiteral();
             String stringFinal = stringInitial.substring(1, stringInitial.length() - 1);
-            if (stringInitial == "\\b") {
-                return new Ast.Expr.Literal("\b");
+            if (stringInitial == "'\\b'") {
+                return new Ast.Expr.Literal('\b');
             }
-            else if (stringInitial == "\\n") {
-                return new Ast.Expr.Literal("\n");
+            else if (stringInitial == "'\\n'") {
+                return new Ast.Expr.Literal('\n');
             }
-            else if (stringInitial == "\\r") {
-                return new Ast.Expr.Literal("\r");
+            else if (stringInitial == "'\\r'") {
+                return new Ast.Expr.Literal('\r');
             }
-            else if (stringInitial == "\\t") {
-                return new Ast.Expr.Literal("\t");
+            else if (stringInitial == "'\\t'") {
+                return new Ast.Expr.Literal('\t');
             }
-            else if (stringInitial == "\\'") {
-                return new Ast.Expr.Literal("\'");
+            else if (stringInitial == "'\\''") {
+                return new Ast.Expr.Literal('\'');
             }
-            else if (stringInitial == "\\\"") {
-                return new Ast.Expr.Literal("\"");
+            else if (stringInitial == "'\\\"'") {
+                return new Ast.Expr.Literal('\"');
             }
-            else if (stringInitial == "\\\\") {
-                return new Ast.Expr.Literal("\\");
+            else if (stringInitial == "'\\\\'") {
+                return new Ast.Expr.Literal('\\');
             }
             return new Ast.Expr.Literal(stringFinal.charAt(0));
         } else if (match(Token.Type.STRING)) {

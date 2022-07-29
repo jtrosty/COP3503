@@ -34,7 +34,7 @@ public final class Lexer {
     String identifierFirstLetter = "[a-zA-Z_]";
     String identifierAfterFirst = "[A-Za-z0-9_-]";
     String numberStart = "[0-9\\+-]";
-    String number = "[0-9\\.]";
+    String number = "[0-9]";
     String decimal = "\\.";
     String numberAfter = "[0-9\\.\\+-]";
     String numberAfterDecimal = "[0-9]";
@@ -42,7 +42,8 @@ public final class Lexer {
     String stringStartEnd = "\"";
     String escape = "\\\\";
     String escapeSecond = "[bnrt\\'\\\"\\\\]";
-    String operator = "([<>!=]=?)|.";
+    String operator = "((<>!=)=?)|.";
+    String pluseOrMinus = "[+-]";
     String whitespace = "[ \\\\b\\n\\r\\t]";
 
 
@@ -92,6 +93,9 @@ public final class Lexer {
     }
 
     public Token lexNumber() {
+        if (peek(pluseOrMinus) && !chars.has(1)) {
+            return lexOperator();
+        }
         Token.Type tokenType = Token.Type.INTEGER;
         chars.advance();
         while(chars.has(0) && peek(number)) {
@@ -131,6 +135,9 @@ public final class Lexer {
         while (!peek(stringStartEnd) && chars.has(0)) {
             if (peek(escape)) {
                 lexEscape();
+            }
+            if (peek("\n") || peek("\r")) {
+                throw new ParseException("Unterminated string.", chars.getIndex());
             }
             chars.advance();
         }
