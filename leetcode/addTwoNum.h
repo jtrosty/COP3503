@@ -16,6 +16,8 @@ public:
         ListNode* current2 = l2;
         ListNode* resultList = l1;
         ListNode* resultListCurrent = l1;
+        ListNode* prevResultList;
+
         int resultVal = 0;
         char active1 = 0;
         char active2 = 0;
@@ -32,8 +34,15 @@ public:
             else if (active1 && !active2) {
                 resultVal = current1->val;
             }
-            else {
+            else if (!active1 && active2) {
+                prevResultList->next = current2;
+                resultListCurrent = current2;
                 resultVal = current2->val;
+            }
+            else if (isGreaterThanTen) {
+                resultVal = isGreaterThanTen;
+                prevResultList->next = new ListNode(1);
+                break;
             }
             
             // If the digits add to ten, carry that to next digit
@@ -49,10 +58,7 @@ public:
 
             // handle making the result
             resultListCurrent->val = resultVal;
-            if (isGreaterThanTen && resultListCurrent->next == nullptr && current2->next == nullptr)  {
-                resultListCurrent->next = new ListNode(1);
-                active1 = 0;
-            }
+            prevResultList = resultListCurrent;
             resultListCurrent = resultListCurrent->next;
 
             // Code to handle if the linked list is still active
