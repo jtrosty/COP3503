@@ -24,7 +24,7 @@ public:
         char isGreaterThanTen = 0;
         
 
-        while (active1 || active2) {
+        while (active1 || active2 || isGreaterThanTen) {
             // are both lists still going are is is one down
             if (active1 && active2) {
                 resultVal = current1->val + current2->val;
