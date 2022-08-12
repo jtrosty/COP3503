@@ -1,13 +1,11 @@
 
 
-CC=clang
+CC=g++
 CFLAGS=-g -Wall
-OBJS=file1.o
+OBJS=main1.o
 BIN = main
 
 all:$(BIN)
-
-main: $(OBJS)
 
 main: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o main
