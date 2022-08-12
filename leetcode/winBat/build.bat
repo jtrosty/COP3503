@@ -1,5 +1,6 @@
 @echo off
 
 pushd ..\debug
-g++ ../main1.cpp -g -o main
+rm ../main1
+cl ../main1.cpp -Zi -o main1
 popd

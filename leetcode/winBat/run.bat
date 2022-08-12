@@ -1,5 +1,3 @@
 @echo off
 
-pushd ../debug
-main.exe
-popd
+../debug/main1.exe

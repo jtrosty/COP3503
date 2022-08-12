@@ -1,7 +1,7 @@
 @echo off
 pushd ..\debug
-    cl -Zi -nologo ../main1.cpp -o main
-    main.exe
+    cl -Zi -nologo ../main1.cpp -o main1
+    main1.exe
 popd
 
 REM Compiler Flags:
