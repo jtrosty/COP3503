@@ -18,3 +18,8 @@ clean:
 
 run: 
 	./main
+
+cleanMakeRun:
+	$(RM) -r main *.o *.dSYM
+	$(CC) $(CFLAGS) main1.cpp -o main
+	./main
