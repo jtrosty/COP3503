@@ -22,7 +22,7 @@ public:
     void resetSubstring(Substring& subString, int index) {
                     subString.start = index;
                     subString.end = index;
-                    subString.length = 1;
+                    subString.length = 0;
     }
 
     void transferSubString(Substring& currentSubString, Substring& longestSubString, int index) {
@@ -52,10 +52,11 @@ public:
             else {
                 usedLetters.insert(s.at(i));
                 currentSubString.end++;
-                currentSubString.length++;
+                currentSubString.length = usedLetters.size();
             }
         }
         if (isLongestSubstring(currentSubString, longestSubString)) {
+            currentSubString.length = usedLetters.size();
             transferSubString(currentSubString, longestSubString, s.length() - 1);
         }
         return longestSubString.length;
