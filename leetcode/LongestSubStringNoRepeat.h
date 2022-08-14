@@ -36,8 +36,10 @@ public:
         Substring longestSubString;
         Substring currentSubString;
         
-        usedLetters.insert(s.at(0));
+        if (s.size() == 0) return 0;
 
+        usedLetters.insert(s.at(0));
+        
         for (int i = 1; i < s.size(); i++) {
             if (usedLetters.count(s.at(i))) {
                 if (isLongestSubstring(currentSubString, longestSubString)) {
@@ -46,11 +48,12 @@ public:
                 }
                 else {
                     resetSubstring(currentSubString, i);
-                    usedLetters.clear();
                 }
+                usedLetters.clear();
+                usedLetters.emplace(i);
             }
             else {
-                usedLetters.insert(s.at(i));
+                usedLetters.emplace(s.at(i));
                 currentSubString.end++;
                 currentSubString.length = usedLetters.size();
             }
