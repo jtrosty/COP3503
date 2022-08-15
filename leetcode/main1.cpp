@@ -6,9 +6,10 @@
 int main(void) {
     /////////// LONGEST SUB STRING NO REPEATE TEST CODE
     Solution testCast;
-    printf("Results are: %i\n", testCast.lengthOfLongestSubstring("aab"));
+    printf("Results are: %i\n", testCast.lengthOfLongestSubstring("ab"));
+    printf("Results are: %i\n", testCast.lengthOfLongestSubstring("dvdf"));
     printf("Results are: %i\n", testCast.lengthOfLongestSubstring("bbbbbbb"));
-    printf("Results are: %i\n", testCast.lengthOfLongestSubstring("aapwwkew"));
+    printf("Results are: %i\n", testCast.lengthOfLongestSubstring("pwwkew"));
     
     /////////// ADD TWO NUMBERS TEST CODE
     /*
