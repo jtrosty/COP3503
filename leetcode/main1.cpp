@@ -1,15 +1,31 @@
 #include <stdio.h>
+#include <vector>
 #include "addTwoNum.h"
 #include "LongestSubStringNoRepeat.h"
+#include "MedianTwoSortedArrays.h"
 
+using std::vector;
 
 int main(void) {
+    /////////// Median Sorted Array TEST CODE
+    printf("We are running \n");
+    SolutionMedianSortedArrays testCodeMedian;
+    std::vector<int> nums1 = { 1};
+    std::vector<int> nums2 = { 1};
+    std::vector<int> nums3 = { 1, 2};
+    std::vector<int> nums4 = { 3, 4};
+    printf("Results are: %f\n", testCodeMedian.findMedianSortedArrays(nums1, nums2));
+    printf("Results are: %f\n", testCodeMedian.findMedianSortedArrays(nums2, nums1));
+    printf("Results are: %f\n", testCodeMedian.findMedianSortedArrays(nums3, nums4));
+    printf("Results are: %f\n", testCodeMedian.findMedianSortedArrays(nums4, nums3));
     /////////// LONGEST SUB STRING NO REPEATE TEST CODE
+    /*
     Solution testCast;
     printf("Results are: %i\n", testCast.lengthOfLongestSubstring("ab"));
     printf("Results are: %i\n", testCast.lengthOfLongestSubstring("dvdf"));
     printf("Results are: %i\n", testCast.lengthOfLongestSubstring("bbbbbbb"));
     printf("Results are: %i\n", testCast.lengthOfLongestSubstring("pwwkew"));
+    */
     
     /////////// ADD TWO NUMBERS TEST CODE
     /*
