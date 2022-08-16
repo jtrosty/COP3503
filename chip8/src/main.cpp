@@ -1,10 +1,24 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include "Renderer.h"
 
 const int WIDTH = 800, HEIGHT = 600;
 
-SDL_Window *Window;
+int main(int argc, char *argv[])
+{
+    Renderer renderer;
+    renderer.initializeChip8Screen();
+    for(int i = 0; i < 1000; i++) {
+        renderer.updateChip8Screen();
+        SDL_Delay(1);
+    }
+    renderer.destoryChip8Screen();
+    return 0;
+}
+
+/*
+SDL_Window *Window = nullptr;
 SDL_Renderer *Renderer;
 
 int Init()
@@ -94,3 +108,4 @@ int main(int argc, char *argv[])
     SDL_Quit();
     return 0;
 }
+*/

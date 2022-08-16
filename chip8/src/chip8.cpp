@@ -20,10 +20,11 @@ void Chip8::fetch( uint16_t& _opcode, uint8_t& _programCounter) {
 
 
 void Chip8::decode() {
-    uint16_t firstNibble = firstOpcodeNibble(opcode);
-    uint16_t secondNibble = secondOpcodeNibble(opcode);
-    uint16_t thridNibble = thirdOpcodeNibble(opcode);
-    uint16_t fourthNibble = fourthOpcodeNibble(opcode);
+    uint16_t firstNibble = firstOpcodeNibble(*opcode);
+    uint16_t secondNibble = secondOpcodeNibble(*opcode);
+    uint16_t thridNibble = thirdOpcodeNibble(*opcode);
+    uint16_t fourthNibble = fourthOpcodeNibble(*opcode);
+    uint16_t mask = 0x0fff;
 
     switch (firstNibble)
     {
@@ -47,13 +48,13 @@ void Chip8::decode() {
         break;
     case 0xA:
         // ANNN: Sets index register to address NNN
-        indexRegister = opcode & 0x0fff; 
+        *indexRegister = *opcode & (uint16_t)0x0FFF; 
         break;
     case 0xB:
         break;
     case 0xC:
         break;
-    case 0xD
+    case 0xD:
         break;
     case 0xE:
         break;
