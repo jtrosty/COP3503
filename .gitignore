@@ -66,6 +66,9 @@ dkms.conf
 *.bmp
 *.jpg
 
+#chip8
+.ch8
+
 # etc
 *.zip
 *.brd
