@@ -1,6 +1,6 @@
-#include "Renderer.h"
+#include "Platform.h"
 
-void Renderer::initializePlatform(const char* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
+void Platform::initializePlatform(const char* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Video initialization error: " << SDL_GetError() << std::endl;
     }
@@ -33,7 +33,7 @@ void Renderer::initializePlatform(const char* title, int windowWidth, int window
     }
 }
 
-void Renderer::update(void const* pixelBuffer, int pitch) { 
+void Platform::update(void const* pixelBuffer, int pitch) { 
 
     // Get new texture 
     SDL_UpdateTexture(texture, NULL, pixelBuffer, pitch);
@@ -45,7 +45,7 @@ void Renderer::update(void const* pixelBuffer, int pitch) {
     SDL_RenderPresent(renderer);
 }
 
-void Renderer::destoryChip8Screen() {
+void Platform::destoryChip8Screen() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(texture);

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
-#include "Renderer.h"
+#include "Platform.h"
 #include "chip8.h"
 
 const int WIDTH = 400, HEIGHT = 800;
@@ -9,18 +9,18 @@ const int WIDTH = 400, HEIGHT = 800;
 int main(int argc, char *argv[])
 {
     Chip8 chip8;
-    Renderer renderer;
-    renderer.initializePlatform("Chips8", WIDTH, HEIGHT, chip8.CHIP8_WIDTH, chip8.CHIP8_HEIGHT);
+    Platform platform;
+    platform.initializePlatform("Chips8", WIDTH, HEIGHT, chip8.CHIP8_WIDTH, chip8.CHIP8_HEIGHT);
 
     int pitch = sizeof(chip8.pixelBuffer[0]) * chip8.CHIP8_WIDTH;
 
     for (int i = 0; i < 1000; i++) {
         chip8.pixelBufferTestCode(chip8.pixelBuffer, i);
-        renderer.update(chip8.pixelBuffer, pitch);
+        platform.update(chip8.pixelBuffer, pitch);
         SDL_Delay(25);
     }
     
-    renderer.destoryChip8Screen();
+    platform.destoryChip8Screen();
     return 0;
 }
 

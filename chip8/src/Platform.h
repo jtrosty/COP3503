@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <iostream>
 
-class Renderer {
+class Platform {
 
     public:
     SDL_Window* window = nullptr;
