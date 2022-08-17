@@ -14,8 +14,11 @@ int main(int argc, char *argv[])
 
     int pitch = sizeof(chip8.pixelBuffer[0]) * chip8.CHIP8_WIDTH;
 
-    for (int i = 0; i < 1000; i++) {
-        chip8.pixelBufferTestCode(chip8.pixelBuffer, i);
+    bool run = true;
+    int i = 0;
+    while(run) {
+        run = !platform.processInput(chip8.keypad);
+        chip8.pixelBufferTestCode(chip8.pixelBuffer, i++);
         platform.update(chip8.pixelBuffer, pitch);
         SDL_Delay(25);
     }
