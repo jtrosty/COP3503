@@ -1,23 +1,35 @@
 #include "chip8.h"
 
-void Chip8::initialize() {
+Chip8::Chip8() {
     vRegisters = new uint8_t[16];
     memory = new uint8_t[4096];
     programCounter = (memory + 20);
     stack = new uint8_t[32];
-    stackPointer = stack;
+   stackPointer = stack;
     memoryStart = memory;
     opcode = 0;
     indexRegister = 0;
 }
 
+Chip8::~Chip8() { 
+    delete[] vRegisters;
+    delete[] memory;
+    delete[] stack;
+    delete[] pixelBuffer;
+}
 
 void Chip8::fetch( uint16_t& _opcode, uint8_t& _programCounter) {
     _opcode = (memory[_programCounter] << 8) | (memory[_programCounter + 1]);
-    programCounter = programCounter + 2;
+    _programCounter = _programCounter + 2;
+}  
+
+void Chip8::pixelBufferTestCode(void* pixelBuffer, int seed) {
+    uint32_t* buffer = (uint32_t*)pixelBuffer;
+    int length = CHIP8_HEIGHT * CHIP8_WIDTH;
+    for (int i = 0; i < length; i++) {
+        buffer[0] = (uint32_t)seed++;
+    }
 }
-
-
 
 void Chip8::decode() {
     uint16_t firstNibble = firstOpcodeNibble(*opcode);
