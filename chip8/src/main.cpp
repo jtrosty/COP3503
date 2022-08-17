@@ -8,7 +8,7 @@ const int WIDTH = 400, HEIGHT = 800;
 
 int main(int argc, char *argv[])
 {
-    Chip8 chip8;
+    Chip8 chip8("..\\ROM\\IBM_Logo.ch8");
     Platform platform;
     platform.initializePlatform("Chips8", WIDTH, HEIGHT, chip8.CHIP8_WIDTH, chip8.CHIP8_HEIGHT);
 
@@ -18,9 +18,9 @@ int main(int argc, char *argv[])
     int i = 0;
     while(run) {
         run = !platform.processInput(chip8.keypad);
-        chip8.pixelBufferTestCode(chip8.pixelBuffer, i++);
+        //chip8.pixelBufferTestCode(chip8.pixelBuffer, i++);
+        chip8.emulateCycle();
         platform.update(chip8.pixelBuffer, pitch);
-        SDL_Delay(25);
     }
     
     platform.destoryChip8Screen();

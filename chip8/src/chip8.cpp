@@ -1,14 +1,34 @@
 #include "chip8.h"
 
-Chip8::Chip8() {
+
+Chip8::Chip8(const char* filename) {
     vRegisters = new uint8_t[16];
     memory = new uint8_t[4096];
-    programCounter = (memory + 20);
+    programCounter = (*memory + 20);
     stack = new uint8_t[32];
-    stackPointer = stack;
-    memoryStart = memory;
+    stackPointer = *stack;
     opcode = 0;
     indexRegister = 0;
+
+    randomByte = std::uniform_int_distribution<unsigned short>(0, 255U);
+
+    std::ifstream inputFile(filename, std::ios::binary);
+    if (!inputFile.is_open()) {
+        std::cout << "Fail to open ROM." << std::endl;
+    }
+    // When binary flag used, tellg will give you the file size in bytes
+    int size = inputFile.tellg();
+    char* fileBuffer = new char[size];
+    inputFile.seekg(0, std::ios::beg); // Goes to begining of file, seekg(0) is not guranteed to get the same result.
+    inputFile.read(fileBuffer, size); // Read the whole file into a buffer.
+    for (int i = 0; i < size; i++) {
+        memory[MEMORY_START + i] = fileBuffer[i];
+    }
+    inputFile.close();
+    // Ready fontset into memory
+    for (int i = 0; i < 80; i++) {
+        memory[MEMORY_FONT_START + i] = fontSet[i];
+    }
 }
 
 Chip8::~Chip8() { 
@@ -18,9 +38,14 @@ Chip8::~Chip8() {
     delete[] pixelBuffer;
 }
 
-void Chip8::fetch( uint16_t& _opcode, uint8_t& _programCounter) {
-    _opcode = (memory[_programCounter] << 8) | (memory[_programCounter + 1]);
-    _programCounter = _programCounter + 2;
+void Chip8::emulateCycle() {
+    fetch();
+    decodeAndExecute();
+}
+
+void Chip8::fetch() {
+    *opcode = (memory[programCounter] << 8) | (memory[programCounter + 1]);
+    programCounter = programCounter + 2;
 }  
 
 void Chip8::pixelBufferTestCode(void* pixelBuffer, int seed) {
@@ -34,7 +59,7 @@ void Chip8::pixelBufferTestCode(void* pixelBuffer, int seed) {
     }
 }
 
-void Chip8::decode() {
+void Chip8::decodeAndExecute() {
     uint16_t firstNibble = firstOpcodeNibble(*opcode);
     uint16_t secondNibble = secondOpcodeNibble(*opcode);
     uint16_t thridNibble = thirdOpcodeNibble(*opcode);
@@ -226,14 +251,14 @@ void Chip8::OPCODE_2nnn() /* CALL addr */ {
 }
 void Chip8::OPCODE_3xnn() /* SE Vx, byte */ {
     // skip next intruction, add 2 to programCounter if Vx = nn
-    uint8_t x = (*opcode >> 8) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
     uint8_t nn = *opcode & 0x00FF;
     if (vRegisters[x] == nn) {
         programCounter += 2;
     }
 }
 void Chip8::OPCODE_4xnn() /* SNE Vx, byte */ {
-    uint8_t x = (*opcode >> 8) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
     uint8_t nn = *opcode & 0x00FF;
     if (vRegisters[x] != nn) {
         programCounter += 2;
@@ -242,51 +267,51 @@ void Chip8::OPCODE_4xnn() /* SNE Vx, byte */ {
 void Chip8::OPCODE_5xy0() /* SE Vx, Vy */ {
     //Skip next instruction if Vx = Vy.
     //The interpreter compares register Vx to register Vy, and if they are equal, increments the program counter by 2./
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     if (vRegisters[x] == vRegisters[y]) {
         programCounter += 2;
     }
 }
 void Chip8::OPCODE_6xnn() /* LD Vx, byte */ {
     //The interpreter puts the value kk into register Vx.
-    uint8_t x = (*opcode >> 8) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
     uint8_t nn = *opcode & 0x0001;
     vRegisters[x] = nn;
 }
 void Chip8::OPCODE_7xnn() /* ADD Vx, byte */ {
-    uint8_t x = (*opcode >> 8) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
     uint8_t nn = *opcode & 0x0001;
     vRegisters[x] = x + nn;
 }
 void Chip8::OPCODE_8xy0() /* LD Vx, Vy */ {
     //Stores the value of register Vy in register Vx.
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     vRegisters[x] = vRegisters[y];
 }
 void Chip8::OPCODE_8xy1() /* OR Vx, Vy */ {
     //Set Vx = Vx OR Vy. 
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     vRegisters[x] = vRegisters[y] | vRegisters[x];
 }
 void Chip8::OPCODE_8xy2() /* AND Vx, Vy */ {
     //Set Vx = Vx AND Vy.
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     vRegisters[x] = vRegisters[y] & vRegisters[x];
 }
 void Chip8::OPCODE_8xy3() /* XOR Vx, Vy */ {
     //Set Vx = Vx XOR Vy. 
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     vRegisters[x] = vRegisters[y] ^ vRegisters[x];
 }
 void Chip8::OPCODE_8xy4() /* ADD Vx, Vy */ {
     //Set Vx = Vx + Vy, set VF = carry. 
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     uint8_t tempX = vRegisters[x];
     vRegisters[x] = vRegisters[y] + vRegisters[x];
     if (vRegisters[x] < tempX && vRegisters[x] < vRegisters[y]) {
@@ -299,8 +324,8 @@ void Chip8::OPCODE_8xy4() /* ADD Vx, Vy */ {
 void Chip8::OPCODE_8xy5() /* SUB Vx, Vy */ {
     //Set Vx = Vx - Vy, set VF = NOT borrow. 
     //If Vx > Vy, then VF is set to 1, otherwise 0. Then Vy is subtracted from Vx, and the results stored in Vx. 
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     if (vRegisters[y] > vRegisters[x]) vRegisters[15] = 1;
     else vRegisters[15] = 0;
     vRegisters[x] = vRegisters[y] - vRegisters[x];
@@ -308,7 +333,7 @@ void Chip8::OPCODE_8xy5() /* SUB Vx, Vy */ {
 void Chip8::OPCODE_8xy6() /* SHR Vx */ {
     // Set Vx = Vx SHR 1. 
     // If the least-significant bit of Vx is 1, then VF is set to 1, otherwise 0. Then Vx is divided by 2. 
-    uint8_t x = (*opcode >> 8) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
     if (vRegisters[x] == 0b00000001)    vRegisters[15] = 1;
     else                                vRegisters[15] = 0;
     vRegisters[x] = vRegisters[x] >> 1;
@@ -316,8 +341,8 @@ void Chip8::OPCODE_8xy6() /* SHR Vx */ {
 void Chip8::OPCODE_8xy7() /* SUBN Vx, Vy */ {
     //Set Vx = Vy - Vx, set VF = NOT borrow. 
     // If Vy > Vx, then VF is set to 1, otherwise 0. Then Vx is subtracted from Vy, and the results stored in Vx. 
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     if (vRegisters[y] > vRegisters[x])  vRegisters[15] = 1;
     else                                vRegisters[15] = 0;
     vRegisters[x] = vRegisters[y] - vRegisters[x];
@@ -325,7 +350,7 @@ void Chip8::OPCODE_8xy7() /* SUBN Vx, Vy */ {
 void Chip8::OPCODE_8xyE() /* SHL Vx, {, Vy} */ {
     // Set Vx = Vx SHL 1.
     // If the most-significant bit of Vx is 1, then VF is set to 1, otherwise to 0. Then Vx is multiplied by 2.
-    uint8_t x = (*opcode >> 8) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
     if ((vRegisters[x] & 0b10000000) == 0b10000000) vRegisters[15] = 1;
     else                                            vRegisters[15] = 0;
     vRegisters[x] = vRegisters[x] << 1;
@@ -333,8 +358,8 @@ void Chip8::OPCODE_8xyE() /* SHL Vx, {, Vy} */ {
 void Chip8::OPCODE_9xy0() /* SNE Vx, Vy */ {
     // Skip next instruction if Vx != Vy.
     // The values of Vx and Vy are compared, and if they are not equal, the program counter is increased by 2.
-    uint8_t x = (*opcode >> 8) & 0x00FF;
-    uint8_t y = (*opcode >> 4) & 0x00FF;
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
     if (vRegisters[x] != vRegisters[y]) {
         programCounter += 2;
     }
@@ -350,11 +375,39 @@ void Chip8::OPCODE_Bnnn() /* JP V0, addr */ {
 void Chip8::OPCODE_Cxnn() /* RND Vx, byte */ {
     // Set Vx = random byte AND kk. 
     //  The interpreter generates a random number from 0 to 255, which is then ANDed with the value kk. The results are stored in Vx. See instruction 8xy2 for more information on AND.  
-
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t tempAddress = *opcode & (uint16_t)0x00FF; 
+    uint8_t tempRandom = randomByte(randomGenerator);
+    vRegisters[x] = tempAddress & tempRandom;
 }
 void Chip8::OPCODE_Dxyn() /* DRW Vx, Vy, nibble */ {
     // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision. 
+    uint8_t x = (*opcode >> 8) & 0x000F;
+    uint8_t y = (*opcode >> 4) & 0x000F;
+    uint8_t vX = vRegisters[x];
+    uint8_t vY = vRegisters[y];
+    uint8_t pixel;
 
+    vRegisters[15] = 0;
+    uint8_t n = (*opcode) & 0x000F;
+
+    // for n rows
+    for (uint8_t row = 0; row < n; row++) {
+        uint8_t spriteyByte = memory[indexRegister + row];
+
+        for (uint8_t col = 0; col < 8; col++) {
+            pixel = spriteyByte & (0x80 >> col);
+            int bufferIndex = (((vY + row) * CHIP8_WIDTH) + (vX + col)) % (CHIP8_HEIGHT * CHIP8_WIDTH);
+            uint32_t* screenPixel = &pixelBuffer[bufferIndex];
+            // Check if there is colision, if pixel has any bits set to 1, a collision can occur
+            if (pixel) {
+                if (*screenPixel == 0xFFFFFFFF) {
+                    vRegisters[15] = 1;
+                }
+            }
+            *screenPixel ^= 0xFFFFFFFF;
+        }
+    }
 }
 void Chip8::OPCODE_Ex9E() /* SKP Vx    */ {
     // Skip next instruction if key with the value of Vx is pressed. 
@@ -362,7 +415,6 @@ void Chip8::OPCODE_Ex9E() /* SKP Vx    */ {
 }
 void Chip8::OPCODE_ExA1() /* SKNP Vx */ {
     // Skip next instruction if key with the value of Vx is not pressed.
- 
 
 }
 void Chip8::OPCODE_Fx07() /* LD Vx, DT */ {
@@ -371,7 +423,6 @@ void Chip8::OPCODE_Fx07() /* LD Vx, DT */ {
 }
 void Chip8::OPCODE_Fx0A() /* LD Vx, K */ {
     // Wait for a key press, store the value of the key in Vx.
- 
 
 }
 void Chip8::OPCODE_Fx15() /* LD DT, Vx */ {

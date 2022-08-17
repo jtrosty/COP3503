@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cstdint>
+#include <fstream>
+#include <random>
 
 class Chip8 {
 
@@ -15,12 +17,17 @@ public:
     uint8_t* stack;
     uint8_t programCounter = 0;
     uint8_t stackPointer = 0;
-    uint8_t memoryStart = 0;
+    const uint8_t MEMORY_START = 0x200;
+    const uint8_t MEMORY_FONT_START = 0x50;
     uint8_t memoryInstructionStart = 0;
     uint8_t startOfRam = 0;
     const int CHIP8_HEIGHT = 64;
     const int CHIP8_WIDTH = 32;
     uint8_t keypad[16] {}; // initialized to zero
+    
+    // Random number
+    std::default_random_engine randomGenerator;
+    std::uniform_int_distribution<unsigned short> randomByte;
 
     // Pixel buffer initialized to 0
     uint32_t* pixelBuffer = new uint32_t[CHIP8_HEIGHT * CHIP8_WIDTH] {};
@@ -31,21 +38,35 @@ public:
     uint8_t delayTimer;
     uint8_t soundTimer;
 
-    Chip8(); 
+    Chip8(const char* filename); 
     ~Chip8(); 
-
-    uint16_t firstOpcodeNibble(uint16_t& _opcode);
-    uint16_t secondOpcodeNibble(uint16_t& _opcode);
-    uint16_t thirdOpcodeNibble(uint16_t& _opcode); 
-    uint16_t fourthOpcodeNibble(uint16_t& _opcode); 
 
     void emulateCycle();
     
     void pixelBufferTestCode(void* pixelBuffer, int seed);
 
-    void fetch(uint16_t& _opcode, uint8_t& _programCounter);
-    void decode();
-    void execute();
+    void fetch();
+    void decodeAndExecute();
+    // FONTSET Sprites in memory (Each 5 bytes)  
+    const uint8_t fontSet[80] = 
+    {
+        0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+        0x20, 0x60, 0x20, 0x20, 0x70, // 1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+        0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+        0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+        0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+        0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+        0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+    };
 
     void OPCODE_NULL(); // NOP instruction
     void OPCODE_00E0(); // CLS
@@ -84,4 +105,8 @@ public:
     void OPCODE_Fx65(); // LD Vx, [I]
 
 
+    uint16_t firstOpcodeNibble(uint16_t& _opcode);
+    uint16_t secondOpcodeNibble(uint16_t& _opcode);
+    uint16_t thirdOpcodeNibble(uint16_t& _opcode); 
+    uint16_t fourthOpcodeNibble(uint16_t& _opcode); 
 };
