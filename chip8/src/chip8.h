@@ -14,15 +14,15 @@ class Chip8 {
 public:
     uint8_t* vRegisters;
     uint8_t* memory;
-    uint8_t* stack;
-    uint8_t programCounter = 0;
+    uint16_t* stack;
+    uint16_t programCounter = 0;
     uint8_t stackPointer = 0;
     const uint8_t MEMORY_START = 0x200;
     const uint8_t MEMORY_FONT_START = 0x50;
     uint8_t memoryInstructionStart = 0;
     uint8_t startOfRam = 0;
-    const int CHIP8_HEIGHT = 64;
-    const int CHIP8_WIDTH = 32;
+    const int CHIP8_HEIGHT = 32;
+    const int CHIP8_WIDTH = 64;
     uint8_t keypad[16] {}; // initialized to zero
     
     // Random number
@@ -32,7 +32,7 @@ public:
     // Pixel buffer initialized to 0
     uint32_t* pixelBuffer = new uint32_t[CHIP8_HEIGHT * CHIP8_WIDTH] {};
 
-    uint16_t* opcode;
+    uint16_t opcode;
     uint16_t indexRegister = 0;
 
     uint8_t delayTimer;

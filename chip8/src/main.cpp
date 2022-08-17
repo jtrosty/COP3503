@@ -4,13 +4,15 @@
 #include "Platform.h"
 #include "chip8.h"
 
-const int WIDTH = 400, HEIGHT = 800;
-
 int main(int argc, char *argv[])
 {
     Chip8 chip8("..\\ROM\\IBM_Logo.ch8");
+    //Chip8 chip8("..\\ROM\\test_opcode.ch8");
     Platform platform;
-    platform.initializePlatform("Chips8", WIDTH, HEIGHT, chip8.CHIP8_WIDTH, chip8.CHIP8_HEIGHT);
+    int scale = 10;
+    int width = chip8.CHIP8_WIDTH * scale;
+    int heigth = chip8.CHIP8_HEIGHT * scale;
+    platform.initializePlatform("Chips8", width, heigth, chip8.CHIP8_WIDTH, chip8.CHIP8_HEIGHT);
 
     int pitch = sizeof(chip8.pixelBuffer[0]) * chip8.CHIP8_WIDTH;
 
