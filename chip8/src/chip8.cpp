@@ -24,10 +24,13 @@ void Chip8::fetch( uint16_t& _opcode, uint8_t& _programCounter) {
 }  
 
 void Chip8::pixelBufferTestCode(void* pixelBuffer, int seed) {
-    uint32_t* buffer = (uint32_t*)pixelBuffer;
-    int length = CHIP8_HEIGHT * CHIP8_WIDTH;
-    for (int i = 0; i < length; i++) {
-        buffer[0] = (uint32_t)seed++;
+    uint8_t* buffer = (uint8_t*)pixelBuffer;
+    int length = CHIP8_HEIGHT * CHIP8_WIDTH * sizeof(uint32_t);
+    for (int i = 0; i < length; i = i + 4) {
+       buffer[i]     = 0;
+       buffer[i + 1] = seed++;
+       buffer[i + 2] = 255;
+       buffer[i + 3] = 0;
     }
 }
 

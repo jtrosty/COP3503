@@ -8,13 +8,13 @@ const int WIDTH = 400, HEIGHT = 800;
 
 int main(int argc, char *argv[])
 {
-    Renderer renderer;
-    renderer.initializePlatform("Chips8", WIDTH, HEIGHT);
-
     Chip8 chip8;
+    Renderer renderer;
+    renderer.initializePlatform("Chips8", WIDTH, HEIGHT, chip8.CHIP8_WIDTH, chip8.CHIP8_HEIGHT);
+
     int pitch = sizeof(chip8.pixelBuffer[0]) * chip8.CHIP8_WIDTH;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 1000; i++) {
         chip8.pixelBufferTestCode(chip8.pixelBuffer, i);
         renderer.update(chip8.pixelBuffer, pitch);
         SDL_Delay(25);

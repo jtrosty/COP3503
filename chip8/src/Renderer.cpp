@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-void Renderer::initializePlatform(const char* title, int windowWidth, int windowHeight) {
+void Renderer::initializePlatform(const char* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Video initialization error: " << SDL_GetError() << std::endl;
     }
@@ -17,8 +17,8 @@ void Renderer::initializePlatform(const char* title, int windowWidth, int window
                                     renderer, 
                                     SDL_PIXELFORMAT_ARGB8888, 
                                     SDL_TEXTUREACCESS_STREAMING,
-                                    windowWidth,
-                                    windowHeight);
+                                    textureWidth,
+                                    textureHeight);
 
 
         if (window == NULL) {

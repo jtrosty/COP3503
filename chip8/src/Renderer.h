@@ -15,7 +15,7 @@ class Renderer {
     SDL_Surface* windowSurface = nullptr;
     SDL_Palette* windowPalette = nullptr;
 
-    void initializePlatform(const char* title, int windowsWidth, int windowHeight);
+    void initializePlatform(const char* title, int windowsWidth, int windowHeight, int textureWidth, int textureHeight);
 
     void update(void const* pixelBuffer, int pitch);
 
