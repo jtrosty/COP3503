@@ -238,6 +238,7 @@ void Chip8::OPCODE_00E0() /* CLS */ {
     for (int i = 0; i < (CHIP8_WIDTH * CHIP8_HEIGHT); i++) {
         pixelBuffer[i] = 0x00000000;
     }
+    updateScreen = true;
 }
 void Chip8::OPCODE_00EE() /* RET */ {
     // Decremet the stack and assign value to program coutner, the oposite of 2nnn
@@ -331,9 +332,9 @@ void Chip8::OPCODE_8xy5() /* SUB Vx, Vy */ {
     //If Vx > Vy, then VF is set to 1, otherwise 0. Then Vy is subtracted from Vx, and the results stored in Vx. 
     uint8_t x = (opcode >> 8) & 0x000F;
     uint8_t y = (opcode >> 4) & 0x000F;
-    if (vRegisters[y] > vRegisters[x]) vRegisters[15] = 1;
+    if (vRegisters[x] > vRegisters[y]) vRegisters[15] = 1;
     else vRegisters[15] = 0;
-    vRegisters[x] = vRegisters[y] - vRegisters[x];
+    vRegisters[x] = vRegisters[x] - vRegisters[y];
 }
 void Chip8::OPCODE_8xy6() /* SHR Vx */ {
     // Set Vx = Vx SHR 1. 
@@ -413,14 +414,21 @@ void Chip8::OPCODE_Dxyn() /* DRW Vx, Vy, nibble */ {
             }
         }
     }
+    updateScreen = true;
 }
 void Chip8::OPCODE_Ex9E() /* SKP Vx    */ {
     // Skip next instruction if key with the value of Vx is pressed. 
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    if ( keypad[vRegisters[x]]) {
+        programCounter += 2;
+    }
 }
 void Chip8::OPCODE_ExA1() /* SKNP Vx */ {
     // Skip next instruction if key with the value of Vx is not pressed.
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    if ( !keypad[vRegisters[x]]) {
+        programCounter += 2;
+    }
 }
 void Chip8::OPCODE_Fx07() /* LD Vx, DT */ {
     //  Set Vx = delay timer value. 
@@ -428,7 +436,18 @@ void Chip8::OPCODE_Fx07() /* LD Vx, DT */ {
 }
 void Chip8::OPCODE_Fx0A() /* LD Vx, K */ {
     // Wait for a key press, store the value of the key in Vx.
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    bool keyPressed = false;
+    uint8_t pressedKey = 0;
+    while (!keyPressed) {
+        for (int i = 0; i < 16; i++) {
+            if (keypad[i]) {
+                keyPressed = true;
+                pressedKey = i;
+            }
+        }
+    }
+    vRegisters[x] = pressedKey;
 }
 void Chip8::OPCODE_Fx15() /* LD DT, Vx */ {
     // Set delay timer = Vx. 
@@ -440,22 +459,35 @@ void Chip8::OPCODE_Fx18() /* LD ST, Vx */ {
 }
 void Chip8::OPCODE_Fx1E() /* ADD I, Vx */ {
     // Set I = I + Vx. 
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    indexRegister = indexRegister + vRegisters[x];
 }
 void Chip8::OPCODE_Fx29() /* LD F, Vx */ {
     // Set I = location of sprite for digit Vx. 
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    indexRegister = MEMORY_FONT_START + (x * 5);
 }
 void Chip8::OPCODE_Fx33() /* LD B, Vx */ {
     // Store BCD representation of Vx in memory locations I, I+1, and I+2. 
-
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    uint8_t value = vRegisters[x];
+    memory[indexRegister + 2] = value % 10;
+    value = value / 10;
+    memory[indexRegister + 1] = value % 10;
+    value = value / 10;
+    memory[indexRegister] = value % 100;
 }
 void Chip8::OPCODE_Fx55() /* LD [I], Vx */ {
     // Store registers V0 through Vx in memory starting at location I. 
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    for (int i = 0; i <= x; i++) {
+        memory[indexRegister + i] = vRegisters[i];
+    }
 }
 void Chip8::OPCODE_Fx65() /* LD Vx, [I] */ {
     // Read registers V0 through Vx from memory starting at location I. 
-
+    uint8_t x = (opcode >> 8) & 0x000F;
+    for (int i = 0; i <= x; i++) {
+        vRegisters[i] = memory[indexRegister + i];
+    }
 }

@@ -37,6 +37,7 @@ public:
 
     uint8_t delayTimer;
     uint8_t soundTimer;
+    bool updateScreen = false;
 
     Chip8(const char* filename); 
     ~Chip8(); 

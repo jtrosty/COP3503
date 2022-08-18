@@ -6,8 +6,8 @@
 
 int main(int argc, char *argv[])
 {
-    Chip8 chip8("..\\ROM\\IBM_Logo.ch8");
-    //Chip8 chip8("..\\ROM\\test_opcode.ch8");
+    //Chip8 chip8("..\\ROM\\IBM_Logo.ch8");
+    Chip8 chip8("..\\ROM\\test_opcode.ch8");
     //Chip8 chip8("..\\ROM\\c8_test.c8");
     Platform platform;
     int scale = 10;
@@ -23,7 +23,10 @@ int main(int argc, char *argv[])
         run = !platform.processInput(chip8.keypad);
         //chip8.pixelBufferTestCode(chip8.pixelBuffer, i++);
         chip8.emulateCycle();
-        platform.update(chip8.pixelBuffer, pitch);
+        if (chip8.updateScreen) {
+            platform.update(chip8.pixelBuffer, pitch);
+            chip8.updateScreen = false;
+        }
     }
     
     platform.destoryChip8Screen();
