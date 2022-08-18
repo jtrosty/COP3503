@@ -15,9 +15,9 @@ public:
     uint8_t* vRegisters;
     uint8_t* memory;
     uint16_t* stack;
-    uint16_t programCounter = 0;
-    uint8_t stackPointer = 0;
-    const uint8_t MEMORY_START = 0x200;
+    uint32_t programCounter = 0;
+    uint16_t stackPointer = 0;
+    const uint32_t MEMORY_START = 0x200;
     const uint8_t MEMORY_FONT_START = 0x50;
     uint8_t memoryInstructionStart = 0;
     uint8_t startOfRam = 0;

@@ -2,11 +2,11 @@
 
 
 Chip8::Chip8(const char* filename) {
-    vRegisters = new uint8_t[16];
-    memory = new uint8_t[4096];
+    vRegisters = new uint8_t[16] {};
+    memory = new uint8_t[4096] {};
     programCounter = MEMORY_START;
-    stack = new uint16_t[16];
-    stackPointer = *stack;
+    stack = new uint16_t[16] {};
+    stackPointer = 0;
     opcode = 0;
     indexRegister = 0;
 
@@ -18,11 +18,15 @@ Chip8::Chip8(const char* filename) {
     }
     std::cout << "success loading ROM." << std::endl;
     // When binary flag used, tellg will give you the file size in bytes
-    int size = inputFile.tellg();
-    char* fileBuffer = new char[size];
+    const auto begin = inputFile.tellg();
+    inputFile.seekg(0, std::ios::end);
+    const auto end = inputFile.tellg();
+    const auto fsize = (end - begin);
+    char* fileBuffer = new char[fsize];
+
     inputFile.seekg(0, std::ios::beg); // Goes to begining of file, seekg(0) is not guranteed to get the same result.
-    inputFile.read(fileBuffer, size); // Read the whole file into a buffer.
-    for (int i = 0; i < size; i++) {
+    inputFile.read(fileBuffer, fsize); // Read the whole file into a buffer.
+    for (int i = 0; i < fsize; i++) {
         memory[MEMORY_START + i] = fileBuffer[i];
     }
     inputFile.close();
@@ -246,7 +250,7 @@ void Chip8::OPCODE_1nnn() /* JP addr */ {
 }
 void Chip8::OPCODE_2nnn() /* CALL addr */ {
     // Store PC value on stack and SP is incremented
-    stack[(stackPointer)++] = programCounter;
+    stack[stackPointer++] = programCounter;
     // set PC to NNN address
     programCounter = opcode & (uint16_t)0x0FFF; 
 }
