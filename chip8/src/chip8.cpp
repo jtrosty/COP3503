@@ -281,13 +281,13 @@ void Chip8::OPCODE_5xy0() /* SE Vx, Vy */ {
 void Chip8::OPCODE_6xnn() /* LD Vx, byte */ {
     //The interpreter puts the value kk into register Vx.
     uint8_t x = (opcode >> 8) & 0x000F;
-    uint8_t nn = opcode & 0x0001;
+    uint8_t nn = opcode & 0x00FF;
     vRegisters[x] = nn;
 }
 void Chip8::OPCODE_7xnn() /* ADD Vx, byte */ {
     uint8_t x = (opcode >> 8) & 0x000F;
-    uint8_t nn = opcode & 0x0001;
-    vRegisters[x] = x + nn;
+    uint8_t nn = opcode & 0x00FF;
+    vRegisters[x] = vRegisters[x] + nn;
 }
 void Chip8::OPCODE_8xy0() /* LD Vx, Vy */ {
     //Stores the value of register Vy in register Vx.
@@ -389,8 +389,8 @@ void Chip8::OPCODE_Dxyn() /* DRW Vx, Vy, nibble */ {
     // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision. 
     uint8_t x = (opcode >> 8) & 0x000F;
     uint8_t y = (opcode >> 4) & 0x000F;
-    uint8_t vX = vRegisters[x];
-    uint8_t vY = vRegisters[y];
+    uint8_t vX = vRegisters[x] % CHIP8_WIDTH;
+    uint8_t vY = vRegisters[y] % CHIP8_HEIGHT;
     uint8_t pixel;
 
     vRegisters[15] = 0;
@@ -401,7 +401,7 @@ void Chip8::OPCODE_Dxyn() /* DRW Vx, Vy, nibble */ {
         uint8_t spriteyByte = memory[indexRegister + row];
 
         for (uint8_t col = 0; col < 8; col++) {
-            pixel = spriteyByte & (0x80 >> col);
+            pixel = spriteyByte & (0x80u >> col);
             int bufferIndex = (((vY + row) * CHIP8_WIDTH) + (vX + col)) % (CHIP8_HEIGHT * CHIP8_WIDTH);
             uint32_t* screenPixel = &pixelBuffer[bufferIndex];
             // Check if there is colision, if pixel has any bits set to 1, a collision can occur
@@ -409,8 +409,8 @@ void Chip8::OPCODE_Dxyn() /* DRW Vx, Vy, nibble */ {
                 if (*screenPixel == 0xFFFFFFFF) {
                     vRegisters[15] = 1;
                 }
+                *screenPixel ^= 0xFFFFFFFF;
             }
-            *screenPixel ^= 0xFFFFFFFF;
         }
     }
 }

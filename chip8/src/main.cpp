@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
 {
     Chip8 chip8("..\\ROM\\IBM_Logo.ch8");
     //Chip8 chip8("..\\ROM\\test_opcode.ch8");
+    //Chip8 chip8("..\\ROM\\c8_test.c8");
     Platform platform;
     int scale = 10;
     int width = chip8.CHIP8_WIDTH * scale;

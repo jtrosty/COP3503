@@ -18,7 +18,7 @@ public:
     uint32_t programCounter = 0;
     uint16_t stackPointer = 0;
     const uint32_t MEMORY_START = 0x200;
-    const uint8_t MEMORY_FONT_START = 0x50;
+    const uint32_t MEMORY_FONT_START = 0x50;
     uint8_t memoryInstructionStart = 0;
     uint8_t startOfRam = 0;
     const int CHIP8_HEIGHT = 32;
