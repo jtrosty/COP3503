@@ -4,17 +4,25 @@
 #include "LongestSubStringNoRepeat.h"
 #include "MedianTwoSortedArrays.h"
 #include "LongestPalindrom.h"
+#include "HappyNumber.h"
 
 using std::vector;
 
 int main(void) {
+    /////////// Happy Number TEST CODE
+    SolutionHappyNumber happyNumber;
+    printf("Results are: %i\n",happyNumber.isHappy(2)); 
+    printf("Results are: %i\n",happyNumber.isHappy(19)); 
+    printf("Results are: %i\n",happyNumber.isHappy(1)); 
     /////////// LongestPalindrome TEST CODE
+    /*
     SolutionLongestPalindrome testPalindrom;
 
     printf("Results are: %s\n", testPalindrom.longestPalindrome("xaabacxcabaaxcabaax"));
     printf("Results are: %s\n", testPalindrom.longestPalindrome("aaaaa"));
     printf("Results are: %s\n", testPalindrom.longestPalindrome("aaaa"));
     printf("Results are: %s\n", testPalindrom.longestPalindrome("babad"));
+    */
 
 
     
