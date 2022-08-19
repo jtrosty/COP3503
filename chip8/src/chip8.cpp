@@ -46,6 +46,8 @@ Chip8::~Chip8() {
 void Chip8::emulateCycle() {
     fetch();
     decodeAndExecute();
+    if (delayTimer > 0) delayTimer--;
+    if (soundTimer > 0) soundTimer--;
 }
 
 void Chip8::fetch() {

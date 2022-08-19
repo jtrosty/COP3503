@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <fstream>
 #include <random>
+#include <chrono>
 
 class Chip8 {
 
@@ -24,6 +25,8 @@ public:
     const int CHIP8_HEIGHT = 32;
     const int CHIP8_WIDTH = 64;
     uint8_t keypad[16] {}; // initialized to zero
+    uint8_t delayTimer = 0;
+    uint8_t soundTimer = 0;
     
     // Random number
     std::default_random_engine randomGenerator;
@@ -44,6 +47,11 @@ public:
 
     void emulateCycle();
     
+    void decrementDelayAndSoundTimer(int timeToDecrement) {
+        if (delayTimer > 0) delayTimer -= timeToDecrement;
+        if (soundTimer > 0) soundTimer-= timeToDecrement;
+    }
+
     void pixelBufferTestCode(void* pixelBuffer, int seed);
 
     void fetch();
