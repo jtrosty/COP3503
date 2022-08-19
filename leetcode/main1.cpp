@@ -3,12 +3,24 @@
 #include "addTwoNum.h"
 #include "LongestSubStringNoRepeat.h"
 #include "MedianTwoSortedArrays.h"
+#include "LongestPalindrom.h"
 
 using std::vector;
 
 int main(void) {
+    /////////// LongestPalindrome TEST CODE
+    SolutionLongestPalindrome testPalindrom;
+
+    printf("Results are: %s\n", testPalindrom.longestPalindrome("xaabacxcabaaxcabaax"));
+    printf("Results are: %s\n", testPalindrom.longestPalindrome("aaaaa"));
+    printf("Results are: %s\n", testPalindrom.longestPalindrome("aaaa"));
+    printf("Results are: %s\n", testPalindrom.longestPalindrome("babad"));
+
+
+    
     /////////// Median Sorted Array TEST CODE
-    printf("We are running \n");
+    /*
+    printf("We are running Full bore \n");
     SolutionMedianSortedArrays testCodeMedian;
     std::vector<int> nums1 = { 1};
     std::vector<int> nums2 = { 1};
@@ -18,6 +30,7 @@ int main(void) {
     printf("Results are: %f\n", testCodeMedian.findMedianSortedArrays(nums2, nums1));
     printf("Results are: %f\n", testCodeMedian.findMedianSortedArrays(nums3, nums4));
     printf("Results are: %f\n", testCodeMedian.findMedianSortedArrays(nums4, nums3));
+    */
     /////////// LONGEST SUB STRING NO REPEATE TEST CODE
     /*
     Solution testCast;
