@@ -4,13 +4,16 @@
 #include "LongestSubStringNoRepeat.h"
 #include "MedianTwoSortedArrays.h"
 #include "LongestPalindrom.h"
-#include "HappyNumber.h"
+#include "LeetCodeDay1.h"
 
 using std::vector;
 
 int main(void) {
+    /////////// Spiral Order TEST CODE
+
     /////////// Happy Number TEST CODE
-    SolutionHappyNumber happyNumber;
+
+    SolutionLeetCode75Day1 happyNumber;
     printf("Results are: %i\n",happyNumber.isHappy(2)); 
     printf("Results are: %i\n",happyNumber.isHappy(19)); 
     printf("Results are: %i\n",happyNumber.isHappy(1)); 

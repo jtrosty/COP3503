@@ -1,7 +1,7 @@
 #include <set>
 #include <vector>
 
-class SolutionHappyNumber {
+class SolutionLeetCode75Day1 {
 public:
 
     int calculateNewValue(int n) {
@@ -22,5 +22,14 @@ public:
             if (n == 1) return true;
         }
         return false;
+    }
+
+
+};
+
+class SolutionSpiralOrder {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        
     }
 };
