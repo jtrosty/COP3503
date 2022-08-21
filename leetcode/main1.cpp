@@ -9,6 +9,8 @@
 using std::vector;
 
 int main(void) {
+    // test changes maade with ubuntu vm
+    int hello;
     /////////// Spiral Order TEST CODE
 
     /////////// Happy Number TEST CODE
