@@ -10,7 +10,8 @@ using std::vector;
 
 int main(void) {
     // test changes maade with ubuntu vm
-    int hello;
+    // makign more changes
+    int whatIsTheHappiestNumber;
     /////////// Spiral Order TEST CODE
 
     /////////// Happy Number TEST CODE
