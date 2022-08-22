@@ -51,5 +51,6 @@ public:
             result.push_back(matrix.at(i).at(rightBottom));
         }
         leftTop++;
+        return result;
     }
 };

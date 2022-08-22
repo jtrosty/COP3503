@@ -6,12 +6,21 @@
 #include "MedianTwoSortedArrays.h"
 #include "LongestPalindrom.h"
 #include "LeetCodeDay1.h"
+#include "SolutionStringArray.h"
 
 using std::vector;
 
 int main(void) {
-    // test changes maade with ubuntu vm
-    // makign more changes
+    ///////////  Most Common Word TEST CODE
+    SolutionMostCommonWord MostCommonWord;
+    string paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.";
+    string paragraph2 = "Bob";
+    vector<string> banned {"hit"};
+    std::cout << "Most commond word: " << MostCommonWord.mostCommonWord(paragraph, banned) << std::endl;
+    std::cout << "Most commond word: " << MostCommonWord.mostCommonWord(paragraph2, banned) << std::endl;
+
+
+
     int whatIsTheHappiestNumber;
     /////////// Spiral Order TEST CODE
     SolutionSpiralOrder spiral;
