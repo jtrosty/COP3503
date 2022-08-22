@@ -11,6 +11,17 @@
 using std::vector;
 
 int main(void) {
+    ///////////  number to Words TEST CODE
+    SolutionNumberToWords NumToWords;
+    std::cout << "Num To words: " << NumToWords.numberToWords(0) << std::endl;
+    std::cout << "Num To words: " << NumToWords.numberToWords(1) << std::endl;
+    std::cout << "Num To words: " << NumToWords.numberToWords(100) << std::endl;
+    std::cout << "Num To words: " << NumToWords.numberToWords(123) << std::endl;
+    std::cout << "Num To words: " << NumToWords.numberToWords(12345) << std::endl;
+    std::cout << "Num To words: " << NumToWords.numberToWords(1234567) << std::endl;
+    std::cout << "Num To words: " << NumToWords.numberToWords(1234567890) << std::endl;
+
+    /*
     ///////////  First Unique CharTEST CODE
     SolutionFirstUniqueCharacter FirstUnique;
     std::cout << "First unique char at: " << FirstUnique.firstUniqChar("leetcode") << std::endl;
@@ -49,6 +60,8 @@ int main(void) {
     printf("Results are: %i\n",happyNumber.isHappy(19)); 
     printf("Results are: %i\n",happyNumber.isHappy(1)); 
     /////////// LongestPalindrome TEST CODE
+    */
+
     /*
     SolutionLongestPalindrome testPalindrom;
 

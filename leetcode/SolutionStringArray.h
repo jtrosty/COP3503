@@ -8,6 +8,67 @@ using std::unordered_map;
 using std::vector;
 using std::set;
 
+class SolutionNumberToWords {
+public:
+        const string zero = "Zero";
+        const string wordsTens[10] = {"", "", "Twenty ", "Thirty ", "Forty ", "Fifty ", "Sixty ", "Seventy ", "Eighty ", "Ninety "};
+        const string wordsNumber[20] = {"", "One ", "Two ", "Three ", "Four ", "Five ", "Six ", "Seven ", "Eight ", "Nine ", "Ten ", "Eleven ", "Twelve ", "Thirteen ", "Fourteen ", "Fifteen ", "Sixteen ", "Seventeen ", "Eighteen ", "Nineteen "};
+        const string wordsBig[5] = {"Hundred ", "", "Thousand ", "Million ", "Billion "};
+
+        string convertToWords(int threeDigitsMax, string range) {
+            string result{};
+            if (threeDigitsMax <= 0) return result;
+            if (threeDigitsMax >= 1000) {
+                return "Digits supplied to this funciton but be only 3";
+            }
+            int remainder = threeDigitsMax / 100;
+            if ((remainder) > 0) {
+                result.append(wordsNumber[remainder]);
+                result.append(wordsBig[0]);
+            }
+            remainder = threeDigitsMax % 100;
+            if (remainder > 19) {
+                int tenth = remainder / 10;
+                int ones = remainder % 10;
+                result.append(wordsTens[tenth]);
+                if (ones != 0) {
+                    result.append(wordsNumber[ones]);
+                }
+            }
+            else {
+                result.append(wordsNumber[remainder]);
+            }
+            if (range.compare("hundred") != 0) {
+                result.append(range);
+            }
+            if (range == wordsBig[1]) {
+                return result;
+            }
+            return result;
+        }
+
+        string numberToWords(int num) {
+            const int BILLION         = 1000000000;
+            const int MILLION            = 1000000;
+            const int THOUSAND              = 1000;
+            string result{};
+            int range = BILLION; // 1
+            int threeDigits = 0;
+            if (num == 0) return zero;
+            for (int i = 4; i > 0; i--) {
+                if (i != 4) {
+                    range = range / 1000;
+                } 
+                threeDigits = (num / range) % 1000;
+                result.append(convertToWords(threeDigits, wordsBig[i]));
+            }
+            if (result.at(result.size() - 1) == ' ') {
+                result.pop_back();
+            }
+            return result;
+    }
+};
+
 class SolutionFirstUniqueCharacter {
   public:
     int firstUniqChar(string s) {
