@@ -29,7 +29,27 @@ public:
 
 class SolutionSpiralOrder {
 public:
-    vector<int> spiralOrder(vector<vector<int>>& matrix) {
-        
+    //  0      1       2      3      4      5      6      7      8
+    // 0,0 -> 1,0 - > 2,0 -> 2,1 -> 2,2 -> 1,2 -> 0,2 -> 0,1 -> 1,1
+
+    vector<int> spiralOrder(vector <vector <int> >& matrix) {
+        vector<int> result;
+
+        int leftTop = 0;
+        int rightBottom = 2;
+        for (int i = 0; i <= rightBottom; i++) {
+            result.push_back(matrix.at(leftTop).at(i));
+        }
+        for (int i = 0; i < rightBottom; i++) {
+            result.push_back(matrix.at(i).at(rightBottom));
+        }
+        rightBottom--;
+        for (int i = rightBottom; i >= leftTop; i--) {
+            result.push_back(matrix.at(rightBottom).at(i));
+        }
+        for (int i = rightBottom + 1; i > leftTop; i--) {
+            result.push_back(matrix.at(i).at(rightBottom));
+        }
+        leftTop++;
     }
 };

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 #include <vector>
 #include "addTwoNum.h"
 #include "LongestSubStringNoRepeat.h"
@@ -13,6 +14,17 @@ int main(void) {
     // makign more changes
     int whatIsTheHappiestNumber;
     /////////// Spiral Order TEST CODE
+    SolutionSpiralOrder spiral;
+    vector< vector <int> > matrix {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    auto result = spiral.spiralOrder(matrix); 
+    for (int i = 0; i < result.size(); i++) {
+        std::cout << result.at(i) << " ";
+    }
+        std::cout << std::endl;
 
     /////////// Happy Number TEST CODE
 
