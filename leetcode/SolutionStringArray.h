@@ -8,6 +8,13 @@ using std::unordered_map;
 using std::vector;
 using std::set;
 
+class SolutionReorderLogFiles {
+public:
+    vector<string> reorderLogFiles(vector<string>& logs) {
+        
+    }
+};
+
 class SolutionNumberToWords {
 public:
         const string zero = "Zero";
