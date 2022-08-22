@@ -8,6 +8,37 @@ using std::unordered_map;
 using std::vector;
 using std::set;
 
+class SolutionFirstUniqueCharacter {
+  public:
+    int firstUniqChar(string s) {
+        unordered_map<char, int> data; 
+        for (int i = 0; i < s.size(); i++) {
+            if (data.count(s.at(i))) {
+                // it is in the list
+                data.at(s.at(i)) = -1;
+            }
+            else {
+                data.emplace(s.at(i), i);
+            }
+        }
+        int result = -1;
+        auto iter = data.begin();
+        for (; iter != data.end(); iter++) {
+            if ((iter->second > -1)) {
+                result = iter->second;
+                break;
+            }
+        }
+        iter = data.begin();
+        for (; iter != data.end(); iter++) {
+            if ((iter->second < result) && (iter->second > -1)) {
+                result = iter->second;
+            }
+        }
+        return result;
+    }
+};
+
 class SolutionMostCommonWord {
     bool skipWhiteSpace(char& letter) {
         if ( letter == ' ' ||

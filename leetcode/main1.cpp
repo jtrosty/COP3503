@@ -11,6 +11,13 @@
 using std::vector;
 
 int main(void) {
+    ///////////  First Unique CharTEST CODE
+    SolutionFirstUniqueCharacter FirstUnique;
+    std::cout << "First unique char at: " << FirstUnique.firstUniqChar("leetcode") << std::endl;
+    std::cout << "First unique char at: " << FirstUnique.firstUniqChar("s") << std::endl;
+    std::cout << "First unique char at: " << FirstUnique.firstUniqChar("aabb") << std::endl;
+
+
     ///////////  Most Common Word TEST CODE
     SolutionMostCommonWord MostCommonWord;
     string paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.";
