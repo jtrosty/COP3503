@@ -11,13 +11,25 @@
 using std::vector;
 
 int main(void) {
+    ///////////  reorder log FilesTEST CODE
+    SolutionReorderLogFiles reorderLog;
+    vector<string> logs = {"dig1 8 1 5 1","let1 art can","dig2 3 6","let2 own kit dig","let3 art zero" }; 
+    vector<string> result = reorderLog.reorderLogFiles(logs);
+    for (int i = 0; i < result.size(); i++) {
+        std::cout << result.at(i) << std::endl;
+    }
+    std::cout << std::endl;
+
     ///////////  two sum TEST CODE
+    /*
     SolutionTwoSum solutiontwoSum;
     vector<int> test1 = {2,7,11,15};
     vector<int> result = solutiontwoSum.twoSum(test1, 9);
-
     std::cout << "TwoSum result: " << result.at(0) << " " << result.at(1) << std::endl;
+    */
+
     ///////////  number to Words TEST CODE
+    /*
     SolutionNumberToWords NumToWords;
     std::cout << "Num To words: " << NumToWords.numberToWords(0) << std::endl;
     std::cout << "Num To words: " << NumToWords.numberToWords(1) << std::endl;
@@ -26,6 +38,7 @@ int main(void) {
     std::cout << "Num To words: " << NumToWords.numberToWords(12345) << std::endl;
     std::cout << "Num To words: " << NumToWords.numberToWords(1234567) << std::endl;
     std::cout << "Num To words: " << NumToWords.numberToWords(1234567890) << std::endl;
+    */
 
     /*
     ///////////  First Unique CharTEST CODE

@@ -3,11 +3,13 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <utility>
 
 using std::string;
 using std::unordered_map;
 using std::vector;
 using std::set;
+using std::pair;
 
 class SolutionTwoSum {
   public:
@@ -58,8 +60,53 @@ class SolutionTwoSum {
 
 class SolutionReorderLogFiles {
 public:
+    struct comparePairStrings {
+        bool operator()(const pair <string, string>& a, const pair <string, string>& b) const {
+            if (a.second.compare(b.second) > 0) {
+                return 0;
+            } else if (a.second.compare(b.second) < 0) {
+                return 1;
+            } else {
+                if (a.first.compare(b.first) > 0) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    };
+
     vector<string> reorderLogFiles(vector<string>& logs) {
-        
+        vector<int> trackDigits;
+        vector< pair <string, string> > trackLetters;
+        vector<string> result;
+
+        for(int i = 0; i < logs.size(); i++) {
+            int count = 0;
+            while (logs.at(i).at(count) != ' ') {
+                count++;
+            }
+
+            if (logs.at(i).at(0 + count + 1) >= 48 && logs.at(i).at(0 + count + 1) <= 57) {
+                // It is a number
+                trackDigits.push_back(i);
+            }
+            else {
+                string identifier = logs.at(i).substr(0, count);
+                string contents = logs.at(i).substr(count); 
+                trackLetters.push_back(make_pair(identifier, contents));
+            }
+        }
+        // Sort the letters
+        sort(trackLetters.begin(), trackLetters.end(), comparePairStrings());
+
+        // build log
+        for (int i = 0; i < trackLetters.size(); i++) {
+            result.push_back(trackLetters.at(i).first + trackLetters.at(i).second);
+        }
+        for (int i = 0; i < trackDigits.size(); i++) {
+            result.push_back(logs.at(trackDigits.at(i)));
+        }
+        return result;
     }
 };
 
