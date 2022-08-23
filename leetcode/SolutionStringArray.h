@@ -2,11 +2,59 @@
 #include <unordered_map>
 #include <vector>
 #include <set>
+#include <algorithm>
 
 using std::string;
 using std::unordered_map;
 using std::vector;
 using std::set;
+
+class SolutionTwoSum {
+  public:
+    struct NumsSorted {
+        int number;
+        int originalIndex;
+    };
+    struct {
+        bool operator()(NumsSorted a, NumsSorted b) const {return a.number > b.number;}
+    } compareLess;
+
+    vector<int> twoSum(vector<int>& nums, int target) {
+
+        vector<int> sorted;
+        for (int i = 0; i < nums.size(); i++) {
+            sorted.push_back(nums.at(i));
+        }
+        std::sort(sorted.begin(), sorted.end());
+
+        int frontPointer = 0;
+        int backPointer = nums.size() -1;
+        int sum = 0;
+        int numbers[2];
+        vector<int> result{};
+
+        while (frontPointer != backPointer) {
+            sum = sorted.at(frontPointer) + sorted.at(backPointer);
+            if (sum == target) {
+                numbers[0] = sorted.at(frontPointer);
+                numbers[1] = sorted.at(backPointer);
+                break;
+            } 
+            else if (sum > target) {
+                backPointer--;
+            }
+            else if (sum < target) {
+                frontPointer++;
+            }
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums.at(i) == numbers[0] || nums.at(i) == numbers[1]) {
+                result.push_back(i);
+            }
+        }
+        return result;
+    }
+};
 
 class SolutionReorderLogFiles {
 public:
@@ -213,3 +261,41 @@ public:
         return 0;
     }
 };
+
+/*
+    vector<int> twoSum(vector<int>& nums, int target) {
+
+        vector<NumsSorted> sorted;
+        for (int i = 0; i < nums.size(); i++) {
+            NumsSorted* temp = new NumsSorted;
+            temp->number = nums.at(i);
+            temp->originalIndex = i;
+            sorted.push_back(temp);
+        }
+        std::sort(sorted.begin(), sorted.end(), compareLess);
+
+        int frontPointer = 0;
+        int backPointer = nums.size() -1;
+        int sum = 0;
+        vector<int> result;
+        int resultArray[2];
+
+        while (frontPointer != backPointer) {
+            sum = sorted.at(frontPointer).number + sorted.at(backPointer).number;
+            if (sum == target) {
+                result.push_back(sorted.at(frontPointer).originalIndex);
+                result.push_back(sorted.at(backPointer).originalIndex);
+                resultArray[0] = sorted.at(frontPointer).originalIndex;
+                resultArray[1] = sorted.at(backPointer).originalIndex;
+                break;
+            } 
+            else if (sum > target) {
+                backPointer--;
+            }
+            else if (sum < target) {
+                frontPointer++;
+            }
+        }
+        return result;
+    }
+    */

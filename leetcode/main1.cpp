@@ -11,6 +11,12 @@
 using std::vector;
 
 int main(void) {
+    ///////////  two sum TEST CODE
+    SolutionTwoSum solutiontwoSum;
+    vector<int> test1 = {2,7,11,15};
+    vector<int> result = solutiontwoSum.twoSum(test1, 9);
+
+    std::cout << "TwoSum result: " << result.at(0) << " " << result.at(1) << std::endl;
     ///////////  number to Words TEST CODE
     SolutionNumberToWords NumToWords;
     std::cout << "Num To words: " << NumToWords.numberToWords(0) << std::endl;
