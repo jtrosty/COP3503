@@ -11,14 +11,23 @@
 using std::vector;
 
 int main(void) {
+    ///////////  Needle Haystack Container TEST CODE
+    string haystack = "hello";
+    string needle = "ll";
+    SolutionNeedleHaystack needleHay;
+
+    std::cout << "First occurence " << needleHay.strStr(haystack, needle) << std::endl;
+
+
+
     ///////////  Max Container TEST CODE
+    /*
     vector<int> maxTest1 = {1,8,6,2,5,4,8,3,7};
     vector<int> maxTest2 = {1,2,4,3};
     SolutionMaxArea solMaxArea;
     std::cout << "max Area " << solMaxArea.maxArea(maxTest1) << std::endl;
     std::cout << "max Area " << solMaxArea.maxArea(maxTest2) << std::endl;
-
-
+    */
     ///////////  Valid Paren TEST CODE
     /*
     vector<int> test1 = {9,6,4,2,3,5,7,0,1};

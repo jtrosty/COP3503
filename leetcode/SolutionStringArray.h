@@ -13,6 +13,22 @@ using std::set;
 using std::pair;
 using std::stack;
 
+class SolutionNeedleHaystack {
+public:
+    int strStr(string haystack, string needle) {
+        int haySize = haystack.size();
+        int needleSize = needle.size();
+        for (int i = 0; i < haySize; i++) {
+            if (haystack.at(i) == needle.at(0)) {
+                if (needle.compare(haystack.substr(i, needleSize)) == 0) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+};
+
 class SolutionMaxArea {
 public:
     int maxArea(vector<int>& height) {
@@ -36,18 +52,11 @@ public:
             else {
                 right--;
             }
-            /*
-            if ((height.at(left + 1) - height.at(left)) > (height.at(right - 1) - height.at(right))) {
-                left++;
-            }
-            else {
-                right--;
-            }
-            */
         }
         return largestArea;
     }
 };
+
 
 class SolutionMissingNumber {
 public:
