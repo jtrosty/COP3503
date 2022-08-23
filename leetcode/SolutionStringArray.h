@@ -11,6 +11,119 @@ using std::vector;
 using std::set;
 using std::pair;
 
+class SolutionTrap {
+public:
+    int trap(vector<int>& height) {
+        // Go through from left
+        vector<int> leftHeights;
+        vector<int> rightHeights;
+        leftHeights.resize(height.size());
+        rightHeights.resize(height.size());
+        
+        int result = 0;
+        int maxHeight = 0;
+        for (int i = 0; i < height.size(); i++) {
+            if (height.at(i) > maxHeight) {
+                maxHeight = height.at(i);
+            }
+            leftHeights.at(i) = maxHeight;
+        }
+        // Go through from right
+        maxHeight = 0;
+        for (int i = height.size() - 1; i > -1; i--) {
+            if (height.at(i) > maxHeight) {
+                maxHeight = height.at(i);
+            }
+            rightHeights.at(i) = maxHeight;
+        }
+
+        for (int i = 0; i < height.size(); i++) {
+            int min = 0;
+            if (rightHeights.at(i) < leftHeights.at(i)) min = rightHeights.at(i);
+            else                                        min = leftHeights.at(i);
+            result += min - height.at(i);
+        }
+        return result;
+    }
+};
+
+class SolutionTrapBad {
+public:
+    int trap(vector<int>& height) {
+        set<int> skipTheseIndexes;
+        int result = 0;
+        for (int i = 1; i < height.size(); i++) {
+            // Lets find the first peak
+            if (height.at(i) < height.at(i - 1)) {
+                // We have a peak at i - 1
+                int peak = height.at(i - 1);
+                int j = i;
+                int waterTotal = 0;
+                bool trapped = true;
+                int highestLocal = 0;
+                int highestLocalIndex = 0;
+
+                while (height.at(j) < peak) {
+                    if (height.at(j) > highestLocal) {
+                        highestLocal = height.at(j);
+                        highestLocalIndex = j;
+                    }
+                    if (j >= height.size() - 1) {
+                        // reached the end the current peak didn't work. 
+                        trapped = false;
+                        break;
+                    }
+                    int currenHeight = height.at(j++);
+                    waterTotal += peak - currenHeight;
+                }
+                if (trapped) {
+                    result += waterTotal;
+                    for (int k = i; k != j; k++) {
+                        skipTheseIndexes.emplace(k);
+                    }
+                    i = j;
+                }
+                else if (highestLocal) {
+                    i = j;
+                }
+            }
+        }
+        for (int i = height.size() - 2; i >= 0; i-- ) {
+            if (skipTheseIndexes.count(i)) {
+                continue;
+            }
+            // Lets find the first peak
+            if (height.at(i) < height.at(i + 1)) {
+                // We have a peak at i - 1
+                int peak = height.at(i + 1);
+                int j = i;
+                int waterTotal = 0;
+                bool trapped = true;
+                int tempHeightLocal = 0;
+                int tempWaterTotalForHeightsLocal = 0;
+                int heightLocal = 0;
+                int waterTotalForHeightsLocal = 0;
+
+                while (height.at(j) < peak) {
+                    if (j == 0) {
+                        // reached the end the current peak didn't work. 
+                        trapped = false;
+                        break;
+                    }
+                    int currenHeight = height.at(j--);
+                    waterTotal += peak - currenHeight;
+                }
+                if (trapped) {
+                    result += waterTotal;
+                    i = j;
+                }
+            }
+
+        }
+        return result;
+    }
+};
+
 class SolutionTwoSum {
   public:
     struct NumsSorted {

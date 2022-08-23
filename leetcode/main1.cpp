@@ -11,7 +11,17 @@
 using std::vector;
 
 int main(void) {
+    ///////////  trapping rain TEST CODE
+    SolutionTrap trapWater;
+    vector<int> heightTest = {5,4,1,2};
+    vector<int> height = {0,1,0,2,1,0,1,3,2,1,2,1};
+    vector<int> fail = {4, 2, 3};
+    vector<int> failAgain = {0,1,0,2,1,0,1,3,2,1,2,1};
+    vector<int> failAgain2 = {6,8,5,0,0,6,5};
+    std::cout << "amt of trapped water: " << trapWater.trap(failAgain2) << std::endl;
+    std::cout << "amt of trapped water: " << trapWater.trap(heightTest) << std::endl;
     ///////////  reorder log FilesTEST CODE
+    /*
     SolutionReorderLogFiles reorderLog;
     vector<string> logs = {"dig1 8 1 5 1","let1 art can","dig2 3 6","let2 own kit dig","let3 art zero" }; 
     vector<string> result = reorderLog.reorderLogFiles(logs);
@@ -19,6 +29,7 @@ int main(void) {
         std::cout << result.at(i) << std::endl;
     }
     std::cout << std::endl;
+    */
 
     ///////////  two sum TEST CODE
     /*
