@@ -12,6 +12,11 @@ using std::vector;
 
 int main(void) {
     ///////////  Valid Paren TEST CODE
+    vector<int> test1 = {9,6,4,2,3,5,7,0,1};
+    SolutionMissingNumber solMissingNumber;
+    std::cout << "Missing number: " << solMissingNumber.missingNumber(test1) << std::endl;
+
+    ///////////  Valid Paren TEST CODE
     SolutionValidParen validParen;
     std::cout << "Parent " << validParen.isValid("()") << std::endl;
 

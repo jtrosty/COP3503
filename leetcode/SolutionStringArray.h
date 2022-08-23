@@ -13,6 +13,23 @@ using std::set;
 using std::pair;
 using std::stack;
 
+class SolutionMissingNumber {
+public:
+    int missingNumber(vector<int>& nums) {
+        int* findMissing = new int[nums.size() + 1] {};
+        for (int i = 0; i < nums.size(); i++) {
+            findMissing[nums.at(i)] = 1;
+        }
+        int i = 0;
+
+        // Find the missing falue
+        while (findMissing[i] == 1) {i++;}
+
+        delete[] findMissing;
+        return i;
+    }
+};
+
 class SolutionValidParen {
 public:
     bool isValid(string s) {
