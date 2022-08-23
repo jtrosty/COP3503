@@ -11,7 +11,12 @@
 using std::vector;
 
 int main(void) {
+    ///////////  Valid Paren TEST CODE
+    SolutionValidParen validParen;
+    std::cout << "Parent " << validParen.isValid("()") << std::endl;
+
     ///////////  trapping rain TEST CODE
+    /*
     SolutionTrap trapWater;
     vector<int> heightTest = {5,4,1,2};
     vector<int> height = {0,1,0,2,1,0,1,3,2,1,2,1};
@@ -20,6 +25,7 @@ int main(void) {
     vector<int> failAgain2 = {6,8,5,0,0,6,5};
     std::cout << "amt of trapped water: " << trapWater.trap(failAgain2) << std::endl;
     std::cout << "amt of trapped water: " << trapWater.trap(heightTest) << std::endl;
+    */
     ///////////  reorder log FilesTEST CODE
     /*
     SolutionReorderLogFiles reorderLog;

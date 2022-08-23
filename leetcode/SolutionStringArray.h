@@ -4,12 +4,50 @@
 #include <set>
 #include <algorithm>
 #include <utility>
+#include <stack>
 
 using std::string;
 using std::unordered_map;
 using std::vector;
 using std::set;
 using std::pair;
+using std::stack;
+
+class SolutionValidParen {
+public:
+    bool isValid(string s) {
+        stack<char> brackets;
+        char value;
+        for (int i = 0; i < s.size(); i++) {
+            value = s.at(i);
+            switch (value) {
+                case '(': 
+                    brackets.push(value);
+                    break;
+                case '[': 
+                    brackets.push(value);
+                    break;
+                case '{': 
+                    brackets.push(value);
+                    break;
+                case ')': 
+                    if (!brackets.empty() && (brackets.top() == '(')) brackets.pop();
+                    else return false;
+                    break;
+                case ']': 
+                    if (!brackets.empty() && brackets.top() == '[') brackets.pop();
+                    else return false;
+                    break;
+                case '}': 
+                    if (!brackets.empty() && brackets.top() == '{') brackets.pop();
+                    else return false;
+                    break;
+            }
+        }
+        if (brackets.empty()) return true;
+        return false;
+    }
+};
 
 class SolutionTrap {
 public:
