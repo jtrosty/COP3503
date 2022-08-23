@@ -11,14 +11,26 @@
 using std::vector;
 
 int main(void) {
+    ///////////  Max Container TEST CODE
+    vector<int> maxTest1 = {1,8,6,2,5,4,8,3,7};
+    vector<int> maxTest2 = {1,2,4,3};
+    SolutionMaxArea solMaxArea;
+    std::cout << "max Area " << solMaxArea.maxArea(maxTest1) << std::endl;
+    std::cout << "max Area " << solMaxArea.maxArea(maxTest2) << std::endl;
+
+
     ///////////  Valid Paren TEST CODE
+    /*
     vector<int> test1 = {9,6,4,2,3,5,7,0,1};
     SolutionMissingNumber solMissingNumber;
     std::cout << "Missing number: " << solMissingNumber.missingNumber(test1) << std::endl;
+    */
 
     ///////////  Valid Paren TEST CODE
+    /*
     SolutionValidParen validParen;
     std::cout << "Parent " << validParen.isValid("()") << std::endl;
+    */
 
     ///////////  trapping rain TEST CODE
     /*

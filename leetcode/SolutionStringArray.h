@@ -13,6 +13,42 @@ using std::set;
 using std::pair;
 using std::stack;
 
+class SolutionMaxArea {
+public:
+    int maxArea(vector<int>& height) {
+        int left = 0;
+        int right = height.size() - 1;
+        int largestLeft = left;
+        int largestRight = right;
+        int largestArea = 0;
+        int currentArea = 0;
+        
+        while (left != right) {
+            currentArea = std::min(height.at(left), height.at(right)) * (right - left);
+            if (currentArea > largestArea) {
+                largestArea = currentArea;
+                largestLeft = left;
+                largestRight = right;
+            }
+            if (height.at(left) < height.at(right)) {
+                left++;
+            }
+            else {
+                right--;
+            }
+            /*
+            if ((height.at(left + 1) - height.at(left)) > (height.at(right - 1) - height.at(right))) {
+                left++;
+            }
+            else {
+                right--;
+            }
+            */
+        }
+        return largestArea;
+    }
+};
+
 class SolutionMissingNumber {
 public:
     int missingNumber(vector<int>& nums) {
