@@ -11,6 +11,14 @@
 using std::vector;
 
 int main(void) {
+    ///////////  Int to RomanTEST CODE
+    SolutionIntToRoman intToRoman;
+    std::cout << "int to Roman 1 " << intToRoman.intToRoman(1) << std::endl;
+    std::cout << "int to Roman 2 " << intToRoman.intToRoman(3) << std::endl;
+    std::cout << "int to Roman 3 " << intToRoman.intToRoman(58) << std::endl;
+    std::cout << "int to Roman 3 " << intToRoman.intToRoman(1994) << std::endl;
+
+
     ///////////  Needle Haystack Container TEST CODE
     string haystack = "hello";
     string needle = "ll";

@@ -5,13 +5,97 @@
 #include <algorithm>
 #include <utility>
 #include <stack>
+#include <tuple>
 
 using std::string;
 using std::unordered_map;
 using std::vector;
 using std::set;
 using std::pair;
+using std::tuple;
 using std::stack;
+using std::cout;
+using std::endl;
+using std::make_pair;
+using std::make_tuple;
+using std::get;
+using std::tie;
+
+class SolutionIntToRoman {
+public:
+    void appendLetters(string& result, char letter, int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            result.push_back(letter);
+        }
+    }
+
+    string intToRoman(int num) {
+ 
+        tuple<char, int, int> roman[7];
+        roman[0] = make_tuple('M', 1000, 900);
+        roman[1] = make_tuple('D', 500, 400);
+        roman[2] = make_tuple('C', 100, 90);
+        roman[3] = make_tuple('L', 50, 40);
+        roman[4] = make_tuple('X', 10, 9);
+        roman[5] = make_tuple('V', 5, 4);
+        roman[6] = make_tuple('I', 1, 1);
+        string result;
+        int value;
+
+        for (int i = 0; i < 7; i++) {
+            char letter;       // = get<0>(romanNums.at(i);
+            int number;       //= get<1>(romanNums.at(i));
+            int specialCase;  // = get<2>(romanNums.at(i));
+            char specialCaseletter;       //= get<1>(romanNums.at(i));
+            tie(letter, number, specialCase) = roman[i];
+            value = num / number;
+            appendLetters(result, letter, value);
+            num = num - (number * value);
+            if (((num % number) >= specialCase) && (number != 1)) {
+                if (letter == 'M' || letter == 'D') specialCaseletter = 'C';
+                else if (letter == 'L' || letter == 'C') specialCaseletter = 'X';
+                else if (letter == 'V' || letter == 'X') specialCaseletter = 'I';
+                appendLetters(result, specialCaseletter, 1);
+                appendLetters(result, letter, 1);
+                num = num - (specialCase);
+            }
+        }
+        return result;
+
+        // TODO: Delete 
+        /*
+         vector<tuple<char, int, int>> romanNums;
+        romanNums.emplace_back(make_tuple('M', 1000, 900));
+        romanNums.emplace_back(make_tuple('D', 500, 400));
+        romanNums.emplace_back(make_tuple('C', 100, 90));
+        romanNums.emplace_back(make_tuple('L', 50, 40));
+        romanNums.emplace_back(make_tuple('X', 10, 9));
+        romanNums.emplace_back(make_tuple('V', 5, 4));
+        romanNums.emplace_back(make_tuple('I', 1, 1));      
+        value = num / 1000;
+        appendLetters(result, 'M', value);
+        if (num % 1000 > 900) {
+            appendLetters(result, 'D', 1);
+            appendLetters(result, 'M', 1);
+        }
+        for (int i = 0; i < 7); i++) {
+            char letter;       // = get<0>(romanNums.at(i));
+            char number;       //= get<1>(romanNums.at(i));
+            char specialCase;  // = get<2>(romanNums.at(i));
+            tie(letter, number, specialCase) = romans.at(i);
+            value = num / number;
+            appendLetters(result, letter, value);
+            num = num - (number * value);
+            if (((num % number) > specialCase) && (number != 1)) {
+                appendLetters(result, get<0>(romanNums.at(i + 1)), 1);
+                appendLetters(result, letter, 1);
+                num = num - (specialCase);
+            }
+        }
+        */
+
+    }
+};
 
 class SolutionNeedleHaystack {
 public:
