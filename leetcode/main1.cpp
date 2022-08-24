@@ -11,6 +11,12 @@
 using std::vector;
 
 int main(void) {
+    ///////////  Groud Anagrams TESTCODE
+    SolutionGroupAnagrams anagrams;
+    vector<string> test = {"eat","tea","tan","ate","nat","bat"};
+    auto reslt = anagrams.groupAnagrams(test);
+
+
     ///////////  Int to RomanTEST CODE
     SolutionIntToRoman intToRoman;
     std::cout << "int to Roman 1 " << intToRoman.intToRoman(1) << std::endl;

@@ -21,6 +21,73 @@ using std::make_tuple;
 using std::get;
 using std::tie;
 
+class SolutionGroupAnagrams {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        vector<vector<string>> result;
+        unordered_map<string, int> anagramExist;
+        int strsSize = strs.size();
+        string sortedString;
+        for (int i = 0; i < strsSize; i++) {
+            sortedString = strs.at(i); 
+            sort(sortedString.begin(), sortedString.end());
+
+            if (anagramExist.count(sortedString) == 0) {
+                anagramExist.emplace(sortedString, result.size());
+                vector<string> newVector;
+                newVector.push_back(strs.at(i));
+                result.push_back(newVector);
+            }
+            else {
+                result.at(anagramExist.at(sortedString)).push_back(strs.at(i));
+            }
+        }
+        struct {
+            bool operator()(vector<string>& a, vector<string>& b) {return a.size() > b.size();}
+        } comp;
+        sort(result.begin(), result.end(), comp);
+        return result;
+    }
+};
+
+/*
+/// SHITTTY SOLUTION 
+vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        vector< set< char> > theAnagrams;
+        vector<vector<string>> result;
+        int strsSize = strs.size();
+        for (int i = 0; i < strsSize; i++) {
+            // First Case done
+            if (i == 0) {
+                int lengthOfWord = strs.at(i).size();
+                set<char> firstSet;
+                for (int j = 0; j < lengthOfWord; j++) {
+                    firstSet.emplace(strs.at(i).at(j));
+                }
+                theAnagrams.push_back(firstSet);
+                result.at(0).push_back(strs.at(i));
+            }
+            else {
+                int lengthOfWord = strs.at(i).size();
+                int numOfSets = theAnagrams.size();
+                bool anagram = true;
+                for (int j = 0; j < theAnagrams; j++) {
+                    auto iter = theAnagrams.at(j).begin(); 
+                    auto end = theAnagrams.at(j).end(); 
+                    for (; iter != end; iter++) {
+                        if (iter->first)
+                    
+                   }
+                }
+                theAnagrams.push_back(firstSet);
+                result.at(0).push_back(strs.at(i));
+
+            }
+        }
+        return result;
+    }
+    */
+
 class SolutionIntToRoman {
 public:
     void appendLetters(string& result, char letter, int quantity) {
