@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <utility>
 #include <stack>
+#include <queue>
 #include <tuple>
 
 using std::string;
@@ -14,12 +15,78 @@ using std::set;
 using std::pair;
 using std::tuple;
 using std::stack;
+using std::queue;
 using std::cout;
 using std::endl;
 using std::make_pair;
 using std::make_tuple;
 using std::get;
 using std::tie;
+
+class SolutionMinWindow {
+public:
+    void adjustLeft(string& string, queue<int>& queue, int& left, int tAlpha[]) {
+        char letter = string.at(queue.front());
+        tAlpha[letter - 97]++;
+        queue.pop();
+        left = queue.front();
+    }
+
+    string minWindow(string s, string t) {
+        queue<int> lettersInWindow;
+        int tAlpha[26];
+        for (int i = 0; i < 26; i++) {
+            tAlpha[i] = -1;
+        }
+        int tSize = t.size();
+        int sSize = s.size();
+        int aLowerStart = 97;
+        int resultFront = 0;
+        int resultCount = -1;
+        // Built my hash Map
+        for (int i = 0; i < tSize; i++) {
+            if (tAlpha[t.at(i) - aLowerStart] == -1) {
+                tAlpha[t.at(i) - aLowerStart] = 0;
+            }
+            tAlpha[t.at(i) - aLowerStart]++;
+        }
+
+        int left = 0;
+        int right = 0;
+        while (right < sSize) {
+            if (tAlpha[s.at(right) - aLowerStart] < 0) {
+                // Not a useful letter
+                right++;
+            }
+            else if (tAlpha[s.at(right) - aLowerStart] > 0) {
+                // success
+                if (!tAlpha[s.at(right) - aLowerStart]--)  {
+                    // check to see if we have all of t
+                    if (lettersInWindow.size() == tSize) {
+                        // We should have all the letters
+                        if ((right - left) < resultCount || resultCount == -1) {
+                            resultFront = left;
+                            resultCount = right - left;
+                        }
+                        adjustLeft(s, lettersInWindow, left, tAlpha);
+                    }
+                }
+                lettersInWindow.push(right);
+                right++;
+            } 
+            else  {
+                // We hit a letter we already used up. 
+                while ((tAlpha[s.at(right) - aLowerStart] = 0) && !lettersInWindow.empty()) {
+                    adjustLeft(s, lettersInWindow, left, tAlpha);
+                }
+            }
+        }
+        if (resultCount == -1) {
+            return "";
+        }
+        return s.substr(resultFront, resultCount);
+    }
+};
 
 class SolutionGroupAnagrams {
 public:

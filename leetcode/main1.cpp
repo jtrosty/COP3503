@@ -11,6 +11,13 @@
 using std::vector;
 
 int main(void) {
+    ///////////  Min Window Substring TESTCODE
+    SolutionMinWindow MinWindow;
+    string s = "ADOBECODEBANC";
+    string t = "ABC";
+    std::cout << "MinWindow " << MinWindow.minWindow(s, t) << std::endl;
+
+
     ///////////  Groud Anagrams TESTCODE
     SolutionGroupAnagrams anagrams;
     vector<string> test = {"eat","tea","tan","ate","nat","bat"};
