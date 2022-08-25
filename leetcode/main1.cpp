@@ -11,6 +11,16 @@
 using std::vector;
 
 int main(void) {
+    ///////////  Rotate TESTCODE
+    SolutionRotate rotate;
+    vector<vector<int>> vect {
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {9, 10, 11, 12},
+        {13, 14, 15, 16}
+    };
+    rotate.rotate(vect);
+
     ///////////  Min Window Substring TESTCODE
     string s3 = "aaaaaaaaaaaabbbbbcdd";
     string t3 ="abcdd";

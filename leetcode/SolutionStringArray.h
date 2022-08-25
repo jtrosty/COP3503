@@ -23,6 +23,44 @@ using std::make_tuple;
 using std::get;
 using std::tie;
 
+class SolutionRotate {
+public:
+    void swap(vector<vector<int>>& matrix, int i, int j, int l) {
+        int TL = matrix.at(i).at(j);
+        int TR = matrix.at(j).at(l - i);
+        int BR = matrix.at(l - i).at(l - j);
+        int BL = matrix.at(l - j).at(i);
+
+        int temp;
+        temp = matrix.at(i).at(j);
+        //  TL                      BL
+        matrix.at(i).at(j) = matrix.at(l - j).at(i);
+        //    BL                  BR
+        matrix.at(l - j).at(i) = matrix.at(l - i).at(l - j) ;
+        //    BR                  TR
+        matrix.at(l - i).at(l - j) = matrix.at(j).at(l - i);
+        //    TR               TL
+        matrix.at(j).at(l - i) = temp;
+    }
+
+    void rotate(vector<vector<int>>& matrix) {
+        int matrixLength = matrix.size();
+        int oddSizeAdjustment = 0;
+        int half;
+        if (matrixLength % 2 == 1) {
+            half = (matrixLength / 2) + 1;
+        }
+        else half = matrixLength / 2;
+
+        for (int i = 0; i < half; i++) {
+            int innerLength = matrixLength - i - 1;
+            for (int j = i; j < innerLength; j++) {
+                swap(matrix, i, j, matrixLength - 1);
+            }
+        }
+    }
+};
+
 class SolutionMinWindow2 {
 public:
     string minWindow(string s, string t) {
