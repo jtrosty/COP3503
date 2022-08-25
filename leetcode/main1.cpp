@@ -12,10 +12,19 @@ using std::vector;
 
 int main(void) {
     ///////////  Min Window Substring TESTCODE
-    SolutionMinWindow MinWindow;
+    string s3 = "aaaaaaaaaaaabbbbbcdd";
+    string t3 ="abcdd";
+    SolutionMinWindow2 MinWindow;
+    string s2 = "ab";
+    string t2 = "a";
+    std::cout << "MinWindow " << MinWindow.minWindow(s2, t2) << std::endl;
+    std::cout << "MinWindow " << MinWindow.minWindow(s3, t3) << std::endl;
     string s = "ADOBECODEBANC";
     string t = "ABC";
     std::cout << "MinWindow " << MinWindow.minWindow(s, t) << std::endl;
+    string s1 = "ADOBECODEBANC";
+    string t1 = "ABC";
+    std::cout << "MinWindow " << MinWindow.minWindow(s1, t1) << std::endl;
 
 
     ///////////  Groud Anagrams TESTCODE

@@ -23,60 +23,152 @@ using std::make_tuple;
 using std::get;
 using std::tie;
 
+class SolutionMinWindow2 {
+public:
+    string minWindow(string s, string t) {
+        int left = -1;
+        int right = 0;
+        int tSize = t.size();
+        int sSize = s.size();
+        int startSmallestWindow = -1;
+        int countSmallestWindow = 1;
+        unordered_map<char, int> tLetter;
+        set<char> lettersCompletelyInWindow;
+        for (int i = 0; i < tSize; i++) {
+            if (tLetter.count(t.at(i)) == 0) {
+                tLetter.emplace(t.at(i), -1);
+            }
+            else {
+                tLetter.at(t.at(i))--;
+            }
+        }
+
+        while (right < sSize) {
+            char currLeter = s.at(right);
+            if (tLetter.count(currLeter) == 0) {
+                // This letter is not in t
+                right++;
+            }
+            else {
+                tLetter.at(currLeter)++;
+                if (left == -1) left = right; // Handles the first time right finds a letter in the window.  
+                if (tLetter.at(currLeter) == 0) {
+                    // we have all the letters need for this letter!
+                    lettersCompletelyInWindow.emplace(currLeter);
+                    if (tLetter.size() == lettersCompletelyInWindow.size()) {
+                        // Then we have all the letters in the window! make sure left is where we want it.
+                        if (startSmallestWindow == -1) {
+                            startSmallestWindow = left;
+                            countSmallestWindow = right - left + 1;
+                        }
+                        else if (countSmallestWindow > (right - left + 1) ) {
+                            startSmallestWindow = left;
+                            countSmallestWindow = right - left + 1;
+                        }
+                        // Now move left untill the window is not valid
+                        while (tLetter.size() == lettersCompletelyInWindow.size()) {
+                            if (countSmallestWindow > (right - left + 1) ) {
+                                startSmallestWindow = left;
+                                countSmallestWindow = right - left + 1;
+                            }
+                            char leftCurrLetter = s.at(left);
+                            if (tLetter.count(leftCurrLetter) == 1) {
+                                tLetter.at(leftCurrLetter)--;
+                                if (tLetter.at(leftCurrLetter) < 0) {
+                                    // The window is not valid
+                                    lettersCompletelyInWindow.erase(leftCurrLetter);
+                                }
+                            }
+                            left++;
+                        }
+                        while (left <= right && tLetter.count(s.at(left)) == 0) left++;
+                    }
+                }
+                right++;
+            }
+        }
+        if (startSmallestWindow == -1) return "";
+        /*
+        if (startSmallestWindow + countSmallestWindow >= sSize) {
+            return s.substr(startSmallestWindow);
+        }
+        */
+        return s.substr(startSmallestWindow, countSmallestWindow);
+    }
+};
+
 class SolutionMinWindow {
 public:
+    int aLowerStart = 65;
+    int aUpperStart = 97;
+
+    int getIndex(char letter) {
+        if (letter < 97) {
+            return letter - aLowerStart;
+        }
+        return letter - aUpperStart + 26;
+    }
+
+
     void adjustLeft(string& string, queue<int>& queue, int& left, int tAlpha[]) {
         char letter = string.at(queue.front());
-        tAlpha[letter - 97]++;
+        tAlpha[getIndex(letter)]++;
         queue.pop();
-        left = queue.front();
+        if (!queue.empty()) {
+            left = queue.front();
+        }
     }
 
     string minWindow(string s, string t) {
         queue<int> lettersInWindow;
-        int tAlpha[26];
-        for (int i = 0; i < 26; i++) {
+        int tAlpha[52];
+        for (int i = 0; i < 52; i++) {
             tAlpha[i] = -1;
         }
         int tSize = t.size();
         int sSize = s.size();
-        int aLowerStart = 97;
         int resultFront = 0;
         int resultCount = -1;
         // Built my hash Map
         for (int i = 0; i < tSize; i++) {
-            if (tAlpha[t.at(i) - aLowerStart] == -1) {
-                tAlpha[t.at(i) - aLowerStart] = 0;
+            char oneLetter = t.at(i);
+            int indexCalc = getIndex(oneLetter);
+            if (tAlpha[indexCalc] == -1) {
+                tAlpha[indexCalc] = 0;
             }
-            tAlpha[t.at(i) - aLowerStart]++;
+            tAlpha[indexCalc]++;
         }
 
         int left = 0;
         int right = 0;
         while (right < sSize) {
-            if (tAlpha[s.at(right) - aLowerStart] < 0) {
+            char oneLetter = s.at(right);
+            int indexCalc = getIndex(oneLetter);
+            if (tAlpha[indexCalc] < 0) {
                 // Not a useful letter
                 right++;
             }
-            else if (tAlpha[s.at(right) - aLowerStart] > 0) {
+            else if (tAlpha[indexCalc] > 0) {
                 // success
-                if (!tAlpha[s.at(right) - aLowerStart]--)  {
+                if (lettersInWindow.empty()) left = right;
+                lettersInWindow.push(right);
+                tAlpha[indexCalc]--;
+                if ((tAlpha[indexCalc]) == 0)  {
                     // check to see if we have all of t
                     if (lettersInWindow.size() == tSize) {
                         // We should have all the letters
                         if ((right - left) < resultCount || resultCount == -1) {
                             resultFront = left;
-                            resultCount = right - left;
+                            resultCount = right - left + 1;
                         }
                         adjustLeft(s, lettersInWindow, left, tAlpha);
                     }
                 }
-                lettersInWindow.push(right);
                 right++;
             } 
             else  {
                 // We hit a letter we already used up. 
-                while ((tAlpha[s.at(right) - aLowerStart] = 0) && !lettersInWindow.empty()) {
+                while ((tAlpha[indexCalc] == 0) && !lettersInWindow.empty()) {
                     adjustLeft(s, lettersInWindow, left, tAlpha);
                 }
             }
