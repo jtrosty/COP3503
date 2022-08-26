@@ -24,28 +24,42 @@ using std::get;
 using std::tie;
 using std::swap;
 
+class SolutionProductExceptSelf {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        int totalProductNoZero = 1;
+        set<int> zeroIndex;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums.at(i) == 0) {
+                zeroIndex.emplace(i);
+            }
+            else {
+                totalProductNoZero = totalProductNoZero * nums.at(i);
+            }
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            if (zeroIndex.size() > 1) {
+                nums.at(i) = 0;
+            }
+            else if (zeroIndex.size() == 1) {
+                if (nums.at(i) != 0) {
+                    nums.at(i) = 0;
+                }
+                else {
+                    nums.at(i) = totalProductNoZero;
+                }
+            }
+            else {
+                int temp = nums.at(i);
+                nums.at(i) = (totalProductNoZero / temp) + (totalProductNoZero % temp);
+            }
+        }
+        return nums;
+    }
+};
+
 class SolutionRotateFast {
 public:
-/*
-    void swap(vector<vector<int>>& matrix, int i, int j, int l) {
-        int TL = matrix.at(i).at(j);
-        int TR = matrix.at(j).at(l - i);
-        int BR = matrix.at(l - i).at(l - j);
-        int BL = matrix.at(l - j).at(i);
-
-        int temp;
-        temp = matrix.at(i).at(j);
-        //  TL                      BL
-        matrix.at(i).at(j) = matrix.at(l - j).at(i);
-        //    BL                  BR
-        matrix.at(l - j).at(i) = matrix.at(l - i).at(l - j) ;
-        //    BR                  TR
-        matrix.at(l - i).at(l - j) = matrix.at(j).at(l - i);
-        //    TR               TL
-        matrix.at(j).at(l - i) = temp;
-    }
-    */
-
     void rotate(vector<vector<int>>& matrix) {
         int matrixLength = matrix.size();
         int oddSizeAdjustment = 0;
