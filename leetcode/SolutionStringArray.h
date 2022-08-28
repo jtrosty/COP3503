@@ -23,6 +23,33 @@ using std::make_tuple;
 using std::get;
 using std::tie;
 using std::swap;
+using std::sort;
+
+class SolutionThreeSum {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> result;
+        sort(nums.begin(), nums.end());
+
+        int first = 0;
+        int middle = first + 1;
+        int end = nums.size() - 1;
+        // Special cases
+        if (nums.size() < 3) return result; // not big enough
+        while (first + 2 != end) {
+            if (middle == end) {
+                first++;
+                middle = first + 1;
+            }
+            if ((nums.at(first) + nums.at(middle) + nums.at(end)) == 0) {
+                vector<int> newResult = {nums.at(first), nums.at(middle), nums.at(end)};
+                result.push_back(newResult);
+                newResult.erase(nums.at(first).);
+            }
+        }
+        return result;
+    }
+};
 
 class SolutionProductExceptSelf {
 public:

@@ -11,6 +11,10 @@
 using std::vector;
 
 int main(void) {
+    ///////////  ThreeSum TEST CODE
+    SolutionThreeSum threeSum;
+    vector<int> threeSumTestCase = {-1,0,1,2,-1,-4 };
+    vector<vector<int>> threeSumResult = threeSum.threeSum(threeSumTestCase);
     ///////////  Rotate TESTCODE
     SolutionRotate rotate;
     vector<vector<int>> vect {
