@@ -8,14 +8,30 @@
 #include "LeetCodeDay1.h"
 #include "SolutionStringArray.h"
 
+using std::cout;
+using std::endl;
 using std::vector;
 
 int main(void) {
     ///////////  ThreeSum TEST CODE
     SolutionThreeSum threeSum;
-    vector<int> threeSumTestCase = {-1,0,1,2,-1,-4 };
-    vector<vector<int>> threeSumResult = threeSum.threeSum(threeSumTestCase);
+    vector<int> threeSumTestCase = {-1,0,1,2,-1,-4 }; // - 4 -1 -1 0 1 2
+    vector<int> threeSumTest2 = {0, 1, 1}; // - 4 -1 -1 0 1 2
+    vector<int> threeSumTest3 = {0, 0, 0, 0}; // - 4 -1 -1 0 1 2
+    vector<int> threeSumTest4 = {-2, 0, 1, 1, 2}; // - 4 -1 -1 0 1 2
+    vector<vector<int>> threeSumResult = threeSum.threeSum(threeSumTest4);
+    int sizeRow = threeSumResult.size();
+    int sizeCol = threeSumResult.at(0).size();
+    for (int i = 0; i < sizeRow; i++) {
+        for (int j = 0; j < sizeCol; j++) {
+            std::cout << threeSumResult.at(i).at(j) << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
     ///////////  Rotate TESTCODE
+    /*
     SolutionRotate rotate;
     vector<vector<int>> vect {
         {1, 2, 3, 4},
@@ -24,8 +40,10 @@ int main(void) {
         {13, 14, 15, 16}
     };
     rotate.rotate(vect);
+    */
 
     ///////////  Min Window Substring TESTCODE
+    /*
     string s3 = "aaaaaaaaaaaabbbbbcdd";
     string t3 ="abcdd";
     SolutionMinWindow2 MinWindow;
@@ -39,9 +57,11 @@ int main(void) {
     string s1 = "ADOBECODEBANC";
     string t1 = "ABC";
     std::cout << "MinWindow " << MinWindow.minWindow(s1, t1) << std::endl;
+    */
 
 
     ///////////  Groud Anagrams TESTCODE
+    /*
     SolutionGroupAnagrams anagrams;
     vector<string> test = {"eat","tea","tan","ate","nat","bat"};
     auto reslt = anagrams.groupAnagrams(test);
@@ -62,6 +82,7 @@ int main(void) {
 
     std::cout << "First occurence " << needleHay.strStr(haystack, needle) << std::endl;
 
+*/
 
 
     ///////////  Max Container TEST CODE

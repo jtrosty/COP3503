@@ -27,29 +27,154 @@ using std::sort;
 
 class SolutionThreeSum {
 public:
+    bool isSolnInResults(vector<int>& newSolution, vector<vector<int>>& results) {
+        bool isUnique = false;
+        for (int i = 0; i < results.size(); i++) {
+            sort(results.at(i).begin(), results.at(i).end());
+            for (int j = 0; j < 3; j++) {
+                if (results.at(i).at(j) != newSolution.at(j)) {
+                    isUnique = true;
+                }
+            }
+        }
+        return isUnique;
+    }
+
+    vector<int> twoSum(vector<int>& nums, int target) {
+
+        vector<int> sorted;
+        for (int i = 0; i < nums.size(); i++) {
+            sorted.push_back(nums.at(i));
+        }
+        std::sort(sorted.begin(), sorted.end());
+
+        int frontPointer = 0;
+        int backPointer = nums.size() -1;
+        int sum = 0;
+        int numbers[2];
+        vector<int> result{};
+
+        while (frontPointer != backPointer) {
+            sum = sorted.at(frontPointer) + sorted.at(backPointer);
+            if (sum == target) {
+                numbers[0] = sorted.at(frontPointer);
+                numbers[1] = sorted.at(backPointer);
+                break;
+            } 
+            else if (sum > target) {
+                backPointer--;
+            }
+            else if (sum < target) {
+                frontPointer++;
+            }
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums.at(i) == numbers[0] || nums.at(i) == numbers[1]) {
+                result.push_back(i);
+            }
+        }
+        return result;
+    }
+
     vector<vector<int>> threeSum(vector<int>& nums) {
         vector<vector<int>> result;
-        sort(nums.begin(), nums.end());
+        set<int> numsVisited;
 
-        int first = 0;
-        int middle = first + 1;
-        int end = nums.size() - 1;
-        // Special cases
-        if (nums.size() < 3) return result; // not big enough
-        while (first + 2 != end) {
-            if (middle == end) {
-                first++;
-                middle = first + 1;
-            }
-            if ((nums.at(first) + nums.at(middle) + nums.at(end)) == 0) {
-                vector<int> newResult = {nums.at(first), nums.at(middle), nums.at(end)};
-                result.push_back(newResult);
-                newResult.erase(nums.at(first).);
+        sort(nums.begin(), nums.end());
+        int size = nums.size();
+        for (int i = 0; i < size; i++) {
+            if (nums[i] > 0 ) break; // We are done no way to get zero again.
+            // Perform 2sum
+            numsVisited.clear();
+            if (i == 0 || nums[i - 1] != nums[i]) {
+                for (int j = i + 1; j < size; j++) {
+                    int needValue = -(nums.at(i) + nums.at(j));
+                    if (numsVisited.count(needValue)) {
+                        vector<int> newResult = {nums.at(i), nums.at(j), needValue};
+                        result.push_back(newResult);
+                        while (j + 1 < size && nums.at(j) == nums.at(j + 1)) { // skip duplicates
+                            j++;
+                        }
+                    }
+                    numsVisited.emplace(nums.at(j));
+                }
             }
         }
         return result;
     }
 };
+
+/*    bool isSolnInResults(vector<int>& newSolution, vector<vector<int>>& results) {
+        bool isUnique = false;
+        for (int i = 0; i < results.size(); i++) {
+            sort(results.at(i).begin(), results.at(i).end());
+            for (int j = 0; j < 3; j++) {
+                if (results.at(i).at(j) != newSolution.at(j)) {
+                    isUnique = true;
+                }
+            }
+        }
+        return isUnique;
+    }
+
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> result;
+        set<int> usedNumbers;
+        unordered_map<int, int> numsMap;
+        for (int i = 0; i < nums.size(); i++) numsMap.emplace(nums.at(i), i);
+        
+        sort(nums.begin(), nums.end());
+
+        int first = 0;
+        int middle = first + 1;
+        int end = nums.size() - 1;
+        int count = 0;
+        // Special cases
+        if (nums.size() < 3) return result; // not big enough
+        while ((first + 1) < end) {
+            int valueFirst = nums.at(first); 
+            int valueEnd = nums.at(end);
+            int valueNeed = -(valueEnd + valueFirst);
+            if (numsMap.count(valueNeed)) {
+                // check if new triplet is in the resuls
+                vector<int> newResult = {nums.at(first), nums.at(middle), nums.at(end)};
+                if (result.size() == 0) result.push_back(newResult);
+                else {
+                    isSolnInResults(newResult, result);
+                    result.push_back(newResult);
+                }
+            }
+            if (count % 2 == 0) first++;
+            else                end--;
+            count++;
+        }
+        return result;
+    }
+            if (middle == end) {
+                first++;
+                middle = first + 1;
+            }
+            if ((nums.at(first) + nums.at(middle) + nums.at(end)) == 0) {
+                if ((usedNumbers.count(nums.at(middle)) == 0) || (usedNumbers.count(nums.at(first)) == 0) || usedNumbers.count(nums.at(end))) {
+                    vector<int> newResult = {nums.at(first), nums.at(middle), nums.at(end)};
+                    result.push_back(newResult);
+                    usedNumbers.emplace(nums.at(first));
+                    usedNumbers.emplace(nums.at(middle));
+                    usedNumbers.emplace(nums.at(end));
+                    first++;
+                    end--;
+                    middle = first + 1;
+                }
+                else {
+                    middle++;
+                }
+            }
+            else {
+                middle++;
+            }
+        }
+        return result;
+        */
 
 class SolutionProductExceptSelf {
 public:
