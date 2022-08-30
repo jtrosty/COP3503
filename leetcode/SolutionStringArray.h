@@ -25,6 +25,80 @@ using std::tie;
 using std::swap;
 using std::sort;
 
+class SolutionCompareVersion {
+public:
+    vector<int> makeSubSrings(string version) {
+        vector<int> result;
+        int subStringStart = 0;
+        bool leadingZeroes = true;
+        int size = version.size();
+
+        for (int i = 0; i < size; i++) {
+            if (version.at(i) == '.') {
+                if (leadingZeroes == true) 
+                    result.push_back(0);
+                else 
+                    result.push_back(stoi(version.substr(subStringStart, i - subStringStart)));
+
+                subStringStart = i + 1;
+                leadingZeroes = true;
+            }
+            else if (leadingZeroes && (version.at(i) == '0')) {
+                subStringStart++;
+            }
+            else if (version.at(i) != 0) {
+                leadingZeroes = false;
+            }
+        }
+        if (leadingZeroes == true) 
+            result.push_back(0);
+        else 
+            result.push_back(stoi(version.substr(subStringStart)));
+        return result;
+    }
+
+    int compareVersion(string version1, string version2) {
+        vector<int> version1Vect = makeSubSrings(version1);
+        vector<int> version2Vect = makeSubSrings(version2);
+
+        int size;
+        bool version1Longer = true;
+        int length1 = version1Vect.size();
+        int length2 = version2Vect.size();
+        int length = length1 - length2;
+        if (version1Vect.size() < version2Vect.size()) {
+            size = version1Vect.size();
+            version1Longer = false;
+        }
+        else size = version2Vect.size();
+        for (int i = 0; i < size; i++) {
+            int item1 = version1Vect.at(i);
+            int item2 = version2Vect.at(i);
+            if (version1Vect.at(i) < version2Vect.at(i)) {
+                return -1;
+            }
+            else if ( version1Vect.at(i) > version2Vect.at(i)) {
+                return 1;
+            }
+        }
+        if (length > 0) {
+            for (int i = size; i < version1Vect.size(); i++) {
+                if (version1Vect.at(i) > 0) {
+                    return 1;
+                }
+            }
+        }
+        else if (length < 0) {
+            for (int i = size; i < version2Vect.size(); i++) {
+                if (version2Vect.at(i) > 0) {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+};
+
 class SolutionThreeSum {
 public:
     bool isSolnInResults(vector<int>& newSolution, vector<vector<int>>& results) {

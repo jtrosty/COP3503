@@ -13,6 +13,12 @@ using std::endl;
 using std::vector;
 
 int main(void) {
+    ///////////  Compare Version TEST CODE
+    SolutionCompareVersion compareVersion;
+    std::cout << "Result " << compareVersion.compareVersion("1.2", "1.10") << std::endl;
+    std::cout << "Result " << compareVersion.compareVersion("1.01", "1.001") << std::endl;
+    std::cout << "Result " << compareVersion.compareVersion("0.1", "1.1") << std::endl;
+
     ///////////  ThreeSum TEST CODE
     SolutionThreeSum threeSum;
     vector<int> threeSumTestCase = {-1,0,1,2,-1,-4 }; // - 4 -1 -1 0 1 2
