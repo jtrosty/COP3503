@@ -7,12 +7,24 @@
 #include "LongestPalindrom.h"
 #include "LeetCodeDay1.h"
 #include "SolutionStringArray.h"
+#include "LinkedList.h"
 
 using std::cout;
 using std::endl;
 using std::vector;
 
 int main(void) {
+    ///////////  Compare Version TEST CODE
+    SolutionMergeTwoLists solnMergeTwoLists;
+    ListNode* list1 = new ListNode(1);
+    list1->next = new ListNode(2);
+    list1->next->next = new ListNode(4);
+    ListNode* list2 = new ListNode(1);
+    list2->next = new ListNode(3);
+    list2->next->next = new ListNode(4);
+    solnMergeTwoLists.mergeTwoLists(list1, list2);
+    
+
     ///////////  Compare Version TEST CODE
     SolutionCompareVersion compareVersion;
     std::cout << "Result " << compareVersion.compareVersion("1.2", "1.10") << std::endl;
