@@ -22,6 +22,11 @@ int main(void) {
     ListNode* list2 = new ListNode(1);
     list2->next = new ListNode(3);
     list2->next->next = new ListNode(4);
+
+    SolutionReverseK reverseK;
+    list1 = reverseK.reverseKGroup(list1, 2);
+
+
     solnMergeTwoLists.mergeTwoLists(list1, list2);
     
 
