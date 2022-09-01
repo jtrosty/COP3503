@@ -15,6 +15,17 @@ using std::vector;
 
 int main(void) {
     ///////////  Compare Version TEST CODE
+    SolutionCopyRandomList copyRandomList;
+    Node* node1 = new Node(1);
+    Node* node2 = new Node(2);
+    node1->next = node2;
+    node1->random = NULL;
+    node2->next = NULL;
+    node2->random = node2;
+    copyRandomList.copyRandomList(node1);
+
+
+    ///////////  Compare Version TEST CODE
     SolutionMergeTwoLists solnMergeTwoLists;
     ListNode* list1 = new ListNode(1);
     list1->next = new ListNode(2);

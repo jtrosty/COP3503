@@ -1,4 +1,16 @@
 
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
 
 struct ListNode {
     int val;
@@ -6,6 +18,94 @@ struct ListNode {
     ListNode() : val(0), next(nullptr) {}
     ListNode(int x) : val(x), next(nullptr) {}
     ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class SolutionCopyRandomList {
+    /*
+        Copying a linked list, 
+        But i can walk through 1 at a time and just copy becauseof th random pointer.  
+        The easiest solution could be to go thorugh the list twice, the first time, make all the nodes and set the values
+        the second time, assign the random pointers.
+        1. use a map for help.
+        2. So walk thorugh the list, assign all nodes to a map with the key being hte pointer to the node and the value being the index that they are at.
+        3. Then go through the list again and build the index node each random ponter is pointing to.  
+        4. Copy all nodes, keep random null initially
+        5. As all nodes are copied, keep pointers to all nodes in another data structure, an array.
+        6. Go through a last time assigning all the random pointers.
+    */
+public:
+    Node* copyRandomList(Node* head) {
+        unordered_map<Node*, int> originalList; 
+        Node* current = head;
+        Node* result;
+
+        if (head == NULL) {
+            return (result = NULL);
+        }
+        else {
+            result = new Node(head->val);
+        }
+        Node* resultCurrent= result;
+
+        int i = 0;
+        // map of pointer and nindex
+        while (current != NULL) {
+            originalList.emplace(current, i++);
+            current = current->next;
+        }
+        // Now assign indexes
+        int* randomIndexes = new int[i];
+        Node** newNodes = new Node*[i];
+
+        current = head;
+        i = 0;
+        while (current != NULL) {
+            if (current->random == NULL) {
+                randomIndexes[i] = -1;
+            }
+            else {
+                randomIndexes[i] = originalList.at(current->random);
+            }
+            i++;
+            current = current->next;
+        }
+
+        // So I can now build the new list
+        current = head;
+        int test = 0;
+        // Copy all the nodes, ignrore random for now
+        // Copy all the pointers into an array of Nodes* for the new to help with assigning the rando pointer
+        i = 0;
+        while (current != NULL) {
+            newNodes[i] = resultCurrent;
+            Node* nextNode;
+            if (current->next == NULL) {
+                nextNode = NULL;
+            }
+            else {
+                nextNode = new Node(current->next->val);
+            }
+            resultCurrent->next = nextNode;
+            resultCurrent = resultCurrent->next;
+            current = current->next;
+            i++;
+        }
+        // Now assing the random pointers
+        resultCurrent = result;
+        i = 0;
+        while (resultCurrent != NULL) {
+            int theRandomIndex = randomIndexes[i];
+            if (theRandomIndex == -1) {
+                resultCurrent->random = NULL;
+            }
+            else {
+                resultCurrent->random = newNodes[randomIndexes[i]];
+            }
+            resultCurrent = resultCurrent->next;
+            i++;
+        }
+        return result;
+    }
 };
 
 class SolutionReverseK {
