@@ -13,10 +13,13 @@ struct Tile {
 int checkTiles(int x, int y, int directionX, int directionY, char team, char enemyTile, vector<vector<int>>& board) {
     int boardSize = board.size() - 1;
     int furtherTiles = 0;
-  
-  	if (x >= 0 && x <= boardSize && y >= 0 && y <= boardSize) {
-        x += directionX;
-        y += directionY;
+    x += directionX;
+    y += directionY;
+
+  	if (x > 0 && x < boardSize && y > 0 && y < boardSize) {
+    }
+    else {
+      return -1;
     }
     int tile = board.at(x).at(y);
     if (tile == enemyTile) {

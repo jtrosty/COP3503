@@ -5,7 +5,7 @@
 #include "catch.hpp"
 
 TEST_CASE("Test case for Othello", "[insert]"){
-    vector<vector<int>> testBoard {     {0, 0, 0, 0, 0, 0, 0, 0},
+    vector<vector<int>> testBoard {     {1, 0, 0, 0, 0, 0, 0, 0},
                                         {0, 0, 0, 0, 0, 0, 0, 0},   
                                         {0, 0, 0, 0, 0, 0, 0, 0},
                                         {0, 0, 0, 0, 0, 0, 0, 0},
@@ -14,5 +14,5 @@ TEST_CASE("Test case for Othello", "[insert]"){
                                         {0, 0, 0, 0, 0, 0, 0, 0},
                                         {0, 0, 0, 0, 0, 0, 0, 0} };
 
-    REQUIRE(howManyPiecesFlip(1, 0, 0, testBoard) == 0);
+    REQUIRE(howManyPiecesFlip(-1, 1, 0, testBoard) == 0);
 }
