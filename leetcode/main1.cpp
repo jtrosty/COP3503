@@ -14,6 +14,7 @@ using std::endl;
 using std::vector;
 
 int main(void) {
+
     ///////////  Compare Version TEST CODE
     SolutionCopyRandomList copyRandomList;
     Node* node1 = new Node(1);
@@ -33,6 +34,11 @@ int main(void) {
     ListNode* list2 = new ListNode(1);
     list2->next = new ListNode(3);
     list2->next->next = new ListNode(4);
+
+    ///////////  merge k listTEST CODE
+    SolutionMergeKLists mergeK;
+    vector<ListNode*> inputMergeK = {list1, list2};
+    mergeK.mergeKLists(inputMergeK);
 
     SolutionReverseK reverseK;
     list1 = reverseK.reverseKGroup(list1, 2);

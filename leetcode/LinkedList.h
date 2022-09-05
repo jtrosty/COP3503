@@ -20,6 +20,65 @@ struct ListNode {
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
+class SolutionMergeKLists {
+    public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+            /*
+                merging k amount of linked lits.
+                need k pointers for the number of liked lits. 
+                make an array of the pointers. iterate thorugh them.  
+                need pointer for the final linked list. 
+            */
+        int k = lists.size();
+        ListNode* kList = new ListNode[k];
+        ListNode* resultHead = nullptr;
+        ListNode* currentResult;
+        bool moreNodes = true;
+
+        for (int i = 0; i < k; i++) {
+                kList[i] = *lists.at(i);
+        }
+
+        while (moreNodes) {
+            bool checkIfEnd = false;
+            int currentValue;   
+            int indexCurrentValue = -1;
+            int i = 0;
+            for (i = 0; i < k; i++) {
+                if (&kList[i] != nullptr) {
+                    if (indexCurrentValue == -1) {
+                        indexCurrentValue = i;
+                        currentValue = kList[i].val;
+                    }
+                    else {
+                        if (currentValue > kList[i].val) {
+                            currentValue = kList[i].val;
+                            indexCurrentValue = i;
+                        }
+                    }
+                }
+            }
+            kList[i] = kList[i].next;
+            if (&kList[i] == nullptr) checkIfEnd = true;
+            if (resultHead == nullptr) {
+                resultHead = new ListNode(currentValue);
+                currentResult = resultHead;
+            }
+            else {
+                currentResult->next = new ListNode(currentValue);
+                currentResult = currentResult->next;
+            }
+            if (checkIfEnd) {
+                for (int i = 0; i < k; i++) {
+                    if (&kList[i] != nullptr) checkIfEnd = true;
+                }
+                if (checkIfEnd == false) moreNodes = false;
+            }
+        }
+        return resultHead;
+    }
+};
+
 class SolutionCopyRandomList {
     /*
         Copying a linked list, 
