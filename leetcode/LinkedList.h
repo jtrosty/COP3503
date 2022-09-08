@@ -48,17 +48,19 @@ class SolutionMergeKLists {
                 if (&kList[i] != nullptr) {
                     if (indexCurrentValue == -1) {
                         indexCurrentValue = i;
-                        currentValue = kList[i].val;
+                        currentValue = (kList[i]).val;
                     }
                     else {
-                        if (currentValue > kList[i].val) {
-                            currentValue = kList[i].val;
+                        if (currentValue > (kList[i]).val) {
+                            currentValue = (kList[i]).val;
                             indexCurrentValue = i;
                         }
                     }
                 }
             }
-            kList[i] = kList[i].next;
+            ListNode* tmp = kList[indexCurrentValue].next;
+            if (tmp == nullptr) kList[indexCurrentValue] = nullptr;
+            else                kList[indexCurrentValue] = *tmp;
             if (&kList[i] == nullptr) checkIfEnd = true;
             if (resultHead == nullptr) {
                 resultHead = new ListNode(currentValue);
