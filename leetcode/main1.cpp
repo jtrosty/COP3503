@@ -8,6 +8,7 @@
 #include "LeetCodeDay1.h"
 #include "SolutionStringArray.h"
 #include "LinkedList.h"
+#include "TreeAndGraph.h"
 
 using std::cout;
 using std::endl;
