@@ -28,10 +28,17 @@ public:
 
     So a breath first search would solve this. Go through 
 */
+
     int searchIslands(vector<vector<char>>& grid, set<string>& visited, int i, int j) {
         int numOfRows = grid.size();
         int numOfCols = grid.at(0).size();
         if (i == numOfRows || j == numOfCols) return 0;
+
+        int r, nr, nc, c;
+        if (r - 1 >= 0 && grid[r-1][c] == '1') dfs(grid, r - 1, c);
+        if (r + 1 < nr && grid[r+1][c] == '1') dfs(grid, r + 1, c);
+        if (c - 1 >= 0 && grid[r][c-1] == '1') dfs(grid, r, c - 1);
+        if (c + 1 < nc && grid[r][c+1] == '1') dfs(grid, r, c + 1);
 
         string indexes = to_string(i);
         indexes.append(to_string(j));
