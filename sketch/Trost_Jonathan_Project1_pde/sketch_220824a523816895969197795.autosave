@@ -1,0 +1,54 @@
+import controlP5.*;
+
+int SCREEN_X = 800;
+int SCREEN_Y = 800;
+float POINT_X = 400.0;
+float POINT_Y = 400.0;
+boolean play = true;
+int increment = 1000;
+float arryPoint[] = {POINT_X, POINT_Y};
+
+void setup() {
+  size(800, 800);
+  background(135, 206, 235);
+  //pixelDensity(displayDensity());
+}
+
+float clamp(float value, float min, float max) {
+  if (value > max)          return max;
+  else if (value < min)     return min;
+  else                      return value;
+}
+
+float[] getNextPoint(float x, float y, float screenX, float screenY) {
+  int randDir = int(random(4));
+  float result[] = {x, y};
+  switch (randDir) {
+    case 0:
+      // Go Up
+      result[1] = clamp(y + 1, 0, screenY);
+      break;
+    case 1:
+      // Go Rigth
+      result[0] = clamp(x + 1, 0, screenX);
+      break;
+    case 2:
+      // Go Up
+      result[1] = clamp(y - 1, 0, screenY);
+      break;
+    case 3:
+      // Go Up
+      result[1] = clamp(x - 1, 0, screenX);
+      break;
+  }
+  return result;
+}
+
+void draw() {
+  stroke(255);
+  if (increment > 0) {
+    arryPoint = getNextPoint(arryPoint[0], arryPoint[1], SCREEN_X, SCREEN_Y);
+    point(arryPoint[0], arryPoint[1]);
+    increment--;
+  }
+}

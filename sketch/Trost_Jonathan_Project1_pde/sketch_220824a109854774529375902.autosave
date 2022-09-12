@@ -1,0 +1,106 @@
+import controlP5.*;
+
+ControlP5 UI;
+
+int SCREEN_X = 800;
+int SCREEN_Y = 800;
+float POINT_X = 400.0;
+float POINT_Y = 400.0;
+boolean play = true;
+int increment = 10000;
+float arryPoint[] = {POINT_X, POINT_Y};
+int step =      10000;
+int counter = 0;
+
+void setup() {
+  size(800, 800);
+  UI = new ControlP5(this);
+  background(135, 206, 235);
+  pixelDensity(displayDensity());
+  //ControlFont font = new ControlFont(createFont("Times", 15));
+  UI.addButton("Start")
+    .setPosition(10,10)
+    .setSize(50,30)
+    ;
+  UI.addSlider("Iterations")
+    .setPosition(200,10)
+    .setSize(350, 30)
+    .setRange(1000, 500000)
+    .setDecimalPrecision(0);
+    ;
+  UI.addSlider("StepCount")
+    .setPosition(200,40)
+    .setSize(350, 30)
+    .setRange(1,1000)
+    .setDecimalPrecision(0);
+    ;
+
+}
+
+void draw() {
+  stroke(255);
+  if (counter < increment) {
+    for (int i = 0; i < step; i++) {
+      float mappedColor = map(counter, 0, increment, 0, 255);
+      stroke(mappedColor);
+      println(mappedColor);
+      arryPoint = getNextPoint(arryPoint[0], arryPoint[1], SCREEN_X, SCREEN_Y);
+      point(arryPoint[0], arryPoint[1]);
+      counter++;
+    }
+  }
+  else {
+    // Stop drawing
+  }
+}
+
+public void controlEvent(ControlEvent event) {
+  println(event.getController().getName());
+}
+
+public void Start() {
+  clear();
+  background(135, 206, 235);
+  reset();
+  if (true) {
+    increment = int(Iterations.getValue());
+    step = int(StepCount.getValue());
+  }
+
+}
+
+void reset() {
+  counter = 0;
+  arryPoint[0] = 400.0;
+  arryPoint[1] = 400.0;
+}
+
+float clamp(float value, float min, float max) {
+  if (value > max)          return max;
+  else if (value < min)     return min;
+  else                      return value;
+}
+
+float[] getNextPoint(float x, float y, float screenX, float screenY) {
+  int randDir = int((random(4)));
+  float result[] = {x, y};
+  switch (randDir) {
+    case 0:
+      // Go Up
+      result[1] = clamp(y + 1, 0, screenY);
+      break;
+    case 1:
+      // Go Rigth
+      result[0] = clamp(x + 1, 0, screenX);
+      break;
+    case 2:
+      // Go down
+      result[1] = clamp(y - 1, 0, screenY);
+      break;
+    case 3:
+      // Go Left
+      result[0] = clamp(x - 1, 0, screenX);
+      break;
+  }
+  return result;
+}
