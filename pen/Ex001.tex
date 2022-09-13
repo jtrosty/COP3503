@@ -1,0 +1,83 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf file.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex010 - Kali Netlab}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	\section{Attack Narrative}
+	
+	\subsection{KEY001}
+	The first key was described as being part of a file name. To search all files for the KEY I constructed the below \textbf{grep} and executed it in the user's home directory. I used regular expressions to search for strings in the format specified for the keys. \\
+	\indent grep -rE "(KEY[0-9]{3}-[a-zA-Z0-9+/]{22})" \\
+	The result is KEY001-R2f6GgmJusEGksUUhIsyHQ== \\
+ 
+	\subsection{KEY002}
+	The bold \textbf{process} in the instructions hinted that the key would be listed among processes. So I used the following command and search looked through the output. The \textbf{ps} command provides a list of current process, the \textbf{a} and \textbf{x} flags together have the ps command list all processes. The \textbf{x} flag list all process own by you and the \textbf{a} lists all processes with a terminal according to the man pages. \\
+	\indent ps ax \\
+	The result is KEY002-5bnFi7p7u8VUky1q6h0xyA==
+\end{document} 
