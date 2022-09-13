@@ -24,18 +24,25 @@ class SolutionZigZag {
 public:
 
     void zigZag(vector<vector<int>>& result, TreeNode* node, int depth) {
-        if (result.size() < depth) {
-            result.resize(depth);
-        }
+        if (node == nullptr) return;
+
         depth++;
+        if (result.size() < depth) {
+            vector<int> newVector;
+            result.push_back(newVector);
+        }
         zigZag(result, node->left, depth);
-        zigZag(result, node->right, depth);
         result.at(depth - 1).push_back(node->val);
+        zigZag(result, node->right, depth);
     }
 
     vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
         vector<vector<int>> result;
-        zigZag(result, root, 1);
+        zigZag(result, root, 0);
+        for (int i = 1; i < result.size(); i += 2) {
+            std::reverse(result.at(i).begin(), result.at(i).end());
+        }
+        return result;
     }
 };
 
