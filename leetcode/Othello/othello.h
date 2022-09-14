@@ -16,7 +16,7 @@ int checkTiles(int x, int y, int directionX, int directionY, char team, char ene
     x += directionX;
     y += directionY;
 
-  	if (x > 0 && x < boardSize && y > 0 && y < boardSize) {
+  	if (x >= 0 && x <= boardSize && y >= 0 && y <= boardSize) {
     }
     else {
       return -1;
@@ -30,6 +30,9 @@ int checkTiles(int x, int y, int directionX, int directionY, char team, char ene
       else {
         return 1 + furtherTiles;
       }
+    }
+    else if (tile == team) {
+      return 0;
     }
     else {
       return -1;
@@ -58,16 +61,21 @@ int checkTiles(int x, int y, int directionX, int directionY, char team, char ene
 
 int howManyPiecesFlip(char team, int x, int y, vector<vector<int>>& board) {
   	int* currentTile = &(board.at(x).at(y));
+    if (*currentTile != 0) return 0;
   	char enemyTile;
     int result = 0;
   
-  	if (team == 1) enemyTile = -1;
-  	else enemyTile = 1;
+  	if (team == 'w') enemyTile = 'b';
+  	else enemyTile = 'w';
   
   	// At the edge or not. 
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
-            result += checkTiles(x, y, i, j, team, enemyTile, board); 
+            if (i == 0 && j == 0) continue;
+            int tempResult = 0;
+            tempResult += checkTiles(x, y, i, j, team, enemyTile, board); 
+            if (tempResult < 0) tempResult = 0;
+            result += tempResult; 
         }
     }
     return result;

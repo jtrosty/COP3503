@@ -10,6 +10,35 @@
 
 using std::to_string;
 
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+class SolutionZigZag {
+public:
+
+    void zigZag(vector<vector<int>>& result, TreeNode* node, int depth) {
+        if (result.size() < depth) {
+            result.resize(depth);
+        }
+        depth++;
+        zigZag(result, node->left, depth);
+        zigZag(result, node->right, depth);
+        result.at(depth - 1).push_back(node->val);
+    }
+
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+        vector<vector<int>> result;
+        zigZag(result, root, 1);
+    }
+};
+
 class SolutionIslands {
 public:
 /*
@@ -28,10 +57,19 @@ public:
 
     So a breath first search would solve this. Go through 
 */
+
     int searchIslands(vector<vector<char>>& grid, set<string>& visited, int i, int j) {
         int numOfRows = grid.size();
         int numOfCols = grid.at(0).size();
         if (i == numOfRows || j == numOfCols) return 0;
+
+/*
+        int r, nr, nc, c;
+        if (r - 1 >= 0 && grid[r-1][c] == '1') dfs(grid, r - 1, c);
+        if (r + 1 < nr && grid[r+1][c] == '1') dfs(grid, r + 1, c);
+        if (c - 1 >= 0 && grid[r][c-1] == '1') dfs(grid, r, c - 1);
+        if (c + 1 < nc && grid[r][c+1] == '1') dfs(grid, r, c + 1);
+        */
 
         string indexes = to_string(i);
         indexes.append(to_string(j));
