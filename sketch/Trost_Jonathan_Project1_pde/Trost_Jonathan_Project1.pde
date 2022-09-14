@@ -7,50 +7,37 @@ Slider StepCountSlider;
 Toggle ColorChange;
 Toggle ImmediateExecution;
 
+// Screen Control variables
 int SCREEN_X = 800;
 int SCREEN_Y = 800;
 float POINT_X = 400.0;
 float POINT_Y = 400.0;
-boolean play = true;
+
+// Walk variables
 int iterations = 0;
-float arryPoint[] = {POINT_X, POINT_Y};
 int stepCount =  0;
+float arryPoint[] = {POINT_X, POINT_Y};
+
+// UI size and position variables
 int counter = 0;
+int heightUI = 30;
+int barLengthUI = 380;
+int startButtonLength = 50;
+
+int startPosX = 10;
+int startPosY = 10;
+int sliderPosX = 200;
+int togglePosX = 70;
+
+int fontSize = 15;
+int toggleLabelOffset = 5;
 
 
 void setup() {
   size(800, 800);
   UI = new ControlP5(this);
   background(135, 206, 235);
-  pixelDensity(displayDensity());
-  StartButton = UI.addButton("Start")
-    .setPosition(10,10)
-    .setSize(50,30)
-    ;
-  IterationsSlider = UI.addSlider("Iterations")
-    .setPosition(200,10)
-    .setSize(350, 30)
-    .setRange(1000, 500000)
-    .setDecimalPrecision(0)
-    .setValue(1000)
-    ;
-  StepCountSlider = UI.addSlider("Step Count")
-    .setPosition(200,40)
-    .setSize(350, 30)
-    .setRange(1,1000)
-    .setDecimalPrecision(0)
-    .setValue(1)
-    ;
-  ColorChange = UI.addToggle("Color")
-    .setPosition(70, 10)
-    .setSize(50, 30)
-    .setValue(true)
-    ;
-  ImmediateExecution = UI.addToggle("Gradual")
-    .setPosition(130, 10)
-    .setSize(50, 30)
-    .setValue(true)
-    ;
+  setUpUI(UI);
 }
 
 void draw() {
@@ -123,4 +110,48 @@ float[] getNextPoint(float x, float y, float screenX, float screenY) {
       break;
   }
   return result;
+}
+
+void setUpUI( ControlP5 ui) {
+  StartButton = ui.addButton("Start")
+    .setPosition(startPosX, startPosY)
+    .setSize(startButtonLength, heightUI)
+    ;
+  StartButton.getCaptionLabel().setSize(fontSize);
+  
+  IterationsSlider = ui.addSlider("Iterations")
+    .setPosition(sliderPosX, startPosY)
+    .setSize(barLengthUI, heightUI)
+    .setRange(1000, 500000)
+    .setDecimalPrecision(0)
+    .setValue(1000)
+    ;
+  IterationsSlider.getCaptionLabel().setSize(fontSize);
+  IterationsSlider.getValueLabel().setSize(fontSize);
+
+  StepCountSlider = ui.addSlider("Step Count")
+    .setPosition(sliderPosX, startPosY + heightUI)
+    .setSize(barLengthUI, heightUI)
+    .setRange(1,1000)
+    .setDecimalPrecision(0)
+    .setValue(1)
+    ;
+  StepCountSlider.getCaptionLabel().setSize(fontSize);
+  StepCountSlider.getValueLabel().setSize(fontSize);
+
+  ColorChange = ui.addToggle("Color")
+    .setPosition(togglePosX, startPosY)
+    .setSize(heightUI, heightUI)
+    .setValue(true)
+    ;
+  ColorChange.getCaptionLabel().setSize(fontSize);
+  ColorChange.getCaptionLabel().setPadding(heightUI + toggleLabelOffset, -((heightUI * 3) / 4));
+
+  ImmediateExecution = ui.addToggle("Gradual")
+    .setPosition(togglePosX, startPosY + heightUI)
+    .setSize(heightUI, heightUI)
+    .setValue(true)
+    ;
+  ImmediateExecution.getCaptionLabel().setSize(fontSize);
+  ImmediateExecution.getCaptionLabel().setPadding(heightUI + toggleLabelOffset, -((heightUI * 3) / 4));
 }
