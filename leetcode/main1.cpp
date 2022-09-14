@@ -9,6 +9,7 @@
 #include "SolutionStringArray.h"
 #include "LinkedList.h"
 #include "TreeAndGraph.h"
+#include "sortingsearching.h"
 
 using std::cout;
 using std::endl;
