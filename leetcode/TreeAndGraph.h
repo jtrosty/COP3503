@@ -20,6 +20,55 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
+class SolutionCanFinish {
+public:
+    /*
+    If I build a graph with this. 
+    Need to check for cycle. 
+    0 - 1
+    1 - 2 
+    2 - 0
+    */
+    bool dfs(vector<vector<int>>& graph, set<int>& path, set<int>& visited, int course, int prereq) {
+        bool result;
+        for (int i = 0; i < graph.at(prereq).size(); i++) {
+            path.emplace(course);
+            if (path.count(graph.at(prereq).at(i)) || graph.at(prereq).at(i) == prereq) {
+                // we have a cycle 
+                return false;
+            }
+            if (visited.count(graph.at(prereq).at(i))) continue;
+            path.emplace(prereq);
+            result = dfs(graph, path, visited, prereq, graph.at(prereq).at(i));
+            if (result == false) return false;
+            path.clear();
+        }
+        return true;
+    }
+
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> graph(numCourses);
+        bool result = true;
+        for (int i = 0; i < prerequisites.size(); i++) {
+            graph.at(prerequisites.at(i).at(0)).push_back(prerequisites.at(i).at(1));
+        }
+        // graph is built, now check for a cycle., 
+        // use DFS
+        set<int> visited;
+        set<int> path;
+        for (int i = 0; i < graph.size(); i++) {
+            if (visited.count(i)) continue;
+            for (int j = 0; j < graph.at(i).size(); j++) {
+                if (i == graph.at(i).at(j)) return false;
+                result = dfs(graph, path, visited, i, graph.at(i).at(j));
+                if (result == false) return false;
+            }
+            visited.emplace(i);
+        }
+        return result;
+    }
+};
+
 class SolutionValidateTree {
 public:
     void addToArray(vector<int>& array, TreeNode* node) {
