@@ -27,13 +27,18 @@ class SolutionKLargest {
 class Solution {
 public:
     vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
-        
+        std::priority_queue<int> kLargest; // Makes it act as a min priority queue
+        int numOfPoints = points.size();
+        for (int i = 0; i < numOfPoints; i++) {
+
+        }
     }
 };
+
 public:
     int findKthLargest(vector<int>& nums, int k) {
         // Get the largest
-        std::priority_queue<int, std::vector<int>, std::greater<int>> kLargest; // Makes it act as a min priority queue
+        std::priority_queue<int> kLargest; // Makes it act as a min priority queue
 
         if (nums.size() == 1) return nums.at(0);
 

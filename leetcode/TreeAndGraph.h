@@ -20,6 +20,61 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
+class SolutionValidateTree {
+public:
+    void addToArray(vector<int>& array, TreeNode* node) {
+        if (node == nullptr) return;
+
+        addToArray(array, node->left);
+        array.push_back(node->val);
+        addToArray(array, node->right);
+    }
+
+    bool isValidBST(TreeNode* root) { 
+        vector<int> array;
+        addToArray(array, root);
+        if (array.size() == 1) return true;
+        for (int i = 0; i < array.size() - 1; i++) {
+            if (array.at(i) < array.at(i+1)) {
+                // great
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool isValidBST2(TreeNode* root) {
+        bool result;
+        if (root->left != nullptr && root->right != nullptr) {
+            if (root-> left->val < root->val && root->right->val > root->val) {
+                // good. 
+                result = isValidBST(root->right);
+                result = isValidBST(root->left);
+            }
+            else return false;
+        }
+        else if (root->left != nullptr) {
+            if (root->left->val < root->val) {
+                result = isValidBST(root->left);
+            }
+            else return false;
+        }
+        else if (root->right != nullptr) {
+            if (root->right->val > root->val) {
+                result = isValidBST(root->right);
+            }
+            else return false;
+        }
+        else if (root->left == nullptr && root->right == nullptr) { 
+            return true;
+        }
+        if (result == false) return false;
+        return true;
+    }
+};
+
 class SolutionZigZag {
 public:
 
