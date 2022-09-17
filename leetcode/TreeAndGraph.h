@@ -20,6 +20,80 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
+class SolutionLadderLength {
+    /*
+    * 1. maybe make another array of ints, where i add up each character.  any word that cna be converted into woudl be 26 letters away. 
+    * 2. Maybe sort the world list and this array based on the array's values. 
+    * 
+    * Sort all the words in teh word list. and teh begining and end word. 
+    * build them into a tree then search through the tree to find the word i want. 
+    * 
+    */
+
+public:
+    bool ladderDfs(vector<vector<int>>& graph, set<int>& visited, int count, int& finalCount, int source, int destination) {
+        count++;
+        visited.emplace(source);
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (visited.count(graph.at(source).at(i))) {
+                continue;
+            }
+            if (graph.at(source).at(i) == destination) {
+                if (count < finalCount || finalCount == -1)  {
+                    finalCount = count;
+                }
+                return true;
+            }
+            bool result  = ladderDfs(graph, visited, count, finalCount, graph.at(source).at(i), destination);
+            if (result) return true;
+        }
+        return false;
+    }
+
+    bool compareLadderWords(string a, string b) {
+        int lettersDifferent = 0;
+        int indexOfDifferentLetter;
+        if (a.size() != b.size()) return false;
+
+        for (int i = 0; i < a.size(); i++) {
+            if (a.at(i) != b.at(i)) {
+                lettersDifferent++;
+            }
+            if (lettersDifferent > 1) return false;
+        }
+        if (lettersDifferent == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        // Start with making an adjancey matrix
+        set<int> visited;
+        int count = 0;
+
+        wordList.push_back(beginWord);
+
+        // Build the graph
+        int endWordIndex = -1;
+        vector<vector<int>> graph(wordList.size());
+
+        for (int i = 0; i < wordList.size(); i++) {
+            for (int j = i; j <wordList.size(); j++) {
+                if (wordList.at(i).compare(endWord) == 0) endWordIndex = i;
+                if (compareLadderWords(wordList.at(i), wordList.at(j))) {
+                    graph.at(i).push_back(j);
+                    graph.at(j).push_back(i);
+                }
+            }
+        }
+        if (endWordIndex == -1) return 0;
+        int finalCount = -1;
+        ladderDfs(graph, visited, count, finalCount, wordList.size() - 1, endWordIndex);
+        return finalCount;
+    }
+};
+
 class SolutionCanFinish {
 public:
     /*
@@ -29,7 +103,7 @@ public:
     1 - 2 
     2 - 0
     */
-    bool dfs(set<int>& visited, vector<vector<int>>& graph, int source, int destination) {
+    bool dfs2(set<int>& visited, vector<vector<int>>& graph, int source, int destination) {
         bool result = false;
         for (int i = 0; i < graph.at(source).size(); i++) {
             if (graph.at(source).at(i) == destination) {
@@ -38,7 +112,7 @@ public:
             else {
                 if(visited.count(graph.at(source).at(i))) continue;
                 visited.emplace(source);
-                result = dfs(visited, graph, graph.at(source).at(i), destination);
+                result = dfs2(visited, graph, graph.at(source).at(i), destination);
                 if (result) return true;
             }
         }
@@ -53,7 +127,7 @@ public:
             graph.at(prerequisites.at(i).at(0)).push_back(prerequisites.at(i).at(1));
         }
         for (int i = 0; i < graph.size(); i++) {
-            result = dfs(visited, graph, i, i);
+            result = dfs2(visited, graph, i, i);
             visited.clear();
             if (result) return false;
         }
@@ -78,7 +152,7 @@ public:
         return true;
     }
 
-    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+    bool canFinish2(int numCourses, vector<vector<int>>& prerequisites) {
         vector<vector<int>> graph(numCourses);
         bool result = true;
         for (int i = 0; i < prerequisites.size(); i++) {
