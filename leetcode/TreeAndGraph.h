@@ -29,6 +29,38 @@ public:
     1 - 2 
     2 - 0
     */
+    bool dfs(set<int>& visited, vector<vector<int>>& graph, int source, int destination) {
+        bool result = false;
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (graph.at(source).at(i) == destination) {
+                return true;
+            }
+            else {
+                if(visited.count(graph.at(source).at(i))) continue;
+                visited.emplace(source);
+                result = dfs(visited, graph, graph.at(source).at(i), destination);
+                if (result) return true;
+            }
+        }
+        return false;
+    }
+
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        set<int> visited; 
+        vector<vector<int>> graph(numCourses);
+        bool result = true;
+        for (int i = 0; i < prerequisites.size(); i++) {
+            graph.at(prerequisites.at(i).at(0)).push_back(prerequisites.at(i).at(1));
+        }
+        for (int i = 0; i < graph.size(); i++) {
+            result = dfs(visited, graph, i, i);
+            visited.clear();
+            if (result) return false;
+        }
+        return true;
+    }
+
+
     bool dfs(vector<vector<int>>& graph, set<int>& path, set<int>& visited, int course, int prereq) {
         bool result;
         for (int i = 0; i < graph.at(prereq).size(); i++) {
