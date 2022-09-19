@@ -19,7 +19,44 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class SolutionSumRootToLeaf {
+public:
+    /*
+    * make and array of these numbers, then calculate them.
+    DFS, make and array of  each set of binary and calcuate the values each makes.  
+    
+    
+    */
+    int sum = 0;
+    void preorder(TreeNode* node, int currentSum) {
+         if (node != nullptr) {
+            currentSum = (currentSum << 1 | node->val);
+            if (node->left == nullptr && node->right == nullptr) {
+                sum += currentSum;
+            }
+            preorder(node->left, currentSum);
+            preorder(node->right, currentSum);
+         }
+    }
+    
 
+    
+    int sumRootToLeaf(TreeNode* root) {
+        preorder(root, 0);
+        return sum;
+    }
+};
 class SolutionLadderLength {
     /*
     * 1. maybe make another array of ints, where i add up each character.  any word that cna be converted into woudl be 26 letters away. 
