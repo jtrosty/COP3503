@@ -34,6 +34,7 @@ public:
     bool ladderDfs(vector<vector<int>>& graph, set<int>& visited, int count, int& finalCount, int source, int destination) {
         count++;
         visited.emplace(source);
+        bool finalResult = false;
         for (int i = 0; i < graph.at(source).size(); i++) {
             if (visited.count(graph.at(source).at(i))) {
                 continue;
@@ -45,9 +46,9 @@ public:
                 return true;
             }
             bool result  = ladderDfs(graph, visited, count, finalCount, graph.at(source).at(i), destination);
-            if (result) return true;
+            if (result) finalResult = true;
         }
-        return false;
+        return finalResult;
     }
 
     bool compareLadderWords(string a, string b) {
@@ -70,17 +71,22 @@ public:
     int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
         // Start with making an adjancey matrix
         set<int> visited;
-        int count = 0;
+        int count = 1;
 
         wordList.push_back(beginWord);
 
         // Build the graph
         int endWordIndex = -1;
+        int wordBeingIndex = wordList.size() - 1;
         vector<vector<int>> graph(wordList.size());
 
         for (int i = 0; i < wordList.size(); i++) {
             for (int j = i; j <wordList.size(); j++) {
                 if (wordList.at(i).compare(endWord) == 0) endWordIndex = i;
+                if ((wordList.at(i).compare(beginWord) == 0) && (i != wordList.size() - 1)) {
+                    wordList.pop_back();
+                    wordBeingIndex = i;
+                }
                 if (compareLadderWords(wordList.at(i), wordList.at(j))) {
                     graph.at(i).push_back(j);
                     graph.at(j).push_back(i);
@@ -89,7 +95,8 @@ public:
         }
         if (endWordIndex == -1) return 0;
         int finalCount = -1;
-        ladderDfs(graph, visited, count, finalCount, wordList.size() - 1, endWordIndex);
+        ladderDfs(graph, visited, count, finalCount, wordBeingIndex, endWordIndex);
+        if (finalCount == -1) return 0;
         return finalCount;
     }
 };
