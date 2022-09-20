@@ -30,6 +30,63 @@ struct TreeNode {
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+
+class SolutionCriticalConnections {
+public:
+    
+    bool dfs(set<int>& visited, vector<vector<int>>& graph, int source, int destination, vector<vector<int>>& connections, int index) {
+        bool result = false;
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (source == connections.at(index).at(0) && destination == connections.at(index).at(1)) {
+                continue;
+            }
+            if (graph.at(source).at(i) == destination) {
+                return true;
+            }
+            else if (visited.count(graph.at(source).at(i))) {
+                continue;
+            }
+            result = dfs(visited, graph, graph.at(source).at(i), destination, connections, index);
+            if (result) return result;
+        }
+        return result;
+    }
+    
+    /*
+    void bfs(set<int>& visited; queue<int>& tracker; vector<vector<int>>& graph, int source) {
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (visited.count(graph.at(source).at(i))) {
+                continue;
+            }
+            tracker.enqueue(graph.at(source).at(i));
+        }
+        while (!tracker.empty()) {
+            visited.emplace(tracker.pop());
+            bfs(visited, tracker, graph, tracker.pop());
+        }
+    }
+    */
+    
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+        int numOfConnections = connections.size();
+        vector<vector<int>> graph(n);
+        // build graph
+        for (int i = 0; i < connections.size(); i++) {
+            graph.at(connections.at(i).at(0)).push_back(connections.at(i).at(1));
+            graph.at(connections.at(i).at(1)).push_back(connections.at(i).at(0));
+        }
+        set<int> visited;
+        int count = 0;
+        vector<vector<int>> result;
+        for (int i = 0; i < connections.size(); i++) {
+            if (!dfs(visited, graph, connections.at(i).at(0), connections.at(i).at(1), connections, i)) {
+                result.push_back(connections.at(i));
+            }
+        }                                               
+        return result;
+    }
+};
+
 class SolutionSumRootToLeaf {
 public:
     /*

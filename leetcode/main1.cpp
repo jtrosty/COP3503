@@ -24,6 +24,11 @@ int main(void) {
     cout << "Max profit is: " << solMaxProfit.maxProfit(prices) << endl;
 
 
+    SolutionReverseStringK solStringKReverse;
+    string testString = "krmyfshbspcgtesxnnljhfursyissjnsocgdhgfxubewllxzqhpasguvlrxtkgatzfybprfmmfithphckksnvjkcvnsqgsgosfxc";
+    string result = solStringKReverse.reverseStr(testString, 20); 
+
+
     /*
     ///////////  Compare Version TEST CODE
     SolutionCopyRandomList copyRandomList;
