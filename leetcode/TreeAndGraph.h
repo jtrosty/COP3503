@@ -37,7 +37,9 @@ public:
     bool dfs(set<int>& visited, vector<vector<int>>& graph, int source, int destination, vector<vector<int>>& connections, int index) {
         bool result = false;
         for (int i = 0; i < graph.at(source).size(); i++) {
-            if (source == connections.at(index).at(0) && destination == connections.at(index).at(1)) {
+            visited.emplace(source);
+            if ((source == connections.at(index).at(0) && graph.at(source).at(i) == connections.at(index).at(1)) ||
+                (source == connections.at(index).at(1) && graph.at(source).at(i) == connections.at(index).at(0))) {
                 continue;
             }
             if (graph.at(source).at(i) == destination) {
@@ -47,25 +49,11 @@ public:
                 continue;
             }
             result = dfs(visited, graph, graph.at(source).at(i), destination, connections, index);
-            if (result) return result;
+            if (result == true) return result;
         }
         return result;
     }
-    
-    /*
-    void bfs(set<int>& visited; queue<int>& tracker; vector<vector<int>>& graph, int source) {
-        for (int i = 0; i < graph.at(source).size(); i++) {
-            if (visited.count(graph.at(source).at(i))) {
-                continue;
-            }
-            tracker.enqueue(graph.at(source).at(i));
-        }
-        while (!tracker.empty()) {
-            visited.emplace(tracker.pop());
-            bfs(visited, tracker, graph, tracker.pop());
-        }
-    }
-    */
+
     
     vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
         int numOfConnections = connections.size();
@@ -82,9 +70,25 @@ public:
             if (!dfs(visited, graph, connections.at(i).at(0), connections.at(i).at(1), connections, i)) {
                 result.push_back(connections.at(i));
             }
+            visited.clear();
         }                                               
         return result;
     }
+     
+    /*
+    void bfs(set<int>& visited; queue<int>& tracker; vector<vector<int>>& graph, int source) {
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (visited.count(graph.at(source).at(i))) {
+                continue;
+            }
+            tracker.enqueue(graph.at(source).at(i));
+        }
+        while (!tracker.empty()) {
+            visited.emplace(tracker.pop());
+            bfs(visited, tracker, graph, tracker.pop());
+        }
+    }
+    */ 
 };
 
 class SolutionSumRootToLeaf {

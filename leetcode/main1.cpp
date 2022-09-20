@@ -17,6 +17,10 @@ using std::endl;
 using std::vector;
 
 int main(void) {
+    /////// Critical Connections
+    vector<vector<int>> testCritical = { {0,1}, {1,2}, {2,0},{1,3}};
+    SolutionCriticalConnections solCritConnection;
+    vector<vector<int>> res = solCritConnection.criticalConnections(4, testCritical);
 
     ///////////  maxProfit TEST CODE
     vector<int> prices = {7,1,5,3,6,4};

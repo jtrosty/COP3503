@@ -70,7 +70,7 @@ public:
                 }
             } else {
                 // reached the end
-                int endReverse = (sizeS - 1 - i)  / 2;
+                int endReverse = (sizeS - i)  / 2;
                 for (int j = 0; j < endReverse; j++) {
                     int index1 = i + j;
                     int index2 = sizeS -1 - j;
