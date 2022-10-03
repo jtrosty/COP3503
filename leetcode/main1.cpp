@@ -9,13 +9,31 @@
 #include "SolutionStringArray.h"
 #include "LinkedList.h"
 #include "TreeAndGraph.h"
+#include "sortingsearching.h"
+#include "dynamic.h"
 
 using std::cout;
 using std::endl;
 using std::vector;
 
 int main(void) {
+    /////// Critical Connections
+    vector<vector<int>> testCritical = { {0,1}, {1,2}, {2,0},{1,3}};
+    SolutionCriticalConnections solCritConnection;
+    vector<vector<int>> res = solCritConnection.criticalConnections(4, testCritical);
 
+    ///////////  maxProfit TEST CODE
+    vector<int> prices = {7,1,5,3,6,4};
+    SolutionMaxProfit solMaxProfit;
+    cout << "Max profit is: " << solMaxProfit.maxProfit(prices) << endl;
+
+
+    SolutionReverseStringK solStringKReverse;
+    string testString = "krmyfshbspcgtesxnnljhfursyissjnsocgdhgfxubewllxzqhpasguvlrxtkgatzfybprfmmfithphckksnvjkcvnsqgsgosfxc";
+    string result = solStringKReverse.reverseStr(testString, 20); 
+
+
+    /*
     ///////////  Compare Version TEST CODE
     SolutionCopyRandomList copyRandomList;
     Node* node1 = new Node(1);
@@ -72,6 +90,7 @@ int main(void) {
     std::cout << std::endl;
 
     ///////////  Rotate TESTCODE
+    */
     /*
     SolutionRotate rotate;
     vector<vector<int>> vect {
@@ -280,6 +299,7 @@ int main(void) {
     printf("\n");
     printf("iok\n");
     */
+
 
     return 0;
 }

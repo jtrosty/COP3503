@@ -59,7 +59,7 @@ class SolutionMergeKLists {
                 }
             }
             ListNode* tmp = kList[indexCurrentValue].next;
-            if (tmp == nullptr) kList[indexCurrentValue] = nullptr;
+            if (tmp == nullptr) kList[indexCurrentValue]; // TODO: need to fix
             else                kList[indexCurrentValue] = *tmp;
             if (&kList[i] == nullptr) checkIfEnd = true;
             if (resultHead == nullptr) {

@@ -19,23 +19,345 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+class SolutionCriticalConnections {
+public:
+    
+    bool dfs(set<int>& visited, vector<vector<int>>& graph, int source, int destination, vector<vector<int>>& connections, int index) {
+        bool result = false;
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            visited.emplace(source);
+            if ((source == connections.at(index).at(0) && graph.at(source).at(i) == connections.at(index).at(1)) ||
+                (source == connections.at(index).at(1) && graph.at(source).at(i) == connections.at(index).at(0))) {
+                continue;
+            }
+            if (graph.at(source).at(i) == destination) {
+                return true;
+            }
+            else if (visited.count(graph.at(source).at(i))) {
+                continue;
+            }
+            result = dfs(visited, graph, graph.at(source).at(i), destination, connections, index);
+            if (result == true) return result;
+        }
+        return result;
+    }
+
+    
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+        int numOfConnections = connections.size();
+        vector<vector<int>> graph(n);
+        // build graph
+        for (int i = 0; i < connections.size(); i++) {
+            graph.at(connections.at(i).at(0)).push_back(connections.at(i).at(1));
+            graph.at(connections.at(i).at(1)).push_back(connections.at(i).at(0));
+        }
+        set<int> visited;
+        int count = 0;
+        vector<vector<int>> result;
+        for (int i = 0; i < connections.size(); i++) {
+            if (!dfs(visited, graph, connections.at(i).at(0), connections.at(i).at(1), connections, i)) {
+                result.push_back(connections.at(i));
+            }
+            visited.clear();
+        }                                               
+        return result;
+    }
+     
+    /*
+    void bfs(set<int>& visited; queue<int>& tracker; vector<vector<int>>& graph, int source) {
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (visited.count(graph.at(source).at(i))) {
+                continue;
+            }
+            tracker.enqueue(graph.at(source).at(i));
+        }
+        while (!tracker.empty()) {
+            visited.emplace(tracker.pop());
+            bfs(visited, tracker, graph, tracker.pop());
+        }
+    }
+    */ 
+};
+
+class SolutionSumRootToLeaf {
+public:
+    /*
+    * make and array of these numbers, then calculate them.
+    DFS, make and array of  each set of binary and calcuate the values each makes.  
+    
+    
+    */
+    int sum = 0;
+    void preorder(TreeNode* node, int currentSum) {
+         if (node != nullptr) {
+            currentSum = (currentSum << 1 | node->val);
+            if (node->left == nullptr && node->right == nullptr) {
+                sum += currentSum;
+            }
+            preorder(node->left, currentSum);
+            preorder(node->right, currentSum);
+         }
+    }
+    
+
+    
+    int sumRootToLeaf(TreeNode* root) {
+        preorder(root, 0);
+        return sum;
+    }
+};
+class SolutionLadderLength {
+    /*
+    * 1. maybe make another array of ints, where i add up each character.  any word that cna be converted into woudl be 26 letters away. 
+    * 2. Maybe sort the world list and this array based on the array's values. 
+    * 
+    * Sort all the words in teh word list. and teh begining and end word. 
+    * build them into a tree then search through the tree to find the word i want. 
+    * 
+    */
+
+public:
+    bool ladderDfs(vector<vector<int>>& graph, set<int>& visited, int count, int& finalCount, int source, int destination) {
+        count++;
+        visited.emplace(source);
+        bool finalResult = false;
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (visited.count(graph.at(source).at(i))) {
+                continue;
+            }
+            if (graph.at(source).at(i) == destination) {
+                if (count < finalCount || finalCount == -1)  {
+                    finalCount = count;
+                }
+                return true;
+            }
+            bool result  = ladderDfs(graph, visited, count, finalCount, graph.at(source).at(i), destination);
+            if (result) finalResult = true;
+        }
+        return finalResult;
+    }
+
+    bool compareLadderWords(string a, string b) {
+        int lettersDifferent = 0;
+        int indexOfDifferentLetter;
+        if (a.size() != b.size()) return false;
+
+        for (int i = 0; i < a.size(); i++) {
+            if (a.at(i) != b.at(i)) {
+                lettersDifferent++;
+            }
+            if (lettersDifferent > 1) return false;
+        }
+        if (lettersDifferent == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        // Start with making an adjancey matrix
+        set<int> visited;
+        int count = 1;
+
+        wordList.push_back(beginWord);
+
+        // Build the graph
+        int endWordIndex = -1;
+        int wordBeingIndex = wordList.size() - 1;
+        vector<vector<int>> graph(wordList.size());
+
+        for (int i = 0; i < wordList.size(); i++) {
+            for (int j = i; j <wordList.size(); j++) {
+                if (wordList.at(i).compare(endWord) == 0) endWordIndex = i;
+                if ((wordList.at(i).compare(beginWord) == 0) && (i != wordList.size() - 1)) {
+                    wordList.pop_back();
+                    wordBeingIndex = i;
+                }
+                if (compareLadderWords(wordList.at(i), wordList.at(j))) {
+                    graph.at(i).push_back(j);
+                    graph.at(j).push_back(i);
+                }
+            }
+        }
+        if (endWordIndex == -1) return 0;
+        int finalCount = -1;
+        ladderDfs(graph, visited, count, finalCount, wordBeingIndex, endWordIndex);
+        if (finalCount == -1) return 0;
+        return finalCount;
+    }
+};
+
+class SolutionCanFinish {
+public:
+    /*
+    If I build a graph with this. 
+    Need to check for cycle. 
+    0 - 1
+    1 - 2 
+    2 - 0
+    */
+    bool dfs2(set<int>& visited, vector<vector<int>>& graph, int source, int destination) {
+        bool result = false;
+        for (int i = 0; i < graph.at(source).size(); i++) {
+            if (graph.at(source).at(i) == destination) {
+                return true;
+            }
+            else {
+                if(visited.count(graph.at(source).at(i))) continue;
+                visited.emplace(source);
+                result = dfs2(visited, graph, graph.at(source).at(i), destination);
+                if (result) return true;
+            }
+        }
+        return false;
+    }
+
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        set<int> visited; 
+        vector<vector<int>> graph(numCourses);
+        bool result = true;
+        for (int i = 0; i < prerequisites.size(); i++) {
+            graph.at(prerequisites.at(i).at(0)).push_back(prerequisites.at(i).at(1));
+        }
+        for (int i = 0; i < graph.size(); i++) {
+            result = dfs2(visited, graph, i, i);
+            visited.clear();
+            if (result) return false;
+        }
+        return true;
+    }
+
+
+    bool dfs(vector<vector<int>>& graph, set<int>& path, set<int>& visited, int course, int prereq) {
+        bool result;
+        for (int i = 0; i < graph.at(prereq).size(); i++) {
+            path.emplace(course);
+            if (path.count(graph.at(prereq).at(i)) || graph.at(prereq).at(i) == prereq) {
+                // we have a cycle 
+                return false;
+            }
+            if (visited.count(graph.at(prereq).at(i))) continue;
+            path.emplace(prereq);
+            result = dfs(graph, path, visited, prereq, graph.at(prereq).at(i));
+            if (result == false) return false;
+            path.clear();
+        }
+        return true;
+    }
+
+    bool canFinish2(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> graph(numCourses);
+        bool result = true;
+        for (int i = 0; i < prerequisites.size(); i++) {
+            graph.at(prerequisites.at(i).at(0)).push_back(prerequisites.at(i).at(1));
+        }
+        // graph is built, now check for a cycle., 
+        // use DFS
+        set<int> visited;
+        set<int> path;
+        for (int i = 0; i < graph.size(); i++) {
+            if (visited.count(i)) continue;
+            for (int j = 0; j < graph.at(i).size(); j++) {
+                if (i == graph.at(i).at(j)) return false;
+                result = dfs(graph, path, visited, i, graph.at(i).at(j));
+                if (result == false) return false;
+            }
+            visited.emplace(i);
+        }
+        return result;
+    }
+};
+
+class SolutionValidateTree {
+public:
+    void addToArray(vector<int>& array, TreeNode* node) {
+        if (node == nullptr) return;
+
+        addToArray(array, node->left);
+        array.push_back(node->val);
+        addToArray(array, node->right);
+    }
+
+    bool isValidBST(TreeNode* root) { 
+        vector<int> array;
+        addToArray(array, root);
+        if (array.size() == 1) return true;
+        for (int i = 0; i < array.size() - 1; i++) {
+            if (array.at(i) < array.at(i+1)) {
+                // great
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool isValidBST2(TreeNode* root) {
+        bool result;
+        if (root->left != nullptr && root->right != nullptr) {
+            if (root-> left->val < root->val && root->right->val > root->val) {
+                // good. 
+                result = isValidBST(root->right);
+                result = isValidBST(root->left);
+            }
+            else return false;
+        }
+        else if (root->left != nullptr) {
+            if (root->left->val < root->val) {
+                result = isValidBST(root->left);
+            }
+            else return false;
+        }
+        else if (root->right != nullptr) {
+            if (root->right->val > root->val) {
+                result = isValidBST(root->right);
+            }
+            else return false;
+        }
+        else if (root->left == nullptr && root->right == nullptr) { 
+            return true;
+        }
+        if (result == false) return false;
+        return true;
+    }
+};
 
 class SolutionZigZag {
 public:
 
     void zigZag(vector<vector<int>>& result, TreeNode* node, int depth) {
-        if (result.size() < depth) {
-            result.resize(depth);
-        }
+        if (node == nullptr) return;
+
         depth++;
+        if (result.size() < depth) {
+            vector<int> newVector;
+            result.push_back(newVector);
+        }
         zigZag(result, node->left, depth);
-        zigZag(result, node->right, depth);
         result.at(depth - 1).push_back(node->val);
+        zigZag(result, node->right, depth);
     }
 
     vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
         vector<vector<int>> result;
-        zigZag(result, root, 1);
+        zigZag(result, root, 0);
+        for (int i = 1; i < result.size(); i += 2) {
+            std::reverse(result.at(i).begin(), result.at(i).end());
+        }
+        return result;
     }
 };
 

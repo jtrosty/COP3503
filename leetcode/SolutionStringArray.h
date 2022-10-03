@@ -25,6 +25,65 @@ using std::tie;
 using std::swap;
 using std::sort;
 
+class SolutionReverseStringK {
+public:
+    /*
+    *1. go through array one time in a loop.
+    *2. another loop to perfomr a swap, need to conisder even and odd.
+    *3. need size of the string
+    
+                for (int j = 0; j < halfK; j++) {
+                int index1 = i + j;
+                int index2 = i + (k - 1) + j;
+                swapChar(s, index1, index2);
+            }
+            
+                string newString;
+        
+        if (sizeS == 1 || sizeS == 0) return s;
+        
+        for (int i = 0; i < sizeS; i++) {
+            if (i == 0 || i % 2k == 0) {
+                
+            }
+            newString.push_back(s.at(i));
+    */
+    void swapChar(string& s, int index1, int index2) {
+        char temp = s.at(index1);
+        s.at(index1) = s.at(index2);
+        s.at(index2) = temp;
+    }
+    
+    string reverseStr(string s, int k) {
+        int sizeS = s.size();
+        int halfK = k / 2;
+        
+        if (sizeS == 1 || sizeS == 0) return s;
+        
+        int counter = 0;
+        for (int i = 0; i < sizeS; i = 2 * k * counter) {
+            if (i + (k - 1) < sizeS) {
+                for (int j = 0; j < halfK; j++) {
+                    int index1 = i + j;
+                    int index2 = i + (k - 1) - j;
+                    swapChar(s, index1, index2);
+                }
+            } else {
+                // reached the end
+                int endReverse = (sizeS - i)  / 2;
+                for (int j = 0; j < endReverse; j++) {
+                    int index1 = i + j;
+                    int index2 = sizeS -1 - j;
+                    swapChar(s, index1, index2);             
+                }
+            }
+            counter++;
+            i++;
+        }
+        return s;
+    }
+};
+
 class SolutionCompareVersion {
 public:
     vector<int> makeSubSrings(string version) {
