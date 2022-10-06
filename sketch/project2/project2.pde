@@ -66,7 +66,9 @@ void draw() {
 
 void resetBackground() {
   background(135, 206, 235);
+  stroke(0);
   fill(90);
+  rectMode(CORNER);
   rect(0, 0, 200, 800);
 }
 
@@ -79,6 +81,7 @@ class RandomWalk {
   float bottomY = 800.0f;
   HashMap<Float, Integer> visited = new HashMap();
 
+  void setup() {}
   void update() {}
   void draw() {}
 
@@ -119,21 +122,16 @@ boolean wasClamp(float value, float min, float max) {
   else                      return false;
 }
 
-class Vector2d {
-  float x;
-  float y;
-  Vector2d(float _x, float _y) {
-    x = _x;
-    y = _y;
-  }
-}
-
 class SquareWalk extends RandomWalk {
 
   SquareWalk(RandWalkData _data, float startX, float startY) {
     data =  _data;
     currentPoint[0] = startX;
     currentPoint[1] = startY;
+    rectMode(CENTER);
+  }
+
+  void setup() {
     rectMode(CENTER);
   }
 
@@ -159,25 +157,25 @@ class SquareWalk extends RandomWalk {
     switch (randDir) {
       case 0:
         // Go Up
-        if(!wasClamp(y - spacing, 0 + data.stepSize, screenY - (data.stepSize / 2))) {
+        if(!wasClamp(y - spacing, 0 + data.stepSize/2, screenY - (data.stepSize / 2))) {
           result[1] = y - spacing;
         }
         break;
       case 1:
         // Go Right
-        if(!wasClamp(x + spacing, 200 + data.stepSize, screenX - (data.stepSize / 2))) {
+        if(!wasClamp(x + spacing, 200 + data.stepSize/2, screenX - (data.stepSize / 2))) {
           result[0] = x + spacing;
         }
         break;
       case 2:
         // Go down
-        if(!wasClamp(y + spacing, 0 + data.stepSize, screenY - (data.stepSize / 2))) {
+        if(!wasClamp(y + spacing, 0 + data.stepSize/2, screenY - (data.stepSize / 2))) {
           result[1] = y + spacing;
         }
         break;
       case 3:
         // Go Left
-        if(!wasClamp(x - spacing, 200 + data.stepSize, screenX - (data.stepSize / 2))) {
+        if(!wasClamp(x - spacing, 200 + data.stepSize/2, screenX - (data.stepSize / 2))) {
           result[0] = x - spacing;
         }
         break;
@@ -243,6 +241,7 @@ public void Start() {
   data.counter = 0;
   data.spacing = int(float(data.stepSize) * data.stepScale);
   walkObj = new SquareWalk(data, 700, 400);
+  walkObj.setup();
   play = true;
 }
 
