@@ -77,11 +77,34 @@ class RandomWalk {
   float originY = 0.0f;
   float rightX = 1200.0f;
   float bottomY = 800.0f;
-  HashMap<Vector2d, Integer> visited;
+  HashMap<Float, Integer> visited = new HashMap();
 
   void update() {}
   void draw() {}
 
+  void terrain(Float key) {
+    int timesVisited = 0; 
+    if (visited.containsKey(key)) {
+      timesVisited = visited.get(key);
+    }
+    else {
+      visited.put(key, 0);
+    }
+
+    if(timesVisited < 4) {
+      fill(160, 126, 84);
+    }
+    else if (timesVisited < 7  && timesVisited > 4) {
+      fill(143, 170, 64);
+    }
+    else if (timesVisited < 10  && timesVisited > 7) {
+      fill(135, 135, 135);
+    }
+    else if (timesVisited >= 10) {
+      fill(timesVisited * 20);
+    }
+    visited.replace(key, timesVisited + 1);
+  }
 }
 
 float clamp(float value, float min, float max) {
@@ -117,16 +140,9 @@ class SquareWalk extends RandomWalk {
   void draw() {
     stroke(255);
     fill(0);
-    if (visited.containsKery(Vector2d(currentPoint[0], currentPoint[1]))) {
-      int timesVisited = visited.get(Vector2d(currentPoint[0], currentPoint[1]));
-      timesVisited++;
-      if (timesVisited > 1){
-        fill(180);
-      }
-    }
-    else {
-      visited.put(Vector2d(currentPoint[0], currentPoint[1]), 0);
-      fill(0);
+    Float tempKey = currentPoint[1] * 1000.0 + currentPoint[0];
+    if (data.simTerrain) {
+      terrain(tempKey);
     }
     square(currentPoint[0], currentPoint[1], data.stepSize);
     data.counter++;
