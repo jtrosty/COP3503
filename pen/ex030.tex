@@ -1,0 +1,113 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf file.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex030 - DNS Reconnaissance}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0b3 performed reconnaissance on Art's Tailor shops network and found two IP blocks 217.70.184 and 10.70.184 along with several IP addresses and domain.  No explicit vulnerability was found but the information gathered will be used in subsequent penetration testing to determine vulnerabilities.   
+	
+	\section{Attack Narrative}
+	The \textbf{Fierce} software was used to collect an initial list of IP address. Two blocks were found using the default work list. The \textbf{Fierce} default word list is located at /usr/lib/python3/dist-packages/fierce/lists/default.txt.  There are two other files 20000.txt and 5000.txt that contain more works. \\
+	The two blocks found were: \\
+	\indent a. 217.70.184 \\
+	\indent b. 10.70.184 \\
+	Domains and IP addresses found with \textbf{Fierce} default.\\
+	\indent 1. ns.arstailor.com 217.70.184.38 -Found with default list. \\
+	\indent 2. ns.arstailor.com 217.70.3 -Found with default list. \\
+	\indent 3. mail.arstailor.com 217.70.184.3 -Found with default list. \\
+	\indent 4. innerouter.artstailor.com 217.70.184.3 -Found with search. \\
+	\indent 5. pdc.artstailor.com 10.70.184.90 -found with default list. \\
+	\indent 6. books.artstailor.com 10.70.184.91 -Found with search. \\
+	\indent 7. pop.artstailor.com 217.70.184.3 -Found with default list. \\
+	The \textbf{CeWL} software was used to create an alternate word list to use with \textbf{fierce}. The additional list of 46 words generated found the following:\\
+	\indent 8. costumes.artstailor.com 10.70.184.39 -Found with new word list. \\
+	\indent 9. linuxserver.artstailor.com. 10.70.184.38 -Found with search \\
+	\indent 10. KEY005-y5An8Bhr0kui0PBIj5pJrQ.artstailor.com 10.70.184.40  -Found with search. \\
+	The above list could also be found if the \textbf{wide} flag is used with fierce. 
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(T0043, Reconnaissance, T1595, Active Scanning, .001, Scanning IP Blocks) \\
+	
+	\ttp(TA0043, Reconnaissance, T1595, Active Scanning, .001, Scanning IP Blocks)
+	
+	\indent\textbackslash ttp(T0043, Reconnaissance, T1595, Active Scanning, .003, Wordlist Scanning) \\
+	
+	\ttp(TA0043, Reconnaissance, T1595, Active Scanning, .003, Wordlist Scanning)
+	
+	\indent\textbackslash ttp(T0043, Reconnaissance, T1590, Gather Victim Network Information, .002, DNS) \\
+	
+	\ttp(TA0043, Reconnaissance, T1590, Gather Victim Network Information, .002, DNS)
+	
+	\indent\textbackslash ttp(T0043, Reconnaissance, T1590, Gather Victim Network Information, .005, IP Addresses) \\
+	
+	\ttp(TA0043, Reconnaissance, T1590, Gather Victim Network Information, .005, IP Addresses)
+
+\end{document} 

@@ -1,0 +1,111 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex060 - VulnScan}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0b3 performed reconnaissance on Art's Tailor shops network to find open ports and services running. A vulnerability scan was performed on the active services. One of the running services was found to have a  serious exploit that requires corrective action.  
+	
+	\subsection{Finding: \emph{Backdoor on File Transfer Server, vsftpd 2.3.4}}
+	
+	\subsubsection{Severity Rating}
+	The severity is 9.8. This is a high risk exploit that opens a shell on the root on the machine.  This exploit would allow the attacker to take data, delete data, and bring down the system or install additional tools.  
+
+	\textbackslash cvss(N,L,N,N,U,H,H,H,9.8)\\
+	\cvss(N,L,N,N,U,H,H,H,9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	The vulnerability opens a shell on port 6200/tcp. This allows the user to perform any actions on the system a user could. The attacker could access secure files, delete data, or bring down the system. This vulnerability has a high impact for confidentiality, integrity, and availability of th system and data. 
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Open metasploit and search for vsftp. There should be one exploit listed. Set the exploit with the \textbf{use} keyword.\\
+	\indent 2. Set the RHOST IP address of 217.70.184.38. \\
+	\indent 3. Execute the exploit with the keyword \textbf{exploit}.\\
+	
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	Download and use the latest version of vsftpd. The back door and been removed. \\
+	
+	\section{Attack Narrative}
+	A scan was performed with the Nessus system which found two vulnerabilities that are classified as high risk.  \\
+	1. vsftpd Smiley Face Backdoor, has a exploit available. \\
+	2. OpenSSH 8.2 < 8.5, no exploit available. \\
+	3. DNS Server Spoofed Request Amplification DDoS. no exploit available. \\
+	The "vsftpd Smiley Face Backdoor" was used to gain access to the system with IP address 217.70.184.38. A search of the system found the key
+	\textbf{KEY008-HHAw+K7/1A+SR/Edya9kEw==}. The exploit used the username \textbf{l2:)} with password \textbf{uWP}. There is a programmed back door that when a username with a smiley face "\textbf{:)}" is used to gain access through the system.  The exploit then opens a shell through a unused port.  
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(T0043, Reconnaissance, T1595, Active Scanning, .002, Vulnerability Scanning) \\
+	
+	\ttp(TA0043, Reconnaissance, T1595, Active Scanning, .002, Vulnerability Scanning) \\
+
+\end{document} 

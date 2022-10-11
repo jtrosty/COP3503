@@ -1,0 +1,110 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf file.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex050 - nmap}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0b3 performed reconnaissance on Art's Tailor shops network to find open ports and services running. A vulnerability scan was performed on the active services. One of the running services was found to have a  serious exploit that requires corrective action.  
+	
+	\subsection{Finding: \emph{Backdoor on File Transfer Server, vsftpd 2.3.4}}
+	
+	\subsubsection{Severity Rating}
+	The severity is 9.8. This is a high risk exploit that opens a shell on the root on the machine.  This exploit would allow the attacker to take data, delete data, and bring down the system or install additional tools.  
+
+	\textbackslash cvss(N,L,N,N,U,H,H,H,9.8)\\
+	\cvss(N,L,N,N,U,H,H,H,9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	The vulnerability opens a shell on port 6200/tcp. This allows the user to perform any actions on the system a user could. The attacker could access secure files, delete data, or bring down the system. This vulnerability has a high impact for confidentiality, integrity, and availability of th system and data. 
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit: \\
+	\indent 1. In command line type \textbf{nmap -sT www.artstailor.com}.\\
+	\indent 2. Under PORT 21, you will see the service \textbf{ftp} with version \textbf{vsftpd 2.3.4}. \\
+	\indent 3. In command line type \textbf{searchsploit vsftpd 2.3.4} \\
+	
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	Download and use the latest version of vsftpd. The back door and been removed. \\
+	
+	\section{Attack Narrative}
+	A TCP and UDP scan of www.artstailor.com with \textbf{nmap} was performed.  The TCP scan performed the default 1000 port scan and the UDP scan was limited to 1-256 for the most commonly used ports. The UDP scan does take much more time. \\
+	The active TCP ports were port 21 for connection to file transfer system. port 22 for SSH, port 53 for domain name service, and port 80 for http.  These 4 parts are active and performing the normal tasks for these port numbers. \\
+	The only abnormal port was UDP port 40. The service was blocked or filtered by the firewall. The service port 40 is unknown. This port does not have a normal service usually performed in the way that port 21, 22, 53, and 80 do. \\ \\
+	A key was found among ICMP packets: 
+	\textbf{KEY007-Smnqzo/vG7UTSS1fTTUW7g==} \\
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(T0043, Reconnaissance, T1595, Active Scanning, .002, Vulnerability Scanning) \\
+	
+	\ttp(TA0043, Reconnaissance, T1595, Active Scanning, .002, Vulnerability Scanning) \\
+
+\end{document} 
