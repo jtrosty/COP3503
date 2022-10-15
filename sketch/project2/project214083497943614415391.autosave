@@ -34,6 +34,7 @@ int heightUI = 20;
 int barLengthUI = 180;
 int shortBarLengthUI = barLengthUI / 3;
 int startButtonLength = 50;
+
 int startPosX = 10;
 int startPosY = 10;
 int dropBoxHeight = 30;
@@ -44,7 +45,7 @@ int toggleLabelOffset = 5;
 //----------------------------------------------------------------------------------//
 
 void setup() {
-  size(1200, 800, P2D);
+  size(1200, 800);
   pixelDensity(displayDensity());
   //pixelDensity(2);
   resetBackground(); 
@@ -56,7 +57,6 @@ void draw() {
   if (data.counter < data.maxSteps && (play == true)) {
     for (int i = 0; i < data.stepRate; i++) {
       walkObj.draw();
-      uiBackground();
       walkObj.update();
     }
   }
@@ -72,13 +72,6 @@ void resetBackground() {
   rect(0, 0, 200, 800);
 }
 
-void uiBackground() {
-  stroke(0);
-  fill(90);
-  rectMode(CORNER);
-  rect(0, 0, 200, 800);
-  rectMode(CENTER);
-}
 class RandomWalk {
   RandWalkData data;
   PVector currentPoint = new PVector(0.0f, 0.0f);
@@ -178,13 +171,13 @@ class HexWalk extends RandomWalk {
     }
     endShape();
   }
- //<>// //<>//
+
   void update() {
     currentPoint = getNextPoint(currentPoint.x, currentPoint.y, data.spacing, 1200, 800);
   }
 
-  PVector getNextPoint(float x, float y, float spacing, float screenX, float screenY) { //<>// //<>//
-    int randDir = int((random(6))); //<>// //<>//
+  PVector getNextPoint(float x, float y, float spacing, float screenX, float screenY) { //<>//
+    int randDir = int((random(6))); //<>//
     PVector result = new PVector(x,y);
 
     switch (randDir) {
@@ -220,14 +213,10 @@ class HexWalk extends RandomWalk {
         y = y + (spacing * sin(radians(30)) * sqrt(3));
         break;
     }
-    if (data.constrainStep) {
-      if (!wasClamp(x, 200 + (sqrt(3) * data.stepSize), screenX - (sqrt(3) * data.stepSize)/2) &&
-          !wasClamp(y, 0 + data.stepSize / 2, screenY - (data.stepSize / 2))) {
-          return new PVector(x, y);
-      }
-    }
-    else {
-          return new PVector(x, y);
+    if (!wasClamp(x, 200 + (sqrt(3) * data.stepSize), screenX - (sqrt(3) * data.stepSize)) &&
+        !wasClamp(y, 0 + data.stepSize / 2, screenY - (data.stepSize / 2))) {
+        return new PVector(x, y);
+        //return CartesianToHex(x, y, data.stepSize, data.stepScale, (screenX / 2) + 200, screenY / 2);
     }
     return result;
   }
@@ -246,13 +235,13 @@ class HexWalk extends RandomWalk {
     
     float roundX = round(x);
     float roundY = round(y);
-    float roundZ = round(z); //<>// //<>//
+    float roundZ = round(z);
     
     float xDiff = abs(roundX - x);
     float yDiff = abs(roundY - y);
     float zDiff = abs(roundZ - z);
-     //<>// //<>//
-    if (xDiff > yDiff && xDiff > zDiff) //<>// //<>//
+     //<>//
+    if (xDiff > yDiff && xDiff > zDiff) //<>//
       roundX = -roundY - roundZ;
     else if (yDiff > zDiff)
       roundY = -roundX - roundZ;
@@ -308,30 +297,31 @@ class SquareWalk extends RandomWalk {
     switch (randDir) {
       case 0:
         // Go Up
-          y = y - spacing;
+          result.y = y - spacing;
         break;
       case 1:
         // Go Right
-          x = x + spacing;
+          result.x = x + spacing;
         break;
       case 2:
         // Go down
-          y = y + spacing;
+          result.y = y + spacing;
         break;
       case 3:
         // Go Left
-          x = x - spacing;
+          result.x = x - spacing;
         break;
     }
-
     if (data.constrainStep) {
-      if (!wasClamp(x, 200 + data.stepSize/2, screenX - (data.stepSize / 2)) &&  
-         (!wasClamp(y, 0 + data.stepSize/2, screenY - (data.stepSize / 2)))) {
+      if (!wasClamp(x - spacing, 200 + data.stepSize/2, screenX - (data.stepSize / 2)) &&  {
+        (!wasClamp(y + spacing, 0 + data.stepSize/2, screenY - (data.stepSize / 2))) {
           return new PVector(x, y);
       }
     }
     else {
-      return new PVector(x, y);
+      if (!minClamp(x - spacing, 200 + data.stepSize/2, screenX - (data.stepSize / 2)) {
+          return new PVector(x, y);
+      }
     }
     return result;
   }

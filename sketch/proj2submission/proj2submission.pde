@@ -178,13 +178,13 @@ class HexWalk extends RandomWalk {
     }
     endShape();
   }
- //<>// //<>//
+ //<>//
   void update() {
     currentPoint = getNextPoint(currentPoint.x, currentPoint.y, data.spacing, 1200, 800);
   }
 
-  PVector getNextPoint(float x, float y, float spacing, float screenX, float screenY) { //<>// //<>//
-    int randDir = int((random(6))); //<>// //<>//
+  PVector getNextPoint(float x, float y, float spacing, float screenX, float screenY) { //<>//
+    int randDir = int((random(6))); //<>//
     PVector result = new PVector(x,y);
 
     switch (randDir) {
@@ -246,13 +246,13 @@ class HexWalk extends RandomWalk {
     
     float roundX = round(x);
     float roundY = round(y);
-    float roundZ = round(z); //<>// //<>//
+    float roundZ = round(z); //<>//
     
     float xDiff = abs(roundX - x);
     float yDiff = abs(roundY - y);
     float zDiff = abs(roundZ - z);
-     //<>// //<>//
-    if (xDiff > yDiff && xDiff > zDiff) //<>// //<>//
+     //<>//
+    if (xDiff > yDiff && xDiff > zDiff) //<>//
       roundX = -roundY - roundZ;
     else if (yDiff > zDiff)
       roundY = -roundX - roundZ;

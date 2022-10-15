@@ -1,0 +1,325 @@
+import controlP5.*;
+ControlP5 cp5;
+
+int width = 1600;
+int height = 1000;
+
+float camBounds = 60;
+PShape monster;
+PShape wireMonster;
+CameraControl camControl;
+PVector zeroPoint = new PVector(0,0,0);
+
+
+void setup() {
+    size(1600, 1000, P3D);
+    cp5 = new ControlP5(this);
+    cp5.addSlider("cameraX", -camBounds, camBounds).setPosition(20,30);
+    cp5.addSlider("cameraY", -camBounds, camBounds).setPosition(20,50);
+    cp5.addSlider("cameraZ", -camBounds, camBounds).setPosition(20,70);
+    monster = loadShape("monster.obj");
+    wireMonster = loadShape("monster.obj");
+    wiredMonster.shape = loadShape("monster.obj");
+    halfMonster.shape = loadShape("monster.obj");
+    boxes.shape = makeCube();
+    camControl = new CameraControl();
+}
+
+void draw() {
+    background(200);
+    // 2 matrixes to setup projection andcamera
+    perspective(radians(50.0f), width / (float) height, 0.1, 1000);
+    camControl.update();
+
+    DrawGridLines();
+    //triangleFanManual();
+    //drawLowResCircle(20, 40);
+    PShape  cube1 = makeCube();
+    pushMatrix();
+    translate(-100, 1, 0);
+    shape(cube1);
+
+    translate(-10, 0, 0);
+    scale(1, 2, 5);
+    shape(cube1);
+    
+    translate(0,-5, 0);
+    scale(2, 2, 2);
+    shape(cube1);
+    popMatrix();
+
+    pushMatrix();
+    scale(.5, .5, .5);
+    monster.setFill(color(100, 100, 0, 255));
+    shape(monster);
+    popMatrix();
+
+    pushMatrix();
+    translate(-50, 5, 0);
+    drawLowResCircle(20, 5);
+    translate(10, 0, 0);
+    drawLowResCircle(6, 5);
+    popMatrix();
+
+    pushMatrix();
+    translate(75,0,0);
+    wireMonster.stroke(0, 0, 0);
+    wireMonster.setStroke(true);
+    wireMonster.setStrokeWeight(2);
+    wireMonster.setFill(color(255, 255, 255, 0));
+    shape(wireMonster);
+    popMatrix();
+
+    perspective();
+    camera();
+}
+
+void mouseWheel(MouseEvent event) {
+    camControl.zoom(event.getCount());
+}
+void keyPressed() {
+    camControl.CycleTarget();
+}
+
+class CameraControl {
+    ArrayList<PVector> targets = new ArrayList<PVector>();
+    targets.add(zeroPoint);
+    float theta = PI / 4.0;
+    float phi = PI / 4.0;
+    float distance = 5;
+    float cameraX = 0;
+    float cameraY = 0;
+    float cameraZ = 0;
+    PVector currentTarget = targets.at(0);
+
+    void Update() {
+        cameraX = distance * cos(phi) * sin(theta);
+        cameraY = distance * cos(theta);
+        cameraZ = distance * sin(theta) * cos(phi);
+
+        camera( cameraX, cameraY, cameraZ,
+                currentTarget.x, currentTarget.y, currentTarget.z,
+                0, -1, 0);
+    }
+
+    void AddLookAtTarget(PVector v1) {
+        targest.add(v1);
+    }
+
+    void CycleTarget() {
+
+
+    }
+
+    void Zoom(float zoom) {
+
+    }
+
+}
+
+class ShapeUnified {
+    PShape shape;
+    float x;
+    float y;
+    float z;
+}
+
+
+PShape makeCube() {
+    PShape cube = createShape();
+    cube.beginShape(TRIANGLE_STRIP);
+    stroke(0);
+
+    //Triangle 1 z plane negative
+    cube.fill(255, 0, 0);
+    cube.vertex( 0.5,  0.5, -0.5);
+    cube.vertex(-0.5,  0.5, -0.5);
+    cube.vertex(-0.5, -0.5, -0.5);
+    
+    //Triangle 2
+    cube.fill(0, 255, 0);
+    cube.vertex(-0.5, -0.5, -0.5);
+    cube.vertex( 0.5, -0.5, -0.5);
+    cube.vertex( 0.5,  0.5, -0.5);
+
+    //Triangle 1 x plane positive
+    cube.fill(0, 0, 255);
+    cube.vertex(0.5,  0.5, -0.5);
+    cube.vertex(0.5,  0.5,  0.5);
+    cube.vertex(0.5, -0.5, -0.5);
+
+    //Triangle 2
+    cube.fill(0, 128, 255);
+    cube.vertex(0.5,  0.5,  0.5);
+    cube.vertex(0.5, -0.5, -0.5);
+    cube.vertex(0.5, -0.5,  0.5);
+
+    //Triangle 1 z positive
+    cube.fill(255, 100, 0);
+    cube.vertex(0.5,  0.5, 0.5);
+    cube.vertex(0.5, -0.5, 0.5);
+    cube.vertex(-0.5, -0.5, 0.5);
+    
+    //Triangle 2
+    cube.fill(146, 216, 255);
+    cube.vertex(-0.5, -0.5, 0.5);
+    cube.vertex(-0.5, 0.5, 0.5);
+    cube.vertex(0.5, 0.5, 0.5);
+
+    //Triangle 1 y plane positive
+    cube.fill(0, 255, 255);
+    cube.vertex( 0.5, 0.5,  0.5);
+    cube.vertex(-0.5, 0.5,  0.5);
+    cube.vertex(-0.5, 0.5, -0.5);
+
+    //Triangle 2
+    cube.fill(255, 0, 255);
+    cube.vertex(-0.5, 0.5, -0.5);
+    cube.vertex( 0.5, 0.5,  0.5);
+    cube.vertex( 0.5, 0.5, -0.5);
+
+    //Triangle 1 x plane negative
+    cube.fill(255, 255, 0);
+    cube.vertex(-0.5,  0.5, -0.5);
+    cube.vertex(-0.5, -0.5, -0.5);
+    cube.vertex(-0.5,  0.5,  0.5);
+    
+    // Triangle 2
+    cube.fill(255, 165, 0);
+    cube.vertex(-0.5, -0.5, -0.5);
+    cube.vertex(-0.5, -0.5,  0.5);
+
+    //Triangle 1 y plane negative
+    cube.fill(106, 90, 205);
+    cube.vertex(-0.5, -0.5,  0.5);
+    cube.vertex( 0.5, -0.5,  0.5);
+    cube.vertex(-0.5, -0.5, -0.5);
+
+    //Triangle 2
+    cube.fill(50, 50, 50);
+    cube.vertex( 0.5, -0.5,  0.5);
+    cube.vertex(-0.5, -0.5, -0.5);
+    cube.vertex( 0.5, -0.5, -0.5);
+/*
+    
+    //Triangle 2
+    cube.vertex(-0.5,  0.5,  0.5);
+    fill(255, 0,0 );
+
+    
+
+
+    */
+/*
+    //Triangle 1 x plane negative 
+    cube.vertex(-0.5, 0.5, -0.5);
+    cube.vertex(-0.5, 0.5, 0.5);
+    cube.vertex(-0.5, -0.5, 0.5);
+    
+    //Triangle 2
+    cube.vertex(-0.5, -0.5, 0.5);
+    cube.vertex(-0.5, 0.5, -0.5);
+    //cube.vertex(-0.5, -0.5, -0.5);
+    // X plane
+    //Triangle 2 x plane
+    cube.vertex(0.5, 0.5, 0.5);
+    cube.vertex(-0.5, 0.5, 0.5);
+    cube.vertex(-0.5, -0.5, 0.5);
+    
+    //Triangle 2
+    cube.vertex(0.5, 0.5, 0.5);
+    cube.vertex(-0.5, -0.5, 0.5);
+    cube.vertex(0.5, -0.5, 0.5);
+    */
+
+    cube.endShape();
+    return cube;
+}
+
+void triangleFanManual() {
+    colorMode(HSB, 360, 100, 100);
+    beginShape(TRIANGLE_FAN);
+    fill(0, 100, 100);
+    vertex(-30, 0, 0);
+    fill(120, 100, 100);
+    vertex(0, -50, 0);
+    fill(240, 100, 100);
+    vertex(30, 0, 0);
+    endShape();
+
+    colorMode(HSB, 360, 100, 100);
+    stroke(0);
+    
+    beginShape(TRIANGLE_FAN);
+    fill(0, 100, 100);
+    vertex(0, 0, 20);
+    fill(60, 100, 100);
+    vertex(0, 20, 0);
+    fill(120, 100, 100);
+    vertex(0, 40, 0);
+    fill(180, 100, 100);
+    vertex(0, 60, 20);
+    fill(240, 100, 100);
+    vertex(0, 40, 40);
+    fill(300, 100, 100);
+    vertex(0, 20, 40);
+    fill(360, 100, 100);
+    vertex(0, 0, 20);
+    endShape();
+}
+
+void drawLowResCircle(float numOfVertices, float radius) {
+    float incrementRad = (2 * PI) / numOfVertices;
+    float increment = 360 / numOfVertices;
+    float value = 0;
+    float startCoordinate = 100;
+    colorMode(HSB, 360, 100, 100);
+    
+    beginShape(TRIANGLE_FAN);
+    strokeWeight(1);
+    stroke(1);
+    for (float i = 0; i < numOfVertices; i++) {
+        fill(value, 100, 100);
+        vertex(radius * cos((i * incrementRad)), radius * sin((i * incrementRad)), 0);
+        value += increment;
+    }
+    fill(value, 100, 100);
+    vertex(radius * cos(0), 0,  radius * sin(0));
+    endShape();
+    colorMode(RGB);
+}
+
+void makeTriangle() {
+    beginShape();
+    fill(255, 0, 0);
+    vertex(-30, 0, 0);
+    fill(0, 255, 0);
+    vertex(0, -50, 0);
+    fill(0, 0, 255);
+    vertex(30, 0, 0);
+    endShape();
+}
+
+void DrawGridLines() {
+    int numOfLines = 20;
+    float startX = -100;
+    float increment = 10;
+
+    strokeWeight(1);
+    stroke(50);
+    for (int i = 0; i < numOfLines; i++) {
+        line( startX + (i * increment), 0.0, startX, startX + (increment * i), 0.0, -startX);
+        line( startX, 0.0, startX + (i * increment), -startX, 0.0, startX + (increment * i));
+        //line(-500, -500 + (i * 100), 500, 0, 0);
+    }
+    strokeWeight(5);
+    stroke(255, 0, 0);
+    line(startX, 0, 0, -startX, 0, 0);
+    stroke(0, 255, 0);
+    line(0, startX, 0, 0,-startX, 0);
+    stroke(0, 0, 255);
+    line(0, 0, startX, 0, 0, -startX);
+
+    strokeWeight(1);
+
+}
