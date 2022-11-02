@@ -1,5 +1,4 @@
-import controlP5.*; 
-ControlP5 cp5;
+import controlP5.*; ControlP5 cp5;
 
 int width = 1600;
 int height = 1000;
@@ -9,34 +8,6 @@ CameraControl camControl;
 PVector zeroPoint = new PVector(0,0,0);
 Terrain terrain = new Terrain();
 LoadImage loadImage = new LoadImage();
-
-// User Controls 
-Button generateButton;
-DropdownList loadFileList;
-Slider rowSlider;
-Slider colSlider;
-Slider terrainSize;
-Slider heightModSlider;
-Slider snowThresholdSlider;
-Toggle strokeToggle;
-Toggle colorToggle;
-Toggle blendToggle;
-
-// UI size and position variables
-int heightUI = 30;
-int toggleWidthUI = 20;
-int sliderHeight = 15;
-int barLengthUI = 180;
-int shortBarLengthUI = barLengthUI / 3;
-int buttonLength = 50;
-int startPosX = 10;
-int startPosY = 20;
-int dropBoxHeight = 20;
-int offsetUI = 30;
-int toggleStartX = 250;
-
-int fontSize = 10;
-int toggleLabelOffset = 5;
 
 void setup() {
     size(1600, 1000, P3D);
@@ -48,7 +19,6 @@ void setup() {
     //halfMonster.shape = loadShape("monster.obj");
     camControl = new CameraControl();
     camControl.AddLookAtTarget(new PVector(0, 0, 0));
-    setUpUI();
 }
 
 void draw() {
@@ -84,7 +54,7 @@ class LoadImage {
 }
 
 class Terrain {
-    int size = 10;
+    int size = 100;
     int rows = size;
     int cols = size;
     int gridSize = 20;
@@ -323,124 +293,4 @@ void DrawGridLines() {
     line(0, 0, startX, 0, 0, -startX);
 
     strokeWeight(1);
-}
-
-void resetBackground() {
-  background(135, 206, 235);
-  stroke(0);
-  fill(90);
-}
-
-void Generate() {
-    clear();
-    resetBackground();
-    terrain.rows = int(rowSlider.getValue());
-    terrain.cols = int(colSlider.getValue());
-    terrain.gridSize = int(terrainSize.getValue());
-    
-}
-
-void setUpUI() {
-
-  rowSlider = cp5.addSlider("Rows")
-    .setPosition(startPosX, startPosY)
-    .setSize(barLengthUI, sliderHeight)
-    .setRange(1, 100)
-    .setDecimalPrecision(0)
-    ;
-  rowSlider.setValue(10);
-  rowSlider.getCaptionLabel().setSize(fontSize);
-  rowSlider.getValueLabel().setSize(fontSize);
-  rowSlider.getCaptionLabel().align(ControlP5.RIGHT, ControlP5.TOP_OUTSIDE);
-
-  colSlider = cp5.addSlider("Columns")
-    .setPosition(startPosX, startPosY + offsetUI)
-    .setSize(barLengthUI, sliderHeight)
-    .setRange(1, 100)
-    .setDecimalPrecision(0)
-    .setValue(30)
-    ;
-  colSlider.getCaptionLabel().setSize(fontSize);
-  colSlider.getValueLabel().setSize(fontSize);
-  colSlider.getCaptionLabel().align(ControlP5.RIGHT, ControlP5.TOP_OUTSIDE);
-
-  terrainSize = cp5.addSlider("Terrain Size")
-    .setPosition(startPosX, startPosY + (2 * offsetUI))
-    .setSize(barLengthUI, sliderHeight)
-    .setRange(20, 50)
-    .setDecimalPrecision(0)
-    .setValue(1000)
-    ;
-  terrainSize.getCaptionLabel().setSize(fontSize);
-  terrainSize.getValueLabel().setSize(fontSize);
-  terrainSize.getCaptionLabel().align(ControlP5.RIGHT, ControlP5.TOP_OUTSIDE);
-
-  generateButton = cp5.addButton("Generate")
-    .setPosition(startPosX, startPosY + (3 * offsetUI))
-    .setSize(heightUI * 3, heightUI)
-    ;
-  generateButton.getCaptionLabel().setSize(fontSize);
-
-  loadFileList = cp5.addDropdownList("Load From File")
-    .setPosition(startPosX, startPosY + (4 * offsetUI) + 10)
-    .setSize(barLengthUI, heightUI)
-    .setBarHeight(heightUI)
-    .addItem("terrain0", 0)
-    .addItem("terrain1", 1)
-    .addItem("terrain2", 2)
-    .addItem("terrain3", 3)
-    .addItem("terrain4", 4)
-    .addItem("terrain5", 5)
-    .addItem("terrain6", 6)
-    .setItemHeight(heightUI / 2);
-    ;
-  loadFileList.setValue(1);
-  loadFileList.getCaptionLabel().setSize(fontSize);
-  loadFileList.getValueLabel().setSize(fontSize);
-
-  strokeToggle  = cp5.addToggle("Stroke")
-    .setPosition(toggleStartX, startPosY)
-    .setSize(heightUI, toggleWidthUI)
-    .setValue(true)
-    ;
-  strokeToggle.getCaptionLabel().setSize(fontSize);
-  strokeToggle.getCaptionLabel().align(ControlP5.LEFT, ControlP5.BOTTOM_OUTSIDE);
-
-  colorToggle = cp5.addToggle("Color")
-    .setPosition(toggleStartX + 40, startPosY)
-    .setSize(heightUI, toggleWidthUI)
-    .setValue(true)
-    ;
-  colorToggle.getCaptionLabel().setSize(fontSize);
-  colorToggle.getCaptionLabel().align(ControlP5.LEFT, ControlP5.BOTTOM_OUTSIDE);
-
-  blendToggle = cp5.addToggle("Blend")
-    .setPosition(toggleStartX + 80, startPosY)
-    .setSize(heightUI, toggleWidthUI)
-    .setValue(true)
-    ;
-  blendToggle.getCaptionLabel().setSize(fontSize);
-  blendToggle.getCaptionLabel().align(ControlP5.LEFT, ControlP5.BOTTOM_OUTSIDE);
-
-  heightModSlider = cp5.addSlider("Height Modifier")
-    .setPosition(toggleStartX, startPosY + (2 * offsetUI))
-    .setSize(barLengthUI, sliderHeight)
-    .setRange(-5.0, 5.0)
-    .setDecimalPrecision(1)
-    .setValue(1.0)
-    ;
-  heightModSlider.getCaptionLabel().setSize(fontSize);
-  heightModSlider.getValueLabel().setSize(fontSize);
-  heightModSlider.getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, ControlP5.CENTER);
-
-  snowThresholdSlider = cp5.addSlider("Snow Threshold")
-    .setPosition(toggleStartX, startPosY + (offsetUI * 3))
-    .setSize(barLengthUI, sliderHeight)
-    .setRange(1.0, 5.0)
-    .setDecimalPrecision(1)
-    .setValue(1.0)
-    ;
-  snowThresholdSlider.getCaptionLabel().setSize(fontSize);
-  snowThresholdSlider.getValueLabel().setSize(fontSize);
-  snowThresholdSlider.getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, ControlP5.CENTER);
 }
