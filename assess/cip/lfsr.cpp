@@ -27,20 +27,33 @@ int main(void) {
 
 unsigned char *LSFR(unsigned char *data, int dataLength, unsigned int initialValue) {
     unsigned int feedback = 0x87654321;
-    char lowestBit = 0x00;
     int bitsInByte = 8;
+    int lowestBit = 0x0;
+
+    // Handle case for if 
+    int intSize = sizeof(initialValue);
+    int keyMask = 0x0;
+    int lowBitMask = 0x0;
+    if (intSize == 2) {
+        keyMask = 0x00FF;
+        lowBitMask = 0x00FF;
+    }
+    else if (intSize == 4) {
+        keyMask = 0x00FF;
+        lowBitMask = 0x00FF;
+
+    }
 
     for (int j = 0; j < dataLength; j++) {
         char keyByte = 0;
         for (int i = 0; i < bitsInByte; i++) {
-            lowestBit = initialValue & 0x00000001;
+            lowestBit = initialValue & lowBitMask;
             initialValue = initialValue >> 1;
             if (lowestBit == 1)  {
                 initialValue = initialValue ^ feedback;
             }
-            keyByte = initialValue & 0x000000FF;
+            keyByte = initialValue & keyMask;
         }
-        //data[dataLength - j - 1] = data[dataLength - j - 1] ^ keyByte;
         data[j] = data[j] ^ keyByte;
     }
     return data;
