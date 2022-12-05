@@ -1,0 +1,49 @@
+class CameraControl {
+    ArrayList<PVector> targets = new ArrayList<PVector>();
+k
+    float theta = PI / 4.0;
+    float phi = PI / 4.0;
+    float distance = 100;
+    float cameraX = 0;
+    float cameraY = 0;
+    float cameraZ = 0;
+    float increment = PI / 360.0;
+    PVector currentTarget;
+    int currIndex = 0;
+    CameraControl() {
+        targets.add(zeroPoint);
+        currentTarget = zeroPoint;
+    }
+
+    void Update() {
+        cameraX = currentTarget.x + distance * cos(phi) * sin(theta);
+        cameraY = currentTarget.y + distance * cos(theta);
+        cameraZ = currentTarget.z + distance * sin(theta) * sin(phi);
+        phi = map(mouseX, 0.0, width, 0.0, (2 * PI));
+        theta = map(mouseY, 0.0, height, 0.0, (PI/ 2));
+        //theta = (mouseY / 360) % (PI);
+        camera( cameraX, cameraY, cameraZ,
+                currentTarget.x, currentTarget.y, currentTarget.z,
+                0, -1, 0);
+    }
+
+    void AddLookAtTarget(PVector v1) {
+        targets.add(v1);
+    }
+
+    void CycleTarget() {
+        if (currIndex < targets.size() - 1) {
+            currIndex++;
+        }
+        else {
+            currIndex = 0;
+        }
+        currentTarget = targets.get(currIndex);
+    }
+
+    void Zoom(float zoom) {
+        distance += zoom * 6;
+        if (distance < 20) distance = 20;
+        if (distance > 200) distance = 200;
+    }
+}

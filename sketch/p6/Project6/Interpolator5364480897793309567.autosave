@@ -1,0 +1,138 @@
+abstract class Interpolator
+{
+  Animation animation;
+  
+  // Where we at in the animation?
+  float currentTime = 0;
+  int numOfFrames;
+  
+  // To interpolate, or not to interpolate... that is the question
+  boolean snapping = false;
+
+  void setInitialMatrix(PVector position, PVector rotation, PVector scale, 
+                        float r, float g, float b, float a) {
+                          /*
+    animation.X = position.x;
+    animation.Y = position.y;
+    animation.Z = position.z;
+    animation.rotationX = rotation.x;
+    animation.rotationY = rotation.y;
+    animation.rotationZ = rotation.z;
+    animation.scaleX = rotationX.x;
+    animation.scaleY = rotationY.y;
+    animation.scaleZ = rotationZ.z;
+    animation.r = r;
+    animation.g = g;
+    animation.b = b;
+    animation.a = a;
+    */
+
+  }
+  
+  void SetAnimation(Animation anim)
+  {
+    animation = anim;
+    numOfFrames = anim.numOfKeyFrames;
+  }
+  
+  void SetFrameSnapping(boolean snap)
+  {
+    snapping = snap;
+  }
+  PVector linearInterpolate(PVector start, PVector end, float ratio) {
+    float x = ((end.x - start.x) * ratio) + start.x;
+    float y = ((end.y - start.y) * ratio) + start.y;
+    float z = ((end.z - start.z) * ratio) + start.z;
+    return new PVector(x, y, z);
+  }
+
+  void UpdateTime(float time)
+  {
+    currentTime += time;
+    if ( currentTime > animation.animDuration) {
+      currentTime =  currentTime - animation.animDuration;
+    }
+
+
+    // TODO: Update the current time
+    // Check to see if the time is out of bounds (0 / Animation_Duration)
+    // If so, adjust by an appropriate amount to loop correctly
+    
+  }
+  
+  // Implement this in derived classes
+  // Each of those should call UpdateTime() and pass the time parameter
+  // Call that function FIRST to ensure proper synching of animations
+  abstract void Update(float time);
+}
+
+class ShapeInterpolator extends Interpolator { 
+  // The result of the data calculations - either snapping or interpolating
+  PShape currentShape;
+  
+  // Changing mesh colors
+  color fillColor;
+  
+  PShape GetShape()
+  {
+    return currentShape;
+  }
+  
+  void Update(float time)
+  {
+    // TODO: Create a new PShape by interpolating between two existing key frames
+    // using linear interpolation
+    // Get key frames
+    int nextIndex = 0;
+    int prevIndex = 0;
+    for (int i = 0; i < numOfFrames; i++) {
+      if (time < animation.keyFrames.get(i).time) {
+        nextIndex = i;
+        break;
+      }
+    }
+    if (nextIndex == 0) {
+
+    }
+    else {
+      prevIndex = nextIndex - 1;
+    }
+    KeyFrame prevFrame = animation.KeyFrame.get(prevIndex);
+    KeyFrame nextFrame = animation.KeyFrame.get(nextIndex);
+    float timeRatio = 0.0;
+    if ( prevFrame.time > nextFrame.time) {
+      ratio = (time / nextFrame.time);
+    }
+    else {
+      ratio = ((time - prevFrame.time) / nextFrame.time);
+    }
+
+
+
+    // We have the frames time ot interperolate and make a shape. 
+    currentShape = createShape();
+    currentShape.beginShape(TRIANGLE); 
+    currentShape.fill(fillColor);
+    s.noStroke();
+    for (int i = 0; i < animation.numOfDataPoints; i++) {
+      PVector pointStart = prevFrame.points.get(i);
+      PVector pointEnd = nextFrame.points.get(i);
+      PVector result = linearInterpolate(pointStart, pointEnd, ratio);
+      vertex(result.x, result.y, result.z);
+    }
+    currentShape.endShape();
+
+  }
+}
+
+class PositionInterpolator extends Interpolator
+{
+  PVector currentPosition;
+  
+  void Update(float time)
+  {
+    // The same type of process as the ShapeInterpolator class... except
+    // this only operates on a single point
+
+  }
+}
