@@ -1,0 +1,129 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex0f0 - Linux is Broken}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage 
+	
+	\subsection{Question 1}
+	\textbf{1.a.} \\ 
+	\indent The above table is not in its first normal form. 
+	
+	\subsection{Finding: \emph{Escalation of Privileges with Sudo}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 8.8 This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(N,L, L, N, U, H, H, H, 8.8)\\
+	\cvss(N,L, L, N, U, H, H, H, 8.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent If an attacker gains access to an employee account that does not have root privileges they can potentially gain root privileges.  Pr0b3 inspected the \textbf{sudodoers} file and observed that a.turing has the ability to run /usr/bin/ps with root privileges.  When a.turing calls for commands in command shell, the first file location that is checked is \textbf{/home/a.turing/bin}.  Pr0b3 copied \textbf{bash} into that folder and remained it psreal.  Upon executing th
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Copy bash into a.turing's /bin folder. cp /usr/bin/bash /home/a.turing/bin.
+	\indent 2. Rename the file to psreal. \textbf{cp bash psreal}.
+	\indent 3. Run command \textbf{sudo -u\#-1 /usr/bin/ps} and enter a.turing's password.  
+	\indent 3. You now have a root on devbox.artstailors.com.
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent \indent 1. Removes a.turings's ability to run \textbf{usr/bin/ps} as root. 
+	
+	\subsection{Finding: \emph{Eternal Red}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 9.8 This is a high risk exploit the allows attackers to remote run code on the attacked machine. 
+	
+	\textbackslash cvss(N,L, N, N, U, H, H, H, 9.8)\\
+	\cvss(N,L, N, N, U, H, H, H, 9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Samba since version 3.5.0 and before 4.6.4, 4.5.10 and 4.4.14 is vulnerable to remote code execution vulnerability, allowing a malicious client to upload a shared library to a writable share, and then cause the server to load and execute it.
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Observe that the samba version is 4.5.9. Versions before 4.5.10 are vulnerable. 
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Update to the latest Samba Revision.  
+	
+	\section{Attack Narrative}
+
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0004, Privilege Escalation, T1574, Hijack Execution Flow, .007, Path Interception by PATH Environment Variable) \\
+	\ttp(TA0004, Privilege Escalation, T1574, Hijack Execuation Flow, .007, Path Interception by PATH Environment Variable) \\
+	
+
+
+\end{document} 

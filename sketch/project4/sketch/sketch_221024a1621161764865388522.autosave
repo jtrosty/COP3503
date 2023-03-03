@@ -88,14 +88,11 @@ class LoadImage {
     PImage theImage;
     String filename;
     void load() { 
-        filename = loadFileList.getText(); //<>// //<>//
-        filename = filename + ".png";
-        theImage = loadImage(filename); 
+        filename = loadFileList.getText();
+        theImage = loadImage(filename + ".png"); 
     } 
-
     PImage getImage() { return theImage; } 
-
-    void setFilename() { filename = loadFileList.getStringValue() + ".png"; } 
+    void setFilename() { filename = loadFileList.getStringValue(); } 
 }
 
 class Terrain {
@@ -115,7 +112,7 @@ class Terrain {
     float gridSizeFl = 30;
     */
     ArrayList<PVector> verticesList = new ArrayList<PVector>(); // 204 -- should be 162, 156
-    ArrayList<Integer> triangleIndex = new ArrayList<Integer>(); // 780, 750 //<>//
+    ArrayList<Integer> triangleIndex = new ArrayList<Integer>(); // 780, 750
     ArrayList<PShape> plane = new ArrayList<PShape>();
 
     void clear() {
@@ -130,44 +127,11 @@ class Terrain {
         color grass = color(143, 170, 64);
         color dirt = color(160, 128, 84);
         color water = color(0, 75, 200);
-        float relativeHeight = abs(vertexHeight / (-snowThreshold));
+        float relativeHeight = abs(vertexHeight) / (-snowThreshold);
         float blendRatio = 0.0;
         
         //if (relativeHeight >= -1.0 && relativeHeight < -0.8) {
         if (withBlend) {
-            if (relativeHeight > 0.8) {
-                blendRatio = (vertexHeight + 0.8f) / 0.2f;
-                return lerpColor(rock, snow, blendRatio);
-            }
-            else if (relativeHeight <= 0.8 && relativeHeight > 0.4) {
-                blendRatio = (vertexHeight + 0.4f) / 0.4f;
-                return lerpColor(grass, rock, blendRatio);
-            }
-            else if (relativeHeight <= 0.4 && relativeHeight > 0.2) {
-                blendRatio = (vertexHeight + 0.2f) / 0.2f;
-                return lerpColor(dirt, grass, blendRatio);
-            }
-            else {
-                blendRatio = (vertexHeight / 0.2f);
-                return lerpColor(water, dirt, blendRatio);
-            }
-        }
-        else {
-            if (relativeHeight > 0.8) {
-                return snow;
-            }
-            else if (relativeHeight <= 0.8 && relativeHeight > 0.4) {
-                return rock;
-            }
-            else if (relativeHeight <= 0.4 && relativeHeight > 0.2) {
-                return grass;
-            }
-            else {
-                return water;
-            }
-        }
-        /*
-        if (withBlend) {
             if (relativeHeight < -0.8) {
                 blendRatio = (vertexHeight + 0.8f) / 0.2f;
                 return lerpColor(rock, snow, blendRatio);
@@ -199,7 +163,6 @@ class Terrain {
                 return water;
             }
         }
-        */
     }
 
     void adjustHeight(PImage image) {
@@ -210,8 +173,8 @@ class Terrain {
         float heightFromColor = 0.0;
         int vertexIndex = 0; 
 
-        for (int j = 0; j < int(rows) + 1; j++) {
-            for (int i = 0; i < int(cols) + 1; i++) {
+        for (int j = 0; j < int(rows); j++) {
+            for (int i = 0; i < int(cols); i++) {
                 xIndex = map(i, 0, cols + 1, 0, image.width);
                 yIndex = map(j, 0, rows + 1, 0, image.height);
 
@@ -378,11 +341,11 @@ class CameraControl {
           deltaY = (mouseY - pmouseY) * scaleMouseControl;
           phi = phi + deltaX;
           theta = theta + deltaY;
-          theta = clampTheta(theta); // Prevent a camera bug by limiting theta from 1 to 179 degrees. //<>//
+          theta = clampTheta(theta); // Prevent a camera bug by limiting theta from 1 to 179 degrees.
         }
 
         cameraX = currentTarget.x + distance * cos(phi) * sin(theta);
-        cameraY = currentTarget.y + distance * cos(theta); //<>//
+        cameraY = currentTarget.y + distance * cos(theta);
         cameraZ = currentTarget.z + distance * sin(theta) * sin(phi);
         /*
         camera( cameraX, cameraY, cameraZ,
@@ -464,10 +427,10 @@ void Generate() {
     terrain.heightModifier = heightModSlider.getValue();
     terrain.gridSize = terrainSize.getValue();
     terrain.colorTerrain = colorToggle.getState();
-    terrain.withStroke = strokeToggle.getState(); //<>//
-    terrain.withBlend = blendToggle.getState(); //<>//
-    loadImage.filename = loadFileList.getText();
-    loadImage.load(); //<>//
+    terrain.withStroke = strokeToggle.getState();
+    terrain.withBlend = blendToggle.getState();
+    //loadImage.load(); //<>//
+    loadImage.filename = new String(loadFileList.getText());
     terrain.generateIndexList();
     terrain.generateVerticesList();
     //terrain.test_DrawVertices();
@@ -523,7 +486,7 @@ void setUpUI() {
     .setSize(barLengthUI, heightUI)
     .setAutoClear(false)
     ;
-  //loadFileList.setValue("terrain0");
+  loadFileList.setValue("terrain0");
   loadFileList.getCaptionLabel().setSize(fontSize);
   loadFileList.getValueLabel().setSize(fontSize);
 /*

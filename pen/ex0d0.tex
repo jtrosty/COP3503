@@ -1,0 +1,114 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex0d0 - Books is Breached}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage 
+	
+		\subsection{Summary of Findings}
+	\indent Pr0b3 used the employee information previously collected to access an internal computer. Based on an overhead conversation pr0b3 was able to determine that the \textbf{sticky keys} could be used to gain access to a command line with root privileges. 
+	
+	\subsection{Finding: \emph{Windows CNG Key Isolation Service Elevation of Privilege Vulnerability CVE-2022-41125}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.8 
+	
+	\textbackslash cvss(L,L,L,N,U,H,H,H,7.8)\\
+	\cvss(L,L,L,N,U,H,H,H,7.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Someone on customers staff has setup the sticky keys exploit to allow them to perform a password reset when convenient. This exploit allows another person with access to the computer to open a command line wiht root privileges.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Log into books.artstailor.com and type \textbf{\\reset} into the windows search box and press enter.  \\
+	\indent 2. Log out and log back in to computer. \\
+	\indent 3. Press shift fives times.  Once sticky keys window pops up, click on the accessibility button in bottom left. \\
+	\indent 4. A command line should be started with root privileges that does not require logging into the computer. 
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Remove the \textbf{reset.bat} file and doe not allow users with admin privileges to perform this exploit. Restrict admin rights to most employees.  
+	
+	\section{Attack Narrative}
+	\indent I used the method described in report Ex0b0 to gain access to boosk.artstailor.com. I then searched the file system and found the reset.bat file at the to of the \textbf{C:\\\\} directory. I then ran the \textbf{//reset} command in the windows search bar. I logged out of \textbf{books.artstailor.com} and then went to the login screen. I then pressed the shift key 5 times. Once the sticky keys prompt came up, I selected the accessibility settings. This caused the command line with root privileges to start.  I then searched through the file system and found the "creds" file within a.turning files system. Inside the creds file I found what I suspect are passwrods for a.turning for: Gatorlink, Amz, Schwab, Insta, TikTok, FB, Windows, Linux, and game. \\ 
+	
+	
+	 A key was found in A.turning cred file. \\
+
+	The code was \textbf{KEY014-qf/UZuKos+DzV6ot0Tktjg==} \\
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0004, Privilege Escalation, T1548, Abuse Elevation Control Mechanism, .002, Abuse Elevation Control Mechanics: Bypass Account Control) \\
+	\ttp(TA0004, Privilege Escalation, T1548, Abuse Elevation Control Mechanism, .002, Abuse Elevation Control Mechanics: Bypass Account Control) \\
+
+
+\end{document} 

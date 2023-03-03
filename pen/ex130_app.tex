@@ -1,0 +1,136 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex130 - EAP Wireless}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0b3 was able to steal hashed credentials by setting up fake access point of WiFi system. 
+	
+	\subsection{Finding: \emph{Mam In The Middle Credential Harvesting Wifi System}}
+	
+	\subsubsection{Severity Rating}
+	\indent The exploit allows users to gain Domain Admin credentials on the the server. 
+	\textbackslash cvss(L, H, N, R, U, L, L, L, 4.5)\\
+	\cvss(L, H, N, R, U, L, L, L, 4.5) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability allows one to make a wifi access point that your users will connect to instead of the actual wireless access point.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm if your system is vulnerability, \\
+	\indent 1. Get software hostapd, and wpa\_supplicant.  .\\
+	\indent 2. In the hostapd configuration file find ssid and set it to artstailor-ddwrt-2. hw\_mode=g and channel to 3.\\
+	\indent 3. Run hostapd with \textbf{sudo ./hostapd-wpe (path to config file)}.\\
+	\indent 4. Use another machine to access our fake wifi access point. \\
+	\indent 5. On the machine running the hostapd, you should see credentials from the transaction. . \\
+		
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. M1031 Network Intrusion Prevention. \\
+	\indent 2. M1035 Limit Access to Resources over Network. \\  
+	\indent 3. M1030 Network Segmentation. \\
+	
+	\section{Attack Narrative}
+	
+	\indent Pr0b3 tested the security of the wifi system.  To start we set up a  hostapd with the following settings. A fake access point was then setup to be used to steal credentials. The conf file for hostapd was modified to be setup for our specific attack. The shot below shows the settings that we used. Hostapd  was started with the command \textbf{sudo ./hostapd-wpe ~/hostapd-2.6/hostapd/hostapd-wpe.conf}  \\
+		\includegraphics[width=4in]{ex130_1.jpg} \\
+	\indent The results of using hostapd are below. Hashed credentials were taken for brian.  \\
+	\includegraphics[width=4in]{ex130_2.jpg} \\
+	\indent The hashed credentials were placed into a txt file and the using the rockyou password text file, the password was cracked and we were able to turn it into plain text.    \\
+	\includegraphics[width=4in]{ex130_3.jpg} \\
+	\indent Next we usd the \textbf{wpa\_supplicant} software to gain access to the server. The configuration file was setup with the following settings:    \\
+	\includegraphics[width=4in]{ex130_config.jpg} \\
+	\indent We begin the attack with the following command \textbf{sudo wpa\_supplicant --c CONFIG\_FILE -i wlan0 -d nl80211}. Once wpa\_supplicant is running and we see the \textbf{CTRL\_EVENT\_CONNECTED} then we connect to wlan0 with \textbf{sudo dhclient wlan0}. Then we connected to the web server at 45.79.141.10 as seen in the below picture. \\
+	\includegraphics[width=4in]{ex130_site.jpg} \\
+	\indent Pr0b3 inspected the html code for the side and there is a commented out url.\\
+	\includegraphics[width=4in]{ex130_html.jpg} \\
+	\indent Pr0b3 navigated to the URL link that was commented out in the HTML code and found the below key. \\
+	\includegraphics[width=4in]{ex130_key.jpg} \\
+	
+
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0009, Collection, T1557, Adversary-in-the-Middle, .003, DHCP Spoofing) \\
+	\ttp(TA0009, Collection, T1557, Adversary-in-the-Middle, .003, DHCP Spoofing) \\
+	
+
+
+
+\end{document} 

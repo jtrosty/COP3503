@@ -1,0 +1,2 @@
+\contentsline {section}{Attack Narrative}{2}{section*.2}%
+\contentsline {subsection}{MITRE ATT{\&}CK Framework TTPs}{2}{section*.3}%

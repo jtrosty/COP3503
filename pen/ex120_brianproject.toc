@@ -1,0 +1,13 @@
+\contentsline {subsection}{Summary of Findings}{2}{section*.2}%
+\contentsline {subsection}{Finding: \emph {Stole Credentials by modifying url to get htpasswd file}}{2}{section*.3}%
+\contentsline {subsubsection}{Severity Rating}{2}{section*.4}%
+\contentsline {subsubsection}{Vulnerability Description}{2}{section*.5}%
+\contentsline {subsubsection}{Confirmation method}{2}{section*.6}%
+\contentsline {subsubsection}{Mitigation or Resolution Strategy}{2}{section*.7}%
+\contentsline {subsection}{Finding: \emph {Able to upload code that can be executed on server. }}{3}{section*.8}%
+\contentsline {subsubsection}{Severity Rating}{3}{section*.9}%
+\contentsline {subsubsection}{Vulnerability Description}{3}{section*.10}%
+\contentsline {subsubsection}{Confirmation method}{3}{section*.11}%
+\contentsline {subsubsection}{Mitigation or Resolution Strategy}{5}{section*.12}%
+\contentsline {section}{Attack Narrative}{5}{section*.13}%
+\contentsline {subsection}{MITRE ATT{\&}CK Framework TTPs}{6}{section*.14}%

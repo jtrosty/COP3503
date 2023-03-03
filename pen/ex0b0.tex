@@ -1,0 +1,100 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex0b0 - Pivot}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage \\
+	
+	\section{Attack Narrative}
+	\indent Accessed COSTUMES computer with provided admin credentials. Then I setup chisel server on kali attack machine. The client was then setup on the costumes machine. The chisel server was set up with --reverse on port 8000 with socks5.  The chisel client then was setup to access the server with R:socks. After having the chisel server and client set up, proxychains was used to run nmap on the devbox.artstailor.com to check port 80. A server was found running. The server was opened in firefox on the kali machine using \textbf{localhost}. The following graphic is proof we were able to access the webpage run on devbox.artstailor.com. \\
+	\includegraphics[width=4in]{ex0b0.jpg} \\
+	
+	 A key was found when inspecting the web code. \\
+	
+	\indent The code was \textbf{KEY012-nrmhB1ncN1rMu0SZrpuMQg==} \\
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0008, Lateral Movement, T1021, Remote Services, .001, Remote Desktop Protocol) \\
+	\ttp(TA0008, Lateral Movement, T1021, Remote Services, .001, Remote Desktop Protocol) \\
+	
+	\indent\textbackslash ttp(TA0008, Reconnaissance, T1592, Gather Victim Host Information, .004, Client Configurations) \\
+	\ttp(TA0003, Persistence, T1136, Create Account, .001, Local Account) \\
+
+
+\end{document} 

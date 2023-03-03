@@ -1,0 +1,145 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex140 - Mobile App Test}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0be conducted reverse engineering of Art's Tailor news android application and discovered credentials to access MySQL server.  
+	
+	\subsection{Finding: \emph{Credentials Hard coded Into Source Code}}
+	
+	\subsubsection{Severity Rating}
+	\indent The gathering of credentials allows an attack the access to your system your employee has. This does allow some amount of exposure of your data or destruction of it. 
+	\textbackslash cvss(N, L, L, N, U, H, L, L, 7.6)\\
+	\cvss(N, L, L, N, U, H, L, L, 7.6) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Application code that was reverse engineer contain credentials for access to MySQL server that can be decoded easily with command line tools. \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit if you have access to the source code. \\
+	\indent 1. Art's Tailor should have source code for the application. Data can be found in android.os.AsyncTask under method with signature "void doInBackground(Void... voidArr).\\
+	To confirm if you do not have access to the source code.\\
+	\indent 1. Start by downloading the \textbf{Jadx Gui} application. It can be used to reverse engineer the software. \\
+	\indent 2. Obtain application .apk file.  Start up \textbf{Jadx} and load the .apk file. \\
+	\indent 3. The source code should now be reverse engineered.  \\
+	\indent 4. Search within the MySQL directories for the phrase 'b64username' and 'b64password.' \\
+	\indent 5. Once you have the codes copy the into text files. For this example the text file is pw.txt. To decode them use the command \textbf{base64 --decodev pw.txt}
+	\indent the username and password should now be available to you. 
+		
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. To fight against reverse engineering of application, use a code obfuscation application such as \textit{appdome}.  Pr0b3 has not evaluated \textit{appdome} and provides no guarantee that it will prevent the reverse engineer of Art's application. \\
+	\indent 2. If possible, remove hard coded credentials from source code.  If not possible, use recommendation 1, and also rename variables to not use easily understood name like 'username' or 'password.' \\
+	\indent 3. Make use of encryption that hashes the code and obfuscate it within your code logic.  
+	
+	\section{Attack Narrative}
+	
+	\indent Pr0b3 had access to ArtsTailorNews.apk, a new application being developed by Art's Tailor. The software was opened with the \textbf{Jadx Gui} software. The source code was reverse engineered by the software and below you see that 100\$ was decoded. The following screenshot is shows the directors that were rebuilt by \textbf{Jadx} and the summary of the reverse engineer.  \\
+		\includegraphics[width=4in]{ex140_1.jpg} \\
+	\indent Pr0b3 then began searching through the source code using keywords such as 'cred', 'credentials', 'password', 'username', and other associated keywords and used the MASVS guidance to determine the guide to search.  \\
+
+	\indent The following picture is additional evidence of reverse engineering the app. \\
+	\includegraphics[width=4in]{ex140_2.jpg} \\
+	\indent The picture below shows the location in the code where the encoded username and password location.\\
+	\includegraphics[width=4in]{ex140-3.jpg} \\
+	\indent The picture below shows the command used to crack the encoded username and password.\\
+	\includegraphics[width=4in]{ex140_4.jpg} \\
+	\indent The credentials found in the application allow access to the MySQL database, evidence shown int he below picture. \\
+	\includegraphics[width=4in]{ex140_7.jpg} \\
+	\indent The picture below shows accessing the MySQL database with the credentials gathered from report ex110 to gain root access to the MySQL. 
+	\includegraphics[width=4in]{ex140_6.jpg} \\
+	\indent With the root access the below shows pr0b3 gathered information on customer names and credit card numbers with root access to the database. 
+	\includegraphics[width=4in]{ex140_5.jpg} \\
+	\indent Using the account information collected on report Ex110. The command \textbf{mysql -u db\_admin\_token -p'KEY019-**********************************************************\\xce}.  
+	\includegraphics[width=4in]{ex140_4.jpg} \\
+	
+	
+	
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0006, Credential Access, T1552, Unsecured Credentials, .001, Credentials In Files) \\
+	\ttp(TA0006, Credential Access, T1552, Unsecured Credentials, .001, Credentials In Files) \\
+	
+	\indent\textbackslash ttp(TA0007, Discovery, T1518, Software Discovery, Jadx, Jadx Reverse Engineer Software) \\
+	\ttp(TA0007, Discovery, T1518, Software Discovery, Jadx, Jadx Reverse Engineer Software) \\
+
+
+\end{document} 

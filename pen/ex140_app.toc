@@ -1,0 +1,8 @@
+\contentsline {subsection}{Summary of Findings}{2}{section*.2}%
+\contentsline {subsection}{Finding: \emph {Credentials Hard coded Into Source Code}}{2}{section*.3}%
+\contentsline {subsubsection}{Severity Rating}{2}{section*.4}%
+\contentsline {subsubsection}{Vulnerability Description}{2}{section*.5}%
+\contentsline {subsubsection}{Confirmation method}{2}{section*.6}%
+\contentsline {subsubsection}{Mitigation or Resolution Strategy}{2}{section*.7}%
+\contentsline {section}{Attack Narrative}{3}{section*.8}%
+\contentsline {subsection}{MITRE ATT{\&}CK Framework TTPs}{6}{section*.9}%

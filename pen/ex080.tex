@@ -1,0 +1,150 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex08'0 - ThroughTheGate}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0b3 performed password spray attack on email exchange accounts.  Pr0b3 was able to get username and password for a employee.  We gained access to the router due to the username and password being the default.  With access to the router and the employees credentials, we were able to make log into the remote desktop of the employee. 
+	
+	\subsection{Finding: \emph{pFSense Default Admin Credentials}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 10.0. This is a high risk exploit that opens network access to an attacker. 
+
+	\textbackslash cvss(N,H,N,N,U,H,H,H,10.0)\\
+	\cvss(N,H,N,N,U,H,H,H,10.0) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability allows an attacker complete control over the router and the rules.  The pfSense default admin credentials are publicly known and anyone can gain control of the router.
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Go to IP address of the router, 217.70.184.3:8443.\\
+	\indent 2. Enter in default pfsense credentials.\\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Change admin credentials on the router.  \\
+	
+	\subsection{Finding: \emph{pFSense Default Admin Credentials}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 10.0. This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(N,H,N,N,U,H,H,H,10.0)\\
+	\cvss(N,H,N,N,U,H,H,H,10.0) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability allows an attacker complete control over the router and the rules.  The pfSense default admin credentials are publicly known and anyone can gain control of the router.
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Go to IP address of the router, 217.70.184.3:8443.\\
+	\indent 2. Enter in default pfsense credentials.\\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. Change admin credentials on the router.  \\
+	\indent 2. Setup router so that it cannot be accessed remotely. \\
+	\indent 3. Remove the ability use a remote desktop. \\
+	
+	\section{Attack Narrative}
+	
+	\indent Intent was collected from trash and from googling. A possible list of usernames for Art's Tailor shop was made and a list of common passwords was generated.  One employee's account was compromised, S.Wilkins. Then I gained access to the router and was able to compromise the system as an administrator.  With access to the router, I configured a firewall NAT rule that directed my system to the costumes.artstailor.com computer IP .10.70.184.39.  I directed the the rule to go to port 3389 of the costumes computer. This port is the Microsoft Remote Desktop port.  I then opened up a remote desktop from costumes and was able to log in using S.Wilkins credentials.  Below is a screenshot of running the remote desktop from my machine.  \\
+
+  	\includegraphics[width=4in]{ex080_evidence.jpg} \\
+  	
+  	\indent Pr0b3 request for the remainder of the penetration testing period:
+  	\indent 1. Change the password for the router so that it is not the default. \\
+  	\indent 2. Set up the router so that it cannot be logged into remotely.  \\
+  	\indent 3. Set up a rule so that allows penetration testing computers to access the network. This can be setup with the \textbf{IPsec Remote Access VPN Example Using IKEv2 with EAP-MSCHAPv2} feature of pfsense. Art's Tailor can create user credentials that are only used by Pr0b3 and can be removed at the end of the penetration testing period. 
+  	\href{https://docs.netgate.com/pfsense/en/latest/recipes/ipsec-mobile-ikev2-eap-mschapv2.html#ipsec-remote-access-vpn-example-using-ikev2-with-eap-mschapv2}{PFsense VPN documentation.} \\
+  	
+  	
+  	\indent A key was found in the email inbox of the employee \textbf{KEY010-5LPdiVVTKM1EJT2mpG75eQ==}. 
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0001, Initial Access, T1078, Valid Accounts, .001, Default Accounts) \\
+	\ttp(TA0001, Initial Access, T1078, Valid Accounts, .001, Default Accounts) \\
+	\indent\textbackslash ttp(TA0001, Initial Access, T1078, Valid Accounts, .004, Cloud Accounts) \\
+	\ttp(TA0001, Initial Access, T1078, Valid Accounts, .004, Cloud Accounts) \\
+	\indent\textbackslash ttp(TA0001, Initial Access, T1133, External Remote Services, G0026, APT18) \\
+	\ttp(TA0001, Initial Access, T1078, Valid Accounts, G0026, APT18) \\
+
+\end{document} 

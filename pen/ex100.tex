@@ -1,0 +1,118 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex100 - Responder}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage 
+	
+	\subsection{Summary of Findings}
+	\indent Pr0b3 was able to get access additional credentials for user d.darkblood for client 10.70.184.101 using internal network attack tool, \textit{Responder}.
+	
+	\subsection{Finding: \emph{Stole Credentials with Internal Network Attack}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 8.8 This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(L,L, H, N, U, H, H, N, 6.0)\\
+	\cvss(L,L, H, N, U, H, H, N, 6.0) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent This attack occurs when already inside the network and having root access. The \textit{Responder} software exploited the default configuration of the \textit{Windows Proxy Automatic Detection (WPAD)} system.  The system will then send a request for the user to enter their credentials.  When the user enters the credentials they are obtained by the attacker.  
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Open root access on a Linux computer, in this case, \textbf{devbox.artstailor.com}. \\
+	\indent 2. Ensure you have the Responder Software. \\
+	\indent 3. Ensure WPAD request are available using wireshark or TCPDUMP. \\
+	\indent 4. Use the command \textbf{python Responder.py -I ens33 -wFb}.\\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Disable Windows \textbf{Web Proxy Auto Discovery Protocol (WPAD)}. For the current size of Art's Tailors, configuring employee computers to know the proxy server for access out side the system is possible.\\
+	   
+	\section{Attack Narrative}
+	\indent Using the previously described access to root on devbox.artstailor.com, pr0b3 transferred over \textbf{Responder} and \textbf{TCPDUMP} to devbox.artstailor.com.  Pr0b3 setup TCPDUMP to observe traffice for a 8 min time period. Receiving the packets, WPAD request were noticed as traffic. The \textbf{TCPDUMP} traffic can be seen in the below picture. \\
+
+	\includegraphics[width=4in]{tcp_1.jpg}
+	\\
+	\indent With the information provided \textbf{Responder} was prepared to perform the attack. The command \textbf{lsof -i:PORT} was used to investigate ports 80, 5, 443, and 5986. Then the command \textbf{kill \$(lsof -t -i:PORT)} was used to end process on those ports. Responder then was initiated with the command shown in the confirmation section. After a few minutes, user credentials were gathered, evidence is show below.\\
+	
+	
+	
+	\includegraphics[width=4in]{tcp_2.jpg}
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0006, Credential Access, T1557, Adversary-in-the-Middle, .001, LLMNR/NBT-NS Poisoning and SMB Relay) \\
+	\ttp(TA0006, Credential Access, T1557, Adversary-in-the-Middle, .001, LLMNR/NBT-NS Poisoning and SMB Relay) \\
+	
+
+
+\end{document} 

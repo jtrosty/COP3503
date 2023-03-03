@@ -1,0 +1,122 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex0a0 - HashTag}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent The hashed passwords harvested in the last report were put through a system to crack the current passwords.  1 password was cracked. 
+	
+	\subsection{Finding: \emph{Weak Password Requirements CWE-521}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 8.1 This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(N,H,N,N,U,H,H,H,8.1)\\
+	\cvss(N,H,N,N,U,H,H,H,8.1) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability make it easier for attackers to use easily available methods to crack passwords. 
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Follow instructions ot get \textbf{mimikatz} on windows system.\\
+	\indent 2. Use a admin account to run \textbf{mimikatz}.\\
+	\indent 3. Once running, escalate privileges with the commands \\ \textbf{PRIVILEGE::Debug0} and \textbf{TOKEN::Elevate}.
+	\indent 4. Run the commands \textbf{SEKURLSA::LogonPasswords} and  \textbf{LSADUMP::SAM}.\\
+	\indent 5. Use the user accounts and hashes are dumped and crack them with \textbf{John The Ripper} software meant for cracking hashed passwords.  \\
+	\indent 6. Use the file \textbf{rockyou.txt} that contains common passwors and one password will be cracked. The password that is cracked is owned by the user \textbf{d.darkblood}. The password used by the individual starts with the letter \textbf{D} and ends with the number \textbf{9}.  \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent \indent 1. Implement a minimum password requirement that requires passwords to be 12 characters with at least 1 uppercase letter, lowercase letter, number, and symbol.  \\
+	\indent 2. Password does not include word that can be found in dictionary or the name of a person, product or organization.  \\
+	
+	\section{Attack Narrative}
+	
+	\indent The hashed password data collected on report Ex090 was used.  With the \textbf{John The Ripper} software I cracked at least 1 password. Below is evidence of the cracking.  I have whited out the password. The password starts with \textbf{D} and ends with \textbf{9}.  \\
+	\includegraphics[width=4in]{break_password.jpg} \\
+
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0003, Persistence, T1136, Create Account, .001, Local Account) \\
+	\ttp(TA0003, Persistence, T1136, Create Account, .001, Local Account) \\
+	
+
+\end{document} 

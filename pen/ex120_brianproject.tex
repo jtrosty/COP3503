@@ -1,0 +1,164 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex120 - Brian's Project}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Exploits int he design of php website were used to gain access to server. The php website \textbf{www.artstailor.com/brian} allows for exploitation of GET to obtain hashed credentials.  The credentials were used to gain access to a portion of the site that allows uploading of files. The ability for any user to upload a file is also a vulnerability.  The file pr0b3 uploaded allowed us to open a shell on the server. Pr0b3 has previously reported weak password vulnerability and will not repeat that finding there, it is applicable as the hash was simple to crack with well known available software. 
+	
+	\subsection{Finding: \emph{Stole Credentials by modifying url to get htpasswd file}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.3. The credentials can be taken at any moment while the site \textbf{www.artstailor.com/brian} is up. The credentials can then be easily cracked using commonly available password crackers, such as \textbf{John The Ripper}.
+	
+	\textbackslash cvss(N,L,N,N,U,L,L,L, 7.3)\\
+	\cvss(N,L,N,N,U,L,L,L,7.3) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The website is setup such that visitors of the site can modify the URL in order to send GET, POST, and OPTIONS request to the web server that were not intended to be done.  These can be used to maliciously gain file such as \textbf{htpssword}.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Log into \textbf{http://www.artstailor.com/brian}.  \\
+	\indent 2. Paste the following URL into the your browser. \textbf{http://www.artstailor.com/brian/getimage.php?raw=true\&file=htpasswd}.\\  
+	\indent 3. You should now see the following, hashed credentials." \\
+	\includegraphics[width=4in]{ex120_1.jpg} \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. Immediate action would be to take down the site until it can be secured. \\
+	\indent 2. MITRE mitigation M1022 - Restrict file and directory permissions. \\
+	
+	\subsection{Finding: \emph{Able to upload code that can be executed on server. }}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 9.8 as it allows attackers to run software on your server, in our case, we opened a shell and gained access to the file system on the server.  \\
+	
+	\textbackslash cvss(N,L,N,N,U,H,H,H, 9.8)\\
+	\cvss(N,L,N,N,U,H,H,H, 9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The website allows users to upload files. We uploaded a reverse shell script that allows us ot open a shell on the server running a php website. The software used was \textbf{laudunam}. \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Prepare laudnum php reverse shell script by modifying IP address in code to match your computer's iP address.   \\
+	\indent 2. Start up burp suite software.  Open web browser in burp suite in the \textbf{Proxy} tab and navigate to site.   \\
+	\indent 3. Log onto \textbf{www.artstailor.com/brian} and log into admin section using stolen and cracked credentials using Burp Suite software.  Bellow is evidence we cracked the password shown above.  \\ 
+	\includegraphics[width=4in]{ex120_2.jpg} \\
+	\indent 4. Make a copy of reverse shell script with .png or .jpg at the end.\\
+	\indent 5. In \textbf{proxy} tab of burp suite, turn on intercept. \\
+	\indent 6. Upload shell script with .png or .jpg file.  The uplaod will be intercept.  Navigate to the script and remove the .jpg or .png from the file and then allow the uplaod to continue. \\
+	\indent 7. You can turn off interception now.  You should see the file was successfully uploaded. \\
+	\indent 8. Navigate to \textbf{https://www.artstailor.com/brian/imgfiless} and you'll see the shell script.  Below is evidence we uploaded the file. \\
+	\includegraphics[width=4in]{ex120_3.jpg} \\
+	\indent 9. Start apache2 server on your computer. \\
+	\indent 10. Click on the reverse shell script and get it to run.\\
+	\indent 11. A shells should now open on your computer.  \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. First to immediately secure the site, take it down until corrections are made. \\ 
+	\indent 2. MITRE M1037 - Filter network traffic. Only allow access to server form specified machines. \\
+	\indent 3. MITRE M1031 - Network Intrusion Prevention. \\
+	\indent 4. MITRE M1020 - SSL/TLS Inspection, inspect HTTPS traffic.\\
+	\indent 5. MITRE M1038 - Execution Prevention. \\
+	\indent 6. MITRE 1021 - Restrict Web-Based Content. \\
+	
+	\section{Attack Narrative}
+	
+	\indent Pr0b3 inspected the new site on Art's Tailor Shop servers.  NIKTO was used to analyze the domain and one of the warming provided stated that GET, PUT, OPTION commands could be used to cause behavior not intended by the site's creator. We modified a URL as described in the confirmation method above in order to gain the hashed credentials.  The credentials were cracked using \textbf{John the Ripper} password cracking software.  \\
+	\indent Once we had Brian's password, we logged into the secured section of his site and saw that we could upload a file.  Usign the \textbf{Burp Suite} we inspected the code associated with the upload and saw it checks for '.jpg' and '.png' at the end of a file. Pr0b3 updated the reverse shell file to have the appropriate tag line and then intercepted the transaction after upload was click. When 'upload' is click is when the file extension is checks. The check happens on the site, as opposed to the server. With the intercepted transaction, we modified the file back to its original form and were then able to run a shell script and gain access to the server. Below is evidence of files that were accessed with this exploit. 
+	We obtained KEY020 and also an invoice we had previously obtained with a different exploit, both are shown below. \\ 
+		\includegraphics[width=4in]{ex120_4.jpg} \\
+		\includegraphics[width=4in]{ex120_5.jpg} \\
+	
+	
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0002, Execution, T1059, Command Scripting Interpreter, .008, Network Device CLI) \\
+	\ttp(TA0002, Execution, T1059, Command Scripting Interpreter, .008, Network Device CLI) \\
+	
+	\indent\textbackslash ttp(TA0006, Credential Access, T1552, Unsecured Credentials, .001, Credentials In Files) \\
+	\ttp(TA0006, Credential Access, T1552, Unsecured Credentials, .001, Credentials In Files) \\
+	
+	\indent\textbackslash ttp(TA0011, Command and Control, T1090, Proxy, .002, External Proxy) \\
+	\ttp(TA0011, Command and Control, T1090, Proxy, .002, External Proxy) \\
+
+\end{document} 

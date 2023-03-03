@@ -166,40 +166,6 @@ class Terrain {
                 return water;
             }
         }
-        /*
-        if (withBlend) {
-            if (relativeHeight < -0.8) {
-                blendRatio = (vertexHeight + 0.8f) / 0.2f;
-                return lerpColor(rock, snow, blendRatio);
-            }
-            else if (relativeHeight >= -0.8 && relativeHeight < -0.4) {
-                blendRatio = (vertexHeight + 0.4f) / 0.4f;
-                return lerpColor(grass, rock, blendRatio);
-            }
-            else if (relativeHeight >= -0.4 && relativeHeight < -0.2) {
-                blendRatio = (vertexHeight + 0.2f) / 0.2f;
-                return lerpColor(dirt, grass, blendRatio);
-            }
-            else {
-                blendRatio = (vertexHeight / 0.2f);
-                return lerpColor(water, dirt, blendRatio);
-            }
-        }
-        else {
-            if (relativeHeight < -0.8) {
-                return snow;
-            }
-            else if (relativeHeight >= -0.8 && relativeHeight < -0.4) {
-                return rock;
-            }
-            else if (relativeHeight >= -0.4 && relativeHeight < -0.2) {
-                return grass;
-            }
-            else {
-                return water;
-            }
-        }
-        */
     }
 
     void adjustHeight(PImage image) {

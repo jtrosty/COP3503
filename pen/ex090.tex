@@ -1,0 +1,150 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex090 - PowerUp}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0b3 used the employee information previously collected to access internal computer. Then Pr0b3 exploited this to find a vulnerability that allowed us to make a local admin account. With the local admin account, we collected the encrypted hashed passwords that are used on the machine. The hashed passwords were then cracked with software and a common password file. 
+	
+	\subsection{Finding: \emph{Windows Elevation of Privilege Vulnerability CVE-2021-36934}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.8 
+
+	\textbackslash cvss(L,L,L,N,U,H,H,H,7.8)\\
+	\cvss(L,L,L,N,U,H,H,H,7.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Allows attacker to run code with SYSTEM privileges.  The attack can install programs, change or delete data, and create new accounts with admin rights. Occures because of permissive Access Control Lists (ACLS) on the Security Accounts Manager (SAM) database. See CVE-2021-36934.\\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Go to IP address of the router, 217.70.184.3:8443.\\
+	\indent 2. Enter in default pfsense credentials.\\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Restrict access to the contents of \%windir\%\\system32\\config. As an administrator run \textbf{icacls \%windir\%\\system32\\config\\*.* /inheritance:e}.
+	Delete shadow copies following Microsoft's guidance:   	\href{https://support.microsoft.com/en-us/topic/kb5005357-delete-volume-shadow-copies-1ceaa637-aaa3-4b58-a48b-baf72a2fa9e72}{KB5005357 - Delete Volume Shadow Copies} \\
+	
+	\subsection{Finding: \emph{Weak Password Requirements CWE-521}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 8.1 This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(N,H,N,N,U,H,H,H,8.1)\\
+	\cvss(N,H,N,N,U,H,H,H,8.1) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability make it easier for attackers to use easily available methods to crack passwords. 
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Follow instructions ot get \textbf{mimikatz} on windows system.\\
+	\indent 2. Use a admin account to run \textbf{mimikatz}.\\
+	\indent 3. Once running, escalate privileges with the commands \\ \textbf{PRIVILEGE::Debug0} and \textbf{TOKEN::Elevate}.
+	\indent 4. Run the commands \textbf{SEKURLSA::LogonPasswords} and  \textbf{LSADUMP::SAM}.\\
+	\indent 5. Use the user accounts and hashes are dumped and crack them with \textbf{John The Ripper} software meant for cracking hashed passwords.  \\
+	\indent 6. Use the file \textbf{rockyou.txt} that contains common passwors and one password will be cracked. The password that is cracked is owned by the user \textbf{d.darkblood}. The password used by the individual starts with the letter \textbf{D} and ends with the number \textbf{9}.  \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent \indent 1. Implement a minimum password requirement that requires passwords to be 12 characters with at least 1 uppercase letter, lowercase letter, number, and symbol.  \\
+	\indent 2. Password does not include word that can be found in dictionary or the name of a person, product or organization.  \\
+	
+	\section{Attack Narrative}
+	
+	\indent I got back on the costumes PC, below is evidence I am on the costumes computer. The method used is the same as documented in report Ex080. \\
+	
+	\includegraphics[width=4in]{ex090_costumes.jpg} \\
+	
+	\indent A remote desktop was crated and shared a folder from my machine with the remote desktop.  I attempted to send over file PowerUp.ps1, a common penetration utility.  The firewall blocked the software from being used on the machine because of the signature of the code. In order to bypass the firewall the code was changed to ensure it is not familiar to the system.  With the utility I crated a local admin account named \textbf{john} on the costumes machine.  \\
+	\indent Now I have a admin account on your system, with that power I disabled the windows security features on the machine and brought on the \textbf{mimikatz} software collect hashes of passwords.  With the hashed passwords, they were loaded back onto my machine.  At least one hashed password was decoded with  \textbf{John the Ripper} and the \textbf{rockyou.txt} file.  
+
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0001, Initial Access, T1078, Valid Accounts, .001, Default Accounts) \\
+	\ttp(TA0001, Initial Access, T1078, Valid Accounts, .001, Default Accounts) \\
+	\indent\textbackslash ttp(TA0007, Discovery, T1087, Account Discovery, .001, Local Accounts) \\
+	\ttp(TA0007, Discovery, T1078, Account Discovery, .001, Local Accounts) \\
+	\indent\textbackslash ttp(TA0003, Persistence, T1136, Create Account, .001, Local Account) \\
+	\ttp(TA0003, Persistence, T1136, Create Account, .001, Local Account) \\
+	
+
+\end{document} 

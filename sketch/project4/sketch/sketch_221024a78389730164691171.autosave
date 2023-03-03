@@ -12,7 +12,7 @@ LoadImage loadImage = new LoadImage();
 
 // User Controls 
 Button generateButton;
-Textfield loadFileList;
+DropdownList loadFileList;
 Slider rowSlider;
 Slider colSlider;
 Slider terrainSize;
@@ -37,39 +37,25 @@ int toggleStartX = 250;
 
 int fontSize = 10;
 int toggleLabelOffset = 5;
-boolean initialStart = true;
 
 void setup() {
     size(1600, 1000, P3D);
     cp5 = new ControlP5(this);
     camControl = new CameraControl();
-    //camControl.AddLookAtTarget(new PVector(0, 0, 0));
+    camControl.AddLookAtTarget(new PVector(0, 0, 0));
     setUpUI();
 }
 
 void draw() {
-    background(0);
-    loadFileList.setVisible(true);
-    loadFileList.show();
+    background(200);
     perspective(radians(50.0f), width / (float) height, 0.1, 1000);
     camControl.Update();
-    //DrawGridLines();
-    //loadImage.load();
-    //terrain.generateIndexList();
-    //terrain.generateVerticesList();
-    ////terrain.test_DrawVertices();
-    //terrain.adjustHeight(loadImage.getImage());
-    if (initialStart) {
-        clear(); //<>//
-        resetBackground();
-        terrain.clear();
-        DrawGridLines();
-        loadImage.load();
-        terrain.generateIndexList();
-        terrain.generateVerticesList();
-        terrain.drawTriangles();
-        initialStart = false;
-    }
+    DrawGridLines();
+    loadImage.load();
+    terrain.generateIndexList();
+    terrain.generateVerticesList();
+    //terrain.test_DrawVertices();
+    terrain.adjustHeight(loadImage.getImage());
     terrain.drawTriangles();
     
     perspective(); //<>// //<>// //<>//
@@ -87,27 +73,15 @@ void keyPressed() {
 class LoadImage {
     PImage theImage;
     String filename;
-    void load() { 
-        filename = loadFileList.getText(); //<>// //<>//
-        filename = filename + ".png";
-        theImage = loadImage(filename); 
-    } 
-
+    void load() { theImage = loadImage("terrain4.png"); } 
     PImage getImage() { return theImage; } 
-
-    void setFilename() { filename = loadFileList.getStringValue() + ".png"; } 
 }
 
 class Terrain {
     //int size = 10; // variable for debugging and testing
-    float rows = 10;
-    float cols = 10;
-    float gridSize = 50;
-    float heightModifier = 5.0;
-    float snowThreshold = 5.0;
-    boolean colorTerrain = false;
-    boolean withStroke = true;
-    boolean withBlend = false;
+    int rows = 10;
+    int cols = 10;
+    int gridSize = 20;
 /*
     float sizeFl = 10;
     float rowsFl = size;
@@ -115,7 +89,7 @@ class Terrain {
     float gridSizeFl = 30;
     */
     ArrayList<PVector> verticesList = new ArrayList<PVector>(); // 204 -- should be 162, 156
-    ArrayList<Integer> triangleIndex = new ArrayList<Integer>(); // 780, 750 //<>//
+    ArrayList<Integer> triangleIndex = new ArrayList<Integer>(); // 780, 750
     ArrayList<PShape> plane = new ArrayList<PShape>();
 
     void clear() {
@@ -124,94 +98,17 @@ class Terrain {
         plane.clear();
     }
 
-    color getColor(float vertexHeight) {
-        color snow = color(255, 255, 255);
-        color rock = color(135, 135, 135);
-        color grass = color(143, 170, 64);
-        color dirt = color(160, 128, 84);
-        color water = color(0, 75, 200);
-        float relativeHeight = abs(vertexHeight / (-snowThreshold));
-        float blendRatio = 0.0;
-        
-        //if (relativeHeight >= -1.0 && relativeHeight < -0.8) {
-        if (withBlend) {
-            if (relativeHeight > 0.8) {
-                blendRatio = (vertexHeight + 0.8f) / 0.2f;
-                return lerpColor(rock, snow, blendRatio);
-            }
-            else if (relativeHeight <= 0.8 && relativeHeight > 0.4) {
-                blendRatio = (vertexHeight + 0.4f) / 0.4f;
-                return lerpColor(grass, rock, blendRatio);
-            }
-            else if (relativeHeight <= 0.4 && relativeHeight > 0.2) {
-                blendRatio = (vertexHeight + 0.2f) / 0.2f;
-                return lerpColor(dirt, grass, blendRatio);
-            }
-            else {
-                blendRatio = (vertexHeight / 0.2f);
-                return lerpColor(water, dirt, blendRatio);
-            }
-        }
-        else {
-            if (relativeHeight > 0.8) {
-                return snow;
-            }
-            else if (relativeHeight <= 0.8 && relativeHeight > 0.4) {
-                return rock;
-            }
-            else if (relativeHeight <= 0.4 && relativeHeight > 0.2) {
-                return grass;
-            }
-            else {
-                return water;
-            }
-        }
-        /*
-        if (withBlend) {
-            if (relativeHeight < -0.8) {
-                blendRatio = (vertexHeight + 0.8f) / 0.2f;
-                return lerpColor(rock, snow, blendRatio);
-            }
-            else if (relativeHeight >= -0.8 && relativeHeight < -0.4) {
-                blendRatio = (vertexHeight + 0.4f) / 0.4f;
-                return lerpColor(grass, rock, blendRatio);
-            }
-            else if (relativeHeight >= -0.4 && relativeHeight < -0.2) {
-                blendRatio = (vertexHeight + 0.2f) / 0.2f;
-                return lerpColor(dirt, grass, blendRatio);
-            }
-            else {
-                blendRatio = (vertexHeight / 0.2f);
-                return lerpColor(water, dirt, blendRatio);
-            }
-        }
-        else {
-            if (relativeHeight < -0.8) {
-                return snow;
-            }
-            else if (relativeHeight >= -0.8 && relativeHeight < -0.4) {
-                return rock;
-            }
-            else if (relativeHeight >= -0.4 && relativeHeight < -0.2) {
-                return grass;
-            }
-            else {
-                return water;
-            }
-        }
-        */
-    }
-
     void adjustHeight(PImage image) {
         float xIndex = 0;
         float yIndex = 0;
         color imageColor;
         float red = 0.0;
         float heightFromColor = 0.0;
+        float maxHeight = 5.0;
         int vertexIndex = 0; 
 
-        for (int j = 0; j < int(rows) + 1; j++) {
-            for (int i = 0; i < int(cols) + 1; i++) {
+        for (int j = 0; j < rows; j++) {
+            for (int i = 0; i < cols; i++) {
                 xIndex = map(i, 0, cols + 1, 0, image.width);
                 yIndex = map(j, 0, rows + 1, 0, image.height);
 
@@ -219,18 +116,18 @@ class Terrain {
                 red = imageColor >> 16 & 0xFF; // Bit shift method to get the red color
                 heightFromColor = map(red, 0, 255, 0.0, 1.0);
 
-                vertexIndex = j * (int(cols) + 1) + i;
-                verticesList.get(vertexIndex).y = heightModifier * heightFromColor;
+                vertexIndex = j * (cols + 1) + i;
+                verticesList.get(vertexIndex).z = maxHeight * heightFromColor;
             }
         }
     }
 
     void generateIndexList() {
-        int verticesInRow = int(cols) + 1;
+        int verticesInRow = cols + 1;
 
-        for (int j = 0; j < int(rows); j++) {
+        for (int j = 0; j < rows; j++) {
             int rowModifier = j * (verticesInRow);
-            for (int i = 0; i < int(cols); i++) {
+            for (int i = 0; i < cols; i++) {
                 // Form both triangles for a square
                 // Triangle 1
                 triangleIndex.add(rowModifier + i);
@@ -253,14 +150,13 @@ class Terrain {
 
         for (float row = start; row <= end; row += incrementRow) {
             for (float col = start; col <= end; col += incrementCol) {
-                PVector newPvect = new PVector(row, 0, col);
+                PVector newPvect = new PVector(row, col, 0);
                 verticesList.add(newPvect); 
             }
         }
     }
     
     void original_generateVerticesList() {
-        /*
         float start = float(gridSize) / -2.0f;
         float end = float(gridSize) / 2.0f;
         float incrementRow = float(gridSize) / float(rows);
@@ -273,11 +169,10 @@ class Terrain {
                 verticesList.add(newPvect); 
             }
         }
-        */
     }
 
     void drawTriangles() {
-        int indexesPerRow = 3 * int(cols) * 2;
+        int indexesPerRow = 3 * cols * 2;
         beginShape(TRIANGLES);
         for (int i = 0; i < triangleIndex.size(); i++) {
             if ( i % indexesPerRow == 0 ) {
@@ -286,25 +181,13 @@ class Terrain {
             }
             int vertIndex = triangleIndex.get(i);
             PVector vert = verticesList.get(vertIndex);
-            if (colorTerrain) {
-                fill(getColor(vert.y));
-            }
-            else {
-                fill(200);
-            }
-            if (withStroke) {
-                stroke(0, 0, 0);
-            }
-            else{
-                noStroke();
-            }
             vertex(vert.x, vert.y, vert.z);
         }
         endShape();
     }
 
     ArrayList<PShape> makeShapeTriagles() {
-        int indexesPerRow = 3 * int(cols) * 2;
+        int indexesPerRow = 3 * cols * 2;
         beginShape(TRIANGLES);
         for (int i = 0; i < triangleIndex.size(); i++) {
             /*
@@ -342,8 +225,8 @@ class CameraControl {
     float phi = PI / 4.0;
     float distance = 100;
     float cameraX = 0;
-    float cameraY = 30;
-    float cameraZ = 70;
+    float cameraY = 0;
+    float cameraZ = 0;
     float deltaX = 0;
     float deltaY = 0;
     float minZoom = 10.0;
@@ -354,7 +237,6 @@ class CameraControl {
     int currIndex = 0;
     float thetaClampMax = radians(179);
     float thetaClampMin = radians(1);
-
     CameraControl() {
         targets.add(zeroPoint);
         currentTarget = zeroPoint;
@@ -378,24 +260,6 @@ class CameraControl {
           deltaY = (mouseY - pmouseY) * scaleMouseControl;
           phi = phi + deltaX;
           theta = theta + deltaY;
-          theta = clampTheta(theta); // Prevent a camera bug by limiting theta from 1 to 179 degrees. //<>//
-        }
-
-        cameraX = currentTarget.x + distance * cos(phi) * sin(theta);
-        cameraY = currentTarget.y + distance * cos(theta); //<>//
-        cameraZ = currentTarget.z + distance * sin(theta) * sin(phi);
-        /*
-        camera( cameraX, cameraY, cameraZ,
-                currentTarget.x, currentTarget.y, currentTarget.z,
-                0, -1, 0);
-                */
-    }
-        /*
-        else if (mousePressed == true) {
-          deltaX = (mouseX - pmouseX) * scaleMouseControl;
-          deltaY = (mouseY - pmouseY) * scaleMouseControl;
-          phi = phi + deltaX;
-          theta = theta + deltaY;
           theta = clampTheta(theta); // Prevent a camera bug by limiting theta from 1 to 179 degrees.
 
           cameraX = currentTarget.x + distance * cos(phi) * sin(theta);
@@ -412,11 +276,25 @@ class CameraControl {
                 currentTarget.x, currentTarget.y, currentTarget.z,
                 0, -1, 0);
         }
-        */
           
+    }
+
+    void AddLookAtTarget(PVector v1) {
+        targets.add(v1);
+    }
+
+    void CycleTarget() {
+        if (currIndex < targets.size() - 1) {
+            currIndex++;
+        }
+        else {
+            currIndex = 0;
+        }
+        currentTarget = targets.get(currIndex);
+    }
 
     void Zoom(float zoom) {
-        distance += zoom * 7;
+        distance += zoom * 6;
         if (distance < minZoom) distance = minZoom;
         if (distance > maxZoom) distance = maxZoom;
     }
@@ -457,22 +335,15 @@ void Generate() {
     clear(); //<>//
     resetBackground();
     terrain.clear();
-    terrain.rows = rowSlider.getValue();
-    terrain.cols = colSlider.getValue();
-    terrain.gridSize = terrainSize.getValue();
-    terrain.snowThreshold = snowThresholdSlider.getValue();
-    terrain.heightModifier = heightModSlider.getValue();
-    terrain.gridSize = terrainSize.getValue();
-    terrain.colorTerrain = colorToggle.getState();
-    terrain.withStroke = strokeToggle.getState(); //<>//
-    terrain.withBlend = blendToggle.getState(); //<>//
-    loadImage.filename = loadFileList.getText();
-    loadImage.load(); //<>//
+    terrain.rows = int(rowSlider.getValue());
+    terrain.cols = int(colSlider.getValue());
+    terrain.gridSize = int(terrainSize.getValue());
+    loadImage.load();
     terrain.generateIndexList();
     terrain.generateVerticesList();
     //terrain.test_DrawVertices();
-    terrain.adjustHeight(loadImage.getImage()); //<>//
-    //terrain.drawTriangles();
+    terrain.adjustHeight(loadImage.getImage());
+    terrain.drawTriangles();
      //<>//
 
 }
@@ -518,21 +389,10 @@ void setUpUI() {
     ;
   generateButton.getCaptionLabel().setSize(fontSize);
 
-  loadFileList = cp5.addTextfield("Load From File")
-    .setPosition(startPosX, startPosY + (4 * offsetUI) + 10)
-    .setSize(barLengthUI, heightUI)
-    .setAutoClear(false)
-    ;
-  //loadFileList.setValue("terrain0");
-  loadFileList.getCaptionLabel().setSize(fontSize);
-  loadFileList.getValueLabel().setSize(fontSize);
-/*
   loadFileList = cp5.addDropdownList("Load From File")
     .setPosition(startPosX, startPosY + (4 * offsetUI) + 10)
     .setSize(barLengthUI, heightUI)
-    .setOpen(true)
-    .setItemHeight(20)
-    .setBarHeight(15)
+    .setBarHeight(heightUI)
     .addItem("terrain0", 0)
     .addItem("terrain1", 1)
     .addItem("terrain2", 2)
@@ -540,11 +400,11 @@ void setUpUI() {
     .addItem("terrain4", 4)
     .addItem("terrain5", 5)
     .addItem("terrain6", 6)
+    .setItemHeight(heightUI / 2);
     ;
   loadFileList.setValue(1);
   loadFileList.getCaptionLabel().setSize(fontSize);
   loadFileList.getValueLabel().setSize(fontSize);
-  */
 
   strokeToggle  = cp5.addToggle("Stroke")
     .setPosition(toggleStartX, startPosY)

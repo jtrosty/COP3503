@@ -1,0 +1,136 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex150 - DC Has Fallen}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\subsection{Summary of Findings}
+	\indent Pr0be conducted surveyed Art's Tailor system and found the backup domain controller located at IP 10.70.184.89 is susceptible to the \textbf{Eternal Blue} exploit.  
+	
+	\subsection{Finding: \emph{Eternal Blue CVE-2017-0144}}
+	
+	\subsubsection{Severity Rating}
+	\indent The exploit allows users to gain Domain Admin credentials on the the server. 
+	\textbackslash cvss(N, H, N, N, U, H, H, H, 8.1)\\
+	\cvss(N, H, N, N, U, H, H, H, 8.1) \\
+	
+	\subsubsection{Vulnerability Description}
+	\indent This a remote code execution vulnerability within the Microsoft Server Message Block.  The vulnerability allows attackers to run code on the compromised system.  \\
+	
+	\subsubsection{Confirmation method}
+	To confirm if your system is vulnerability, \\
+	\indent 1. To confirm exploit, you need Kali linux and metasploit.\\
+	\indent 1. Start metaspolit and metaspolit database. \textbf{msfconsole -1} and \textbf{msfdb -init} to start them.\\
+	\indent 2. In metasploit, type \textbf{search eternal blue.}  \\
+	\indent 3. Select "exploit//windows//smb//ms17\_010\_psexece Windows Code Execution" \\
+	\indent 4. Set the RHOST to 10.70.184.89. \\
+	\indent 5. Run exploit by typing \textbf{exploit.}\\
+	\indent 6. The exploit should run and now and give you access to the system. \\
+	\indent 7. To gain the domain admin credentials. Run ps to have all processes listed. Look up 'ServerManager.exe' with the "ARTSTAILOR\\Administrator" and record the PID.\\
+	\indent 8. Use meterpreter command \textbf{migrate (PID)}.\\
+	\indent 9. Type \textbf{getuid} and you will see that you now have administrative privileges.\\ 
+		
+	\subsubsection{Mitigation or Resolution Strategy}
+	\indent The following are recommendations from Microsoft. \\
+	\indent 1. Disable SMBv1 on the affect computer. \\
+	\indent 2. Install update 2919355 from Microsoft, this removes the vulnerability. \\  
+	
+	\section{Attack Narrative}
+	
+	\indent Pr0b3 test3ed the secondary domain controller. First we had to figure out the IP address for the unit. To start, we setup proxychains through costumes. Once the proxy chain was set up, we executed a search through all IP addresses that could be possible in the next work. The command was \textbf{proxychians nmap -sV -p 139, 445 10.70.184.0/24}. In the below picture, you see the new IP address that is observed, 10.70.184.89.  \\
+		\includegraphics[width=4in]{ex150_2.jpg} \\
+	\indent Pr0b3 then started up metasploit and metasploit database as described in the confirmation method above.  With that run, we confirmed who were as shown in the screenshot below. \\
+	\includegraphics[width=4in]{ex150_3.jpg} \\
+	\indent We then looked at the running process on the system and observed an opportunity to become the Administrator. Pr0b3 migrated to the running service and we became the administrator. Then we searched through the files system and found and downloaded the SacredText.txt file. You can see our finding of the file and that it is on our Kali machine.   \\
+	\includegraphics[width=4in]{ex150_5.jpg} \\
+
+	
+
+	
+	
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0008, Lateral Movement, T1210, Exploitation of Remote Services, SMBv1, Eternal Blue Exploit) \\
+	\ttp(TA0008, Lateral Movement, T1210, Exploitation of Remote Services, SMBv1, Eternal Blue Exploit) \\
+	
+
+
+
+\end{document} 

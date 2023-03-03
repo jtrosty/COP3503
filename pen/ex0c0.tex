@@ -1,0 +1,94 @@
+%  Make this into a pdf document as follows:
+%
+%
+% The edit the Report.tex file appropriately to include only those elements that
+% make sense for the assignment you're reporting on.
+%
+% You can use a tool like TeXShop or Texmaker or some other graphical tool
+% to convert Report.text into a pdf fi le.
+%
+% If you are making this with command line tools, you'd run the following command:
+%
+%     latex Report.tex
+%
+% That will generate a dvi (device independent) document file called Report.dvi
+% The pages reported in the table of contents won't be correct, since latex only
+% processes one pass over the document. To adjust the page numbers in the contents,
+% run latex again:
+%
+%    latex Report.tex
+%
+% Then run
+%
+%   dvipdf Report.dvi
+%
+% to generate Report.pdf
+%
+% You can view this file to check it out by running
+%
+% xdg-open Report.pdf
+%
+% That's it.
+
+\def\cvss(#1,#2,#3,#4,#5,#6,#7,#8,#9){
+	\indent\textbf{CVSS Base Severity Rating: #9}  AV:#1 AC:#2 PR:#3 UI:#4 S:#5 C:#6 I:#7 A:#8}
+
+\def\ttp(#1, #2, #3, #4, #5, #6){
+	\indent\textbf{#1:} #2 \\
+	\indent\indent\textbf{#3:} #4 \\
+	\indent\indent\indent\textbf{#5:} #6 \\}
+
+\documentclass[notitlepage]{article}
+
+\usepackage{bibunits}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{numprint}
+
+% processes above options
+\usepackage{palatino}  %OR newcent ncntrsbk helvet times palatino
+\usepackage{url}
+\usepackage{footmisc}
+\usepackage{endnotes}
+\usepackage{hyperref}
+
+\urlstyle{same}
+
+\setcounter{secnumdepth}{0}
+\begin{document}
+	
+	\nplpadding{2}
+	\newdateformat{isodate}{
+		\THEYEAR -\numprint{\THEMONTH}-\numprint{\THEDAY}}
+	
+	\title{PenTest Lab Exercise Ex0c0 - Hiding in Plain Sight}
+	\author{Jonathan Trost}
+	\date{\isodate\today}
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage 
+	
+	\section{Attack Narrative}
+	\indent The goal of the attack in this report was to see if we could run penetration software on a windows machine within Arts Tailor. A connection to the computer at IP \textbf{books.artstailor.com}.  A remote desktop was opened on the at \textbf{books.artstailor.com} using the credentials that were gathered and reported in Ex090, the account used was \textbf{d.darkblood}. The service proxychains was setup to allow the a folder on the pr0b3 machine to the Art's Tailor machine.  \\
+	\indent A \textbf{Veil} payload was attempted to get running on the Windows defender software detected the payload and prevented it from running. We were able to get \textbf{meterpeter} software running by initializing a server of it on the penetration testing computer. With \textbf{Meterpeter} up, the generated update file was transferred to \textbf{books.artstailor.com} this code was then run on the attacked computer.  Meterpeter was then fully running on the the penetration testing computer with access to the file system of books.artstailor.com. \\ 
+	\includegraphics[width=5in]{meterpeter.jpg} \\
+	
+	 A key was found when inspecting the web code. \\
+	
+	\indent The code was \textbf{KEY013-qf/UZuKos+DzV6ot0Tktjg==} \\
+	
+	\subsection{MITRE ATT{\&}CK Framework TTPs}
+	
+	\indent\textbackslash ttp(TA0008, Lateral Movement, T1021, Remote Services, .001, Remote Desktop Protocol) \\
+	\ttp(TA0008, Lateral Movement, T1021, Remote Services, .001, Remote Desktop Protocol) \\
+	
+	\indent\textbackslash ttp(TA0008, Reconnaissance, T1592, Gather Victim Host Information, .004, Client Configurations) \\
+	\ttp(TA0003, Persistence, T1136, Create Account, .001, Local Account) \\
+
+
+\end{document} 
