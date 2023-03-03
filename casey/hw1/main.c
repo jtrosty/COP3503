@@ -34,7 +34,8 @@ int main(int argc, char* argv[]) {
         if (fileSize == 0) {
             perror("File filed to open.");
         }
-        rawInstructionsData = malloc(sizeof(char) * fileSize);
+        size_t bytes = sizeof(char) * (int)fileSize;
+        rawInstructionsData = malloc(bytes);
         fp = fopen(debug_fileName, "r");
     }
     else {
@@ -46,7 +47,8 @@ int main(int argc, char* argv[]) {
     int c;
     for (long i = 0; i < fileSize; i++) {
         c = fgetc(fp);
-        rawInstructionsData[i] = (char*)(c | 0x000000FF);
+        char temp = (char)(c | 0x000000FF);
+        rawInstructionsData[i] = temp;
     }
 
     return 0;
