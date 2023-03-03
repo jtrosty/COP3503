@@ -4,4 +4,10 @@ LIB= lib/libraylib.a
 FRAMEWORK= -framework CoreVideo -framework IOkit -framework Cocoa -framework GLUT -framework OpenGL
 
 default:
-	clang -g main.c 
+	cl -Zi main.c 
+
+hw1:
+	cl -Zi hw1/main.c 
+
+run:
+	main.exe
