@@ -2,92 +2,25 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+char* regTable[2][8] = {{"AL", "CL", "DL", "BL", "AH", "CH", "DH", "BH"}, 
+                        {"AX", "CX", "DX", "BX", "SP", "BP", "SI", "DI"}};
+
 long getfileSize(char* filename) {
     FILE* fp = fopen(filename, "r");
     if (fp == NULL) {
-        perror("File faailed to open.");
+        perror("File failed to open.");
     }
     if (fseek(fp, 0, SEEK_END) < 0) {
         fclose(fp);
-        perror("File faailed to open.");
+        perror("File failed to open.");
     }
     long length = ftell(fp);
     fclose(fp);
     return length;
 }
 
-char* getRegName(char reg, char w) {
-    if (w) {
-        switch (reg)
-        {
-        case 0b000:
-            return "AX";
-            break;
-        case 0b001:
-            return "CX";
-            break;
-        case 0b010:
-            return "DX";
-            break;
-        case 0b011:
-            return "BX";
-            break;
-        case 0b100:
-            return "SP";
-            break;
-        case 0b101:
-            return "BP";
-            break;
-        case 0b110:
-            return "SI";
-            break;
-        case 0b111:
-            return "DI";
-            break;
-        default:
-            break;
-        }
-    }
-    else {
-        switch (reg)
-        {
-        case 0b000:
-            return "AL";
-            break;
-        case 0b001:
-            return "CL";
-            break;
-        case 0b010:
-            return "DL";
-            break;
-        case 0b011:
-            return "BL";
-            break;
-        case 0b100:
-            return "AH";
-            break;
-        case 0b101:
-            return "CH";
-            break;
-        case 0b110:
-            return "DH";
-            break;
-        case 0b111:
-            return "BH";
-            break;
-        default:
-            break;
-        }
-
-    }
-
-}
-
 void printMovInst(char regTo, char regFrom, char w) {
-    char* to = getRegName(regTo, w);
-    char* fm = getRegName(regFrom, w);
-
-    printf("MOV %s, %s", to, fm);
+    printf("MOV %s, %s \n", regTable[w][regTo], regTable[w][regFrom]);
 }
 
 void movRtoR(uint16_t fullInst) {
@@ -99,24 +32,23 @@ void movRtoR(uint16_t fullInst) {
     char regTo;
 
     // Get direciton of move
-    if (fullInst & 0b0000001000000000) dir = 1;
+    if ((fullInst & 0x0002) > 0) dir = 1;
     else dir = 0;
     // Get if it is a full word or not
-    if (fullInst & 0b0000000100000000) word = 1;
+    if ((fullInst & 0x0001) > 0) word = 1;
     else word = 0;
-    uint16_t test_mod = (fullInst > 14) & 0x0003; // > 14;
-    uint16_t test_regFrom = (fullInst > 11) & 0x0007; //> 11;
-    uint16_t test_regTo = (fullInst > 8) & 0x0007;// > 8;
 
-    mod = (fullInst & 0xC000) > 14;
-    regFrom = (fullInst & 0x3800) > 11;
-    regTo = (fullInst & 0x0700) > 8;
+    mod = (fullInst & 0xC000) >> 14;
+    regFrom = (fullInst & 0x3800) >> 11;
+    regTo = (fullInst & 0x0700) >> 8;
     printMovInst(regTo, regFrom, word);
 }
 
 void decode(uint16_t fullInst) {
 
-    printf("%X \n", fullInst);
+    //TODO: Debug code to remove 
+    //printf("%X \n", fullInst);
+    //
     uint8_t opcode = (fullInst & 0x00FC); // need the first 6 bits
     switch (opcode) {
         case 0b10001000: {
@@ -140,7 +72,9 @@ int main(int argc, char* argv[]) {
         }
     }
     else if (argc == 1) {
-        debug_fileName = "short_test.bin";
+        //debug_fileName = "short_test.bin";
+        debug_fileName = "many_test.bin";
+
         fileSize = getfileSize(debug_fileName);
         if (fileSize == 0) {
             perror("File filed to open.");
