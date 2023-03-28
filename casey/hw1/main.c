@@ -45,15 +45,31 @@ void movRtoR(uint16_t fullInst) {
 }
 
 void decode(uint16_t fullInst) {
-
-    //TODO: Debug code to remove 
-    //printf("%X \n", fullInst);
-    //
-    uint8_t opcode = (fullInst & 0x00FC); // need the first 6 bits
-    switch (opcode) {
-        case 0b10001000: {
-            movRtoR(fullInst);
+    uint8_t opcodeFourBits = (fullInst & 0x00F0); // need the first 6 bits
+    uint8_t nextTwoBits = (fullInst & 0x000C);
+    switch (opcodeFourBits) {
+        case 0xA0: { // 1000
+            // TODO: mem to accumlator, accum to mem 
             break;
+        }
+        case 0xB0: { // 1000
+            // TODO: add immediate register move
+            break;
+        }
+        case 0x80: { // 1000
+            switch (nextTwoBits)
+            {
+                case 0x0080:
+                    movRtoR(fullInst);
+                    break;
+                case 0x00C0:
+                    // TODO: 
+                    // Add reg/mem to segreg
+                    // Add segment rgister/mem
+                    break;
+                default:
+                    break;
+            }
         } 
     }
 }
