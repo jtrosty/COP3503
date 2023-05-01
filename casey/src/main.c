@@ -75,7 +75,7 @@ void decode_one_byte_inst(struct Inst_PC_Data* inst) {
 }
 
 void decode_two_byte_inst(struct Inst_PC_Data* inst) {
-    uint8_t opcode_six_bits = (inst->byte_one & 0x00FC); // need the first 6 bits
+    uint8_t opcode_six_bits = (uint8_t)(inst->byte_one & 0x00FC); // need the first 6 bits
     switch (opcode_six_bits)
     {
     case 0x3C: // CMP: Immediate with Accumlator 
@@ -86,9 +86,9 @@ void decode_two_byte_inst(struct Inst_PC_Data* inst) {
         break;
     default:
         // Handle to 3rd byte if w = 1 case.
-        uint8_t opcode_four_bits = (inst->byte_one & 0xF0);
-        if (opcode_four_bits == 0xB0) {
-            uint8_t w_field = (inst->byte_one & 0x08);
+        uint8_t opcode_four_bits = (uint8_t)(inst->byte_one & 0xF0);
+        if ((opcode_four_bits == 0xB0) > 0) {
+            uint8_t w_field = (uint8_t)(inst->byte_one & 0x08);
             if (w_field) {
                 // MOV Immediate to Reg 16 bits
                 move_i_to_r_16bit(inst);
