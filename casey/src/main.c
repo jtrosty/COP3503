@@ -178,13 +178,23 @@ void move_i_to_r_16bit(struct Inst_PC_Data* inst) {
     inst->pc += 3;
 }
 
+void print_add_reg_mem(char to, char from,char word, char dir, char mod, char disp) {
+    if (disp == 0) {
+        printf("MOV %s, [%s] \n", regTable[word][to], eff_address_table[mod][from]);
+    }
+    else {
+        printf("MOV %s, [%s + %i] \n", regTable[word][to], eff_address_table[mod][from], disp);
+    }
+
+}
+
 void add_reg_mem(struct Inst_PC_Data* inst) {
     char dir = 0;
     char word = 0;
     char mod = 0;
-    char from = 0;
-    char to = 0;
-    char r_m = inst->byte_two & 0x07;
+    char r_m_field = inst->byte_two & 0x07;
+    char reg = (inst->byte_two & 0x38) >> 3;
+    uint16_t displacement = 0;
     uint16_t value = 0;
 
     // Get direciton of move
@@ -197,19 +207,55 @@ void add_reg_mem(struct Inst_PC_Data* inst) {
     mod = (inst->byte_two & 0xC0) >> 6; // Maybe we just know that mode is 11 when we get here?
 
     if (mod == 0) {
-
+        if (dir == 0) {
+            printf("MOV %s, [%s] \n", regTable[word][reg], eff_address_table[mod][r_m_field]);
+        }
+        else {
+            printf("MOV %s, [%s] \n", eff_address_table[mod][r_m_field], regTable[word][reg]);
+        }
         inst->pc += 2;
     }
     else if (mod == 0x01) {
-
+        displacement = inst->byte_three;
+        if (displacement == 0){
+            printf("MOV %s, [%s] \n", regTable[word][reg], eff_address_table[mod][r_m_field]);
+        }
+        else {
+            printf("MOV %s, [%s + %i] \n", regTable[word][reg], eff_address_table[mod][r_m_field], displacement);
+        }
         inst->pc += 3;
     }
     else if (mod == 0x02) {
-
+        displacement = inst->byte_four << 8;
+        displacement = displacement | inst->byte_three;
+        if (dir == 0) {
+            printf("MOV %s, [%s + %i] \n", regTable[word][reg], eff_address_table[mod][r_m_field], displacement);
+        }
+        else {
+            printf("MOV %s, [%s + %i] \n", eff_address_table[mod][r_m_field], regTable[word][reg], displacement);
+        }
         inst->pc += 4;
     }
     else if (mod == 0x03) {
-
+        if (r_m_field == 0x3) {
+            displacement = inst->byte_four << 8;
+            displacement = displacement | inst->byte_three;
+            if (dir == 0) {
+                printf("MOV %s, [%s + %i] \n", regTable[word][reg], eff_address_table[mod][r_m_field], displacement);
+            }
+            else {
+                printf("MOV %s, [%s + %i] \n", eff_address_table[mod][r_m_field], regTable[word][reg], displacement);
+            }
+            inst->pc += 2;
+        }
+        else {
+            if (dir == 0) {
+                printf("MOV %s, [%s] \n", regTable[word][reg], regTable[mod][r_m_field]);
+            }
+            else {
+                printf("MOV %s, [%s] \n", regTable[mod][r_m_field], regTable[word][reg]);
+            }
+        }
         inst->pc += 2;
     }
 }
@@ -364,8 +410,9 @@ int main(int argc, char* argv[]) {
     }
     else if (argc == 1) {
         //path = "..\\data\\";
-        debug_fileName = "..\\data\\many_test.bin";
+        //debug_fileName = "..\\data\\many_test.bin";
         //debug_fileName = "..\\data\\listing_0039_more_movs.bin";
+        debug_fileName = "..\\data\\listing_0041_add_sub_cmp_jnz.bin";
 
         fileSize = getfileSize(debug_fileName);
         if (fileSize == 0) {
