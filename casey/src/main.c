@@ -180,15 +180,16 @@ void move_i_to_r_16bit(struct Inst_PC_Data* inst) {
 
 void print_add_reg_mem(char to, char from,char word, char dir, char mod, char disp) {
     if (disp == 0) {
-        printf("MOV %s, [%s] \n", regTable[word][to], eff_address_table[mod][from]);
+        printf("ADD %s, [%s] \n", regTable[word][to], eff_address_table[mod][from]);
     }
     else {
-        printf("MOV %s, [%s + %i] \n", regTable[word][to], eff_address_table[mod][from], disp);
+        printf("ADD %s, [%s + %i] \n", regTable[word][to], eff_address_table[mod][from], disp);
     }
 
 }
 
 void add_reg_mem(struct Inst_PC_Data* inst) {
+    //TODO: (Jon)   This should be a struct
     char dir = 0;
     char word = 0;
     char mod = 0;
@@ -208,20 +209,89 @@ void add_reg_mem(struct Inst_PC_Data* inst) {
 
     if (mod == 0) {
         if (dir == 0) {
-            printf("MOV %s, [%s] \n", regTable[word][reg], eff_address_table[mod][r_m_field]);
+            printf("ADD %s, [%s] \n", regTable[word][reg], eff_address_table[mod][r_m_field]);
         }
         else {
-            printf("MOV %s, [%s] \n", eff_address_table[mod][r_m_field], regTable[word][reg]);
+            printf("ADD %s, [%s] \n", eff_address_table[mod][r_m_field], regTable[word][reg]);
         }
         inst->pc += 2;
     }
     else if (mod == 0x01) {
         displacement = inst->byte_three;
         if (displacement == 0){
-            printf("MOV %s, [%s] \n", regTable[word][reg], eff_address_table[mod][r_m_field]);
+            printf("ADD %s, [%s] \n", regTable[word][reg], eff_address_table[mod][r_m_field]);
         }
         else {
-            printf("MOV %s, [%s + %i] \n", regTable[word][reg], eff_address_table[mod][r_m_field], displacement);
+            printf("ADD %s, [%s + %i] \n", regTable[word][reg], eff_address_table[mod][r_m_field], displacement);
+        }
+        inst->pc += 3;
+    }
+    else if (mod == 0x02) {
+        displacement = inst->byte_four << 8;
+        displacement = displacement | inst->byte_three;
+        if (dir == 0) {
+            printf("ADD %s, [%s + %i] \n", regTable[word][reg], eff_address_table[mod][r_m_field], displacement);
+        }
+        else {
+            printf("ADD %s, [%s + %i] \n", eff_address_table[mod][r_m_field], regTable[word][reg], displacement);
+        }
+        inst->pc += 4;
+    }
+    else if (mod == 0x03) {
+        if (r_m_field == 0x3) {
+            displacement = inst->byte_four << 8;
+            displacement = displacement | inst->byte_three;
+            if (dir == 0) {
+                printf("ADD %s, [%s + %i] \n", regTable[word][reg], eff_address_table[mod][r_m_field], displacement);
+            }
+            else {
+                printf("ADD %s, [%s + %i] \n", eff_address_table[mod][r_m_field], regTable[word][reg], displacement);
+            }
+            inst->pc += 2;
+        }
+        else {
+            if (dir == 0) {
+                printf("ADD %s, [%s] \n", regTable[word][reg], regTable[mod][r_m_field]);
+            }
+            else {
+                printf("ADD %s, [%s] \n", regTable[mod][r_m_field], regTable[word][reg]);
+            }
+        }
+        inst->pc += 2;
+    }
+}
+
+void add_i_reg_mem(struct Inst_PC_Data* inst) {
+    char sign_extension = 0;
+    char word = 0;
+    char mod = 0;
+    char r_m_field = inst->byte_two & 0x07;
+    char reg = (inst->byte_two & 0x38) >> 3;
+    uint16_t displacement = 0;
+    uint16_t value = 0;
+
+    // Get direciton of move
+    if ((inst->byte_one & 0x02) > 0) sign_extension = 1;
+    else sign_extension = 0;
+    // Get if it is a full word or not
+    if ((inst->byte_one & 0x01) > 0) word = 1;
+    else word = 0;
+
+    mod = (inst->byte_two & 0xC0) >> 6; // Maybe we just know that mode is 11 when we get here?
+
+    if (mod == 0) {
+        displacement = inst->byte_three;
+        printf("ADD %s, %i \n", regTable[word][reg], displacement);
+        inst->pc += 3;
+    }
+    else if (mod == 0x01) {
+        displacement = inst->byte_three;
+        if (displacement == 0){
+            printf("ADD [%s], $s \n", regTable[word][reg], eff_address_table[mod][r_m_field]);
+        }
+        else {
+            printf("ADD [%s + %i], $s \n", regTable[word][reg], displacement);
+            printf("ADD %s, %i \n", regTable[word][reg], displacement);
         }
         inst->pc += 3;
     }
@@ -258,10 +328,6 @@ void add_reg_mem(struct Inst_PC_Data* inst) {
         }
         inst->pc += 2;
     }
-}
-
-void add_i_reg_mem(struct Inst_PC_Data* inst) {
-
 }
 
 void add_i_accumulator(struct Inst_PC_Data* inst) {
